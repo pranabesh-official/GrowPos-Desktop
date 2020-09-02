@@ -3,10 +3,10 @@ import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux'
 import { Tab } from 'semantic-ui-react'
 import DataProvider from '../../LocalDB'
-import ShopProvider from '../../LocalDB/ShopDB'
 import { View } from 'react-desktop/macOs';
-import OrderSource from './OrderSource'
-
+import OrderSource from './OrderSource/index'
+import ClientProvider from '../../LocalDB/ClientDB'
+import {ThemeBackground} from '../LayoutManeger/Themes'
 class Pos extends Component {
     constructor(props) {
         super(props)
@@ -21,7 +21,7 @@ class Pos extends Component {
         localStorage.setItem('lastPage', '/CategorySetup')
         const { height } = this.state
         const style = {
-            background: "white",
+            background: ThemeBackground,
             display: 'flex',
             flexWrap: 'wrap',
             width: '100%',
@@ -35,9 +35,9 @@ class Pos extends Component {
                     <Tab.Pane attached={false}>
                         <Grid container direction='column'>
                             <DataProvider>
-                                <ShopProvider>
+                                <ClientProvider>
                                     <OrderSource />
-                                </ShopProvider>
+                                </ClientProvider>
                             </DataProvider>
                         </Grid>
                     </Tab.Pane>

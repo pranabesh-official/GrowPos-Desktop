@@ -17,7 +17,7 @@ class DataProvider extends Component {
             items: [],
             BulkLodding: false
         }
-        this.db = new TurtleDB('Data');
+        this.db = new TurtleDB('Myshop');
         this.db.setRemote('http://localhost:4040')
         this.addItem = this.addItem.bind(this)
         this.deleteItem = this.deleteItem.bind(this)

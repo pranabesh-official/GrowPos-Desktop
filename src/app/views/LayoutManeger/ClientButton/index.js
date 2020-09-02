@@ -16,7 +16,7 @@ const getStatus= (status) => {
         default: return info
     }
 }
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     logo: {
         height: '35px' ,
         width: '30px' 
@@ -24,14 +24,18 @@ const useStyles = makeStyles({
     buttonStatus: props=> {
         const color = getStatus(props.status)
         return{
+            margin: theme.spacing(0.5),
             borderBottom: `5px solid ${color}`,
             maxWidth:props.size,
         }
     }
-});
+    
+}))
+
 
 const StyledButton = withStyles({
     root: {
+        
         background: ThemeLite,
         borderRadius: 0,
         color: 'white',
@@ -53,7 +57,7 @@ const StyledButton = withStyles({
 
 export default function ClientButton(props) {
     const classes = useStyles(props);
-    const { onClick, label , Type } = props
+    const { onClick, label , Type , } = props
     const getType= (Type) => {
         switch (Type) {
             case 'Table': return table
@@ -62,12 +66,18 @@ export default function ClientButton(props) {
             default: return takeAway
         }
     }
+    let key = 0
+    const keygen = () => {
+        key = key + 1
+        return key
+    }
     return (
         <StyledButton
         className={classes.buttonStatus}
         startIcon={<img src={getType(Type)} alt="" className={classes.logo}/>}
         onClick={onClick}
         fullWidth
+        key={keygen()}
         >
             {label}
         </StyledButton>

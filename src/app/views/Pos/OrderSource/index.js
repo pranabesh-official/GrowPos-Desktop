@@ -3,23 +3,47 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Tables from './Tables'
+import { Grid } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    height: '100%',
+  },
+  tabs: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  Box: {
+    height: '100%',
+    width: '100%'
+  },
+  TabPanel: {
+    height: '100%',
+    width: '100%'
+  }
+}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
+  const classes = useStyles();
   return (
     <div
       role="tabpanel"
+      className={classes.TabPanel} 
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
     >
       {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
+        <Box className={classes.Box} >
+          <Grid container >{children}</Grid>
         </Box>
       )}
     </div>
@@ -39,17 +63,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: '100%',
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
-}));
+
 
 export default function OrderSource() {
   const classes = useStyles();
@@ -69,34 +83,33 @@ export default function OrderSource() {
         aria-label="Vertical tabs example"
         className={classes.tabs}
       >
-        <Tab label="Item One" {...a11yProps(0)} wrapped/>
-        <Tab label="Item Two" {...a11yProps(1)} wrapped/>
-        <Tab label="Item Three" {...a11yProps(2)} wrapped/>
-        <Tab label="Item Four" {...a11yProps(3)} wrapped/>
-        <Tab label="Item Five" {...a11yProps(4)} wrapped/>
-        <Tab label="Item Six" {...a11yProps(5)} wrapped/>
-        <Tab label="Item Seven" {...a11yProps(6)} wrapped />
+        <Tab label="Tables" {...a11yProps(0)} wrapped />
+        <Tab label="Take Away" {...a11yProps(1)} wrapped />
+        <Tab label="Delivery" {...a11yProps(2)} wrapped />
+        <Tab label="Active" {...a11yProps(3)} wrapped />
+        <Tab label="Inactive" {...a11yProps(4)} wrapped />
+        <Tab label="Pending" {...a11yProps(5)} wrapped />
+
       </Tabs>
       <TabPanel value={value} index={0}>
-        Item One
+
+        <Tables />
+
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        Take Away
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        Delivery
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Item Four
+        Active
       </TabPanel>
       <TabPanel value={value} index={4}>
-        Item Five
+        Inactive
       </TabPanel>
       <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
+        Pending
       </TabPanel>
     </div>
   );
