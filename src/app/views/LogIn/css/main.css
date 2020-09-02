@@ -58,7 +58,7 @@ a:focus {
 
 a:hover {
 	text-decoration: none;
-  color: #562BB8;
+  color: #321fdb;
 }
 
 /*---------------------------------------------*/
@@ -256,7 +256,7 @@ iframe {
   width: 100%;
   height: 100%;
   box-shadow: 0px 0px 0px 0px;
-  color: #562BB8;
+  color: #321fdb;
 }
 
 .input100:focus + .focus-input100 {
@@ -304,7 +304,7 @@ iframe {
 }
 
 .input100:focus + .focus-input100 + .symbol-input100 {
-  color: #562BB8;
+  color: #321fdb;
   padding-left: 28px;
 }
 
@@ -332,7 +332,7 @@ iframe {
   width: 100%;
   height: 50px;
   border-radius: 25px;
-  background: #562BB8;
+  background: #321fdb;
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;

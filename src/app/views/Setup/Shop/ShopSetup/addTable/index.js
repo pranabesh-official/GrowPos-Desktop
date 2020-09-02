@@ -56,6 +56,7 @@ class AddTable extends Component {
         }
         if (No) {
             this.context.addItem('Tables', data)
+            this.handleReset() 
         }
     };
     render() {

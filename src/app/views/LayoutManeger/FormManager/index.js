@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers"
 import DateFnsUtils from '@date-io/date-fns';
-import { danger, secondary,primary, success, info,  warning, light, dark } from '../Themes'
+import { danger, secondary,primary, success, info,  warning, light, dark , ThemeDark } from '../Themes'
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel, RadioGroup as MuiRadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 
@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
     },
     Checkbox: props => {
         return {
-            color: setColor(props.color) || dark
+            color:  ThemeDark
         }
     },
     Radio: props => {
         return {
-            color: dark
+            color: ThemeDark
         }
     },
 }))

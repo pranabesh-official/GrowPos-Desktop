@@ -4,18 +4,22 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
+// import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+
 
 import { ShopData } from '../../../LocalDB/ShopDB'
+import icon from './location.png'
 
 const style = theme => ({
     root: {
         maxWidth: '100%',
+        borderTop: '1px solid #f0f0f0',
     },
     avatar: {
-        backgroundColor: red[500],
+        backgroundColor: '#00000000',
+        hiight:48,
+        width:48 
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -45,9 +49,11 @@ class ShopProfile extends Component {
                     <Card className={classes.Profile}>
                         <CardHeader
                             avatar={
-                                <Avatar aria-label={Name} className={classes.avatar}>
-                                    {Name}
-                                </Avatar>
+                                <img 
+                                src={icon}
+                                className={classes.avatar}
+                                alt="icon"
+                                />
                             }
                             title={Name}
                             subheader={Bar ? `${Type} Cum Bar`:  Type }

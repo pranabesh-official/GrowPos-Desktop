@@ -20,15 +20,7 @@ export const themeColor = createMuiTheme({
         danger: danger,
     },
     palette: {
-        primary: {
-            main: primary,
-        },
-        secondary: {
-            main: light,
-        },
-        danger: {
-            main: danger,
-        },
+       
     },
     shape: {
         borderRadius: 0
