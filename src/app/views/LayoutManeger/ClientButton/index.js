@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     buttonStatus: props=> {
         const color = getStatus(props.status)
         return{
-            margin: theme.spacing(0.5),
+            // margin: theme.spacing(0.5),
             borderBottom: `5px solid ${color}`,
             maxWidth:props.size,
         }
@@ -35,12 +35,12 @@ const useStyles = makeStyles(theme => ({
 
 const StyledButton = withStyles({
     root: {
-        
         background: ThemeLite,
         borderRadius: 0,
         color: 'white',
         height: 48,
         padding: '0 0px',
+        margin: '1px',
         "&:hover": {
             backgroundColor: ThemeDark,
 

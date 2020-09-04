@@ -27,8 +27,10 @@ class DataProvider extends Component {
         this.BulkAdd = this.BulkAdd.bind(this);
     }
     componentDidMount() {
-        this.loadAllData();
-
+        const {dataload} = this.props.data
+        if(dataload === false){
+            this.loadAllData();
+        }
     }
     loadAllData() {
         const loadData = () => {

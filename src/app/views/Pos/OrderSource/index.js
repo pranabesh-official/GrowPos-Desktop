@@ -62,7 +62,11 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box className={classes.Box} >
-          <Grid container >{children}</Grid>
+          <Grid container >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              {children}
+            </Grid>
+          </Grid>
         </Box>
       )}
     </div>
@@ -111,8 +115,8 @@ export default function OrderSource(props) {
       </Tabs>
       <TabPanel value={value} index={0}>
         <Paper className={classes.CartBody}>
-          <Grid container>
-            <Tables />
+          <Grid container >
+            <Tables props={props} />
           </Grid>
         </Paper>
       </TabPanel>

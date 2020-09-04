@@ -9,6 +9,8 @@ import ClientProvider from '../../LocalDB/ClientDB'
 import { ThemeBackground } from '../LayoutManeger/Themes'
 import OrderPane from './OrderPane'
 import { withStyles } from '@material-ui/core/styles';
+import Header from '../LayoutManeger/header'
+import tables from '../LayoutManeger/icons/dinner.png'
 const style = (theme) => ({
     CartBody: {
         borderRadius: 0,
@@ -45,15 +47,19 @@ class Pos extends Component {
     constructor(props) {
         super(props)
         this.updateDimensions = this.updateDimensions.bind(this);
+        this.handleTabChange = this.handleTabChange.bind(this);
         this.state = {
             width: 0,
             height: 0,
+            activeIndex: 0 ,
+            current:null
         };
     }
-
+    handleTabChange (activeIndex, current){
+        this.setState({activeIndex , current})
+    }
     render() {
-        localStorage.setItem('lastPage', '/CategorySetup')
-        const { height } = this.state
+        const { height , activeIndex } = this.state
         const { classes } = this.props;
         const style = {
             background: ThemeBackground,
@@ -66,7 +72,7 @@ class Pos extends Component {
                         <Grid container direction='column'>
                             <DataProvider>
                                 <ClientProvider>
-                                    <OrderSource height={height} />
+                                    <OrderSource height={height} handleTabChange={this.handleTabChange} />
                                 </ClientProvider>
                             </DataProvider>
                         </Grid>
@@ -82,8 +88,12 @@ class Pos extends Component {
                                 <OrderPane height={height} />
                             </Grid>
                             <Grid item xs={12} sm={5}>
-                                <Paper className={classes.CartTitel}>
-                                </Paper>
+                                <Header
+                                height={40}
+                                title={`Order for ${this.state.current.dbName}`}
+                                subtitle={`No ${this.state.current.No}`}
+                                src={tables}
+                                />
                                 <Paper className={classes.CartBody} style={{ height: `${(height - 68) - 100}px`, maxHeight: `${(height - 68) - 100}px` }}>
                                     <CartItem/>
                                 </Paper>
@@ -102,6 +112,8 @@ class Pos extends Component {
                     <Tab
                         menu={{ borderless: true, attached: false, tabular: false, }}
                         panes={panes}
+                        activeIndex={activeIndex}
+                        onTabChange={()=>this.handleTabChange(0,null)}
                     />
                 </Grid>
             </Grid>

@@ -38,12 +38,12 @@ class EmployeProvider extends Component {
         this.stateReset = this.getUsers.bind(this)
     }
     componentDidMount() {
-        this.getUsers().then((data)=>{
+        this.getUsers().then((data) => {
             this.setState({ users: data })
         })
-        
+
     }
-    getUsers(){
+    getUsers() {
         let getitem = {
             method: 'get',
             url: baseurl + 'user',
@@ -54,10 +54,10 @@ class EmployeProvider extends Component {
         }
         return new Promise((resolve, reject) => {
             axios(getitem)
-                .then(({data})=> {
+                .then(({ data }) => {
                     resolve(data)
                 })
-                .catch((error)=> {
+                .catch((error) => {
                     reject(error)
                     console.log(error)
                 })
@@ -85,8 +85,22 @@ class EmployeProvider extends Component {
 
     }
 
-    handleremove(url, id) {
-
+    handleremove(id) {
+        let deleteUser = {
+            method: 'delete',
+            url: baseurl + 'user/' + id,
+            headers: {
+                'x-access-token': auth,
+                'Content-Type': 'application/json'
+            }
+        }
+        axios(deleteUser)
+            .then(function (response) {
+                console.log(response)
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
     }
     stateReset() {
 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Route, BrowserRouter } from 'react-router-dom';
-// import { Redirect } from "react-router-dom"
-// HashRouter
+import { Ripple } from 'react-preloaders';
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 import { getProfileFetch } from '../store/action/Auth';
@@ -16,25 +15,24 @@ class View extends Component {
 
   }
   componentDidMount() {
-      this.props.getProfileFetch()
+    this.props.getProfileFetch()
   }
 
   render() {
-    const { logIn} = this.props.Auth
+    const { logIn } = this.props.Auth
 
     const TheLayout = React.lazy(() => import('../containers/TheLayout'));
 
     return (
-      <React.Fragment>
-        { logIn ?
+      <React.Suspense fallback={<Ripple />}>
+        {logIn ?
           <BrowserRouter>
             <Route path="/" name="Home" render={(props) => <TheLayout {...props} />} />
           </BrowserRouter>
           :
-          < Redirect to = { '/'} />
+          < Redirect to={'/'} />
         }
-
-      </React.Fragment>
+      </React.Suspense>
     )
   }
 }

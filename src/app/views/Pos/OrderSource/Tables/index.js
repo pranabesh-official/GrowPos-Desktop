@@ -11,14 +11,14 @@ class Tables extends Component {
         }
     }
     render() {
-        console.log(this.context)
+        const {handleTabChange}=this.props.props
         return (
             <DataConsumer>
                 {({ Tables }) => (
                     Tables.map((item) => (
-                        <Grid item xs={2} sm={2} key={item._id}>
+                        <Grid item xs={3} sm={3} md={2} lg={1} xl={1} key={item._id}>
                             <ClientButton
-                                // onClick={this.handleReset}
+                                onClick={()=>handleTabChange(1,item)}
                                 label={`TABLE ${item.No}`}
                                 status={item.table_Status}
                                 Type='Table'

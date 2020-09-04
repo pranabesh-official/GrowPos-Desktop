@@ -1,11 +1,41 @@
 import React, { Component } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import AddEmploye from './AddEmploye'
 import EmployeProvider from '../../LocalDB/EmoloyeDB'
 import { Tab } from 'semantic-ui-react'
+import { withStyles } from '@material-ui/core/styles';
+import EmoloyDetails from './EmoloyDetails'
+const style = (theme) => ({
+  CartBody: {
+    borderRadius: 0,
+    border: 0,
+    padding: '0 0px',
+    boxShadow: '0 0px 0px 0px ',
+    background: 'white',
+    overflow: 'auto',
+  },
+  CartTitel: {
+    borderRadius: 0,
+    border: 0,
+    height: '40px',
+    padding: '0 0px',
+    boxShadow: '0 0px 0px 0px ',
+    background: 'white',
+    overflow: 'auto',
+    borderBottom: '1px solid #f0f0f0'
+  },
+  CartAction: {
+    borderRadius: 0,
+    border: 0,
+    height: '60px',
+    padding: '0 0px',
+    boxShadow: '0 0px 0px 0px ',
+    background: 'white',
+    overflow: 'auto',
+    borderTop: '1px solid #f0f0f0'
+  },
 
-// import { View } from 'react-desktop/macOs';
-
+});
 
 class Employe extends Component {
   constructor(props) {
@@ -19,7 +49,8 @@ class Employe extends Component {
 
   render() {
     localStorage.setItem('lastPage', '/CategorySetup')
-    // const { height } = this.state
+    const { height } = this.state
+    const { classes } = this.props
     const panes = [
       {
         menuItem: 'Add Employe',
@@ -33,29 +64,23 @@ class Employe extends Component {
           </Tab.Pane>
         )
       },
-      // {
-      //   menuItem: 'Products',
-      //   render: () => (
-      //     <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
-      //       <View padding="0px" margin="0px" width='100%' height={`${height - 75}px`}>
-      //         <Grid container direction="column" style={style}  >
-      //           <DataProvider>
-      //             <ViweProduct />
-      //           </DataProvider>
-      //         </Grid>
-      //       </View>
-      //     </Tab.Pane>
-      //   )
-      // }
+      {
+        menuItem: 'Employe Details',
+        render: () => (
+          <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
+            <Grid container direction="column" >
+              <Grid item xs={12} sm={12}>
+                <Paper className={classes.CartBody} style={{ height: `${height - 68}px`, maxHeight: `${height - 68}px` }}>
+                  <EmployeProvider>
+                    <EmoloyDetails />
+                  </EmployeProvider>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Tab.Pane>
+        )
+      }
     ]
-    // const style = {
-    //   background: "white",
-    //   display: 'flex',
-    //   flexWrap: 'wrap',
-    //   width: '100%',
-    //   height: '100%',
-    //   variant: "scrollable",
-    // }
     return (
       <Grid container spacing={1} style={{ padding: '5px' }}>
         <Grid item xs={12} sm={12} >
@@ -85,5 +110,5 @@ class Employe extends Component {
 
 }
 
+export default withStyles(style, { withTheme: true })(Employe)
 
-export default Employe
