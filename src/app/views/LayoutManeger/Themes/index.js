@@ -23,6 +23,7 @@ export const themeColor = createMuiTheme({
        
     },
     shape: {
-        borderRadius: 0
+        borderRadius: 0,
+        border: '1px solid rgba(34,36,38,.15)'
     }
 });

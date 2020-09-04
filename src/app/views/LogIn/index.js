@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Redirect } from "react-router-dom"
 import { isElectron } from 'react-device-detect'
 import Titlebar from '../../TitleBar'
-import axios from 'axios'
+import { userPostFetch, getProfileFetch } from '../../store/action/Auth'
 
 
 import './css/style.css'
@@ -29,54 +29,27 @@ class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
     }
+    componentWillMount() {
+        try {
+            this.props.getProfileFetch('LOGIN')
+        } catch (error) {
 
+        }
+    }
     handleChange(e) {
         const { name, value } = e.target;
         this.setState({ [name]: value });
     }
     handleSubmit(e) {
-        const base64 = require('base-64');
         e.preventDefault();
-        const send = (user, pass) => {
-            return new Promise((resolve, reject) => {
-                let basic = 'Basic ' + base64.encode(user + ":" + pass)
-                let login = {
-                    method: 'get',
-                    url: 'http://127.0.0.1:5000/login',
-                    headers: {
-                        'Authorization': basic,
-                    }
-                }
-                axios(login)
-                    .then(({ data }) => {
-                        resolve(data)
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                        reject(error)
-                    })
-            })
-        }
         const { username, password } = this.state
         if (username && password) {
-            this.setState({ loading: true })
-            send(username, password).then((data) => {
-                sessionStorage.setItem('isadmin', data.isadmin)
-                sessionStorage.setItem('UserName', data.UserName)
-                sessionStorage.setItem('Name', data.Name)
-                sessionStorage.setItem('Department', data.Department)
-                sessionStorage.setItem('Mobile', data.Mobile)
-                sessionStorage.setItem('token', data.token)
-                sessionStorage.setItem('public_id', data.public_id)
-                this.setState({ logedIn: true })
-            }).catch((error) => {
-                console.log(error)
-                this.setState({ logedIn: false })
-            })
+            this.props.userPostFetch(username, password)
         }
     }
     render() {
-
+        const { logIn } = this.props.Auth
+        console.log(logIn)
         const layout = () => {
             const { username, password } = this.state;
             return (
@@ -118,7 +91,7 @@ class Login extends Component {
             )
         }
 
-        if (this.state.logedIn) {
+        if (logIn) {
             return (
                 <Redirect to={'/dashbord'} />
             )
@@ -135,10 +108,10 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        Shop: state.Shop,
+        Auth: state.Auth,
     }
 }
-export default connect(mapStateToProps)(Login)
+export default connect(mapStateToProps, { userPostFetch, getProfileFetch })(Login)
 
 
 

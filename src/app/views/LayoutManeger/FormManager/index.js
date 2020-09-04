@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers"
 import DateFnsUtils from '@date-io/date-fns';
-import { danger, secondary,primary, success, info,  warning, light, dark , ThemeDark } from '../Themes'
+import { danger, secondary, primary, success, info, warning, light, dark} from '../Themes'
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel, RadioGroup as MuiRadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
             background: setColor(props.color),
             "&:hover": {
                 backgroundColor: setColor(props.color),
-    
+
                 "@media (hover: none)": {
                     backgroundColor: setColor(props.color)
                 }
@@ -43,12 +43,18 @@ const useStyles = makeStyles(theme => ({
     },
     Checkbox: props => {
         return {
-            color:  ThemeDark
+            color: primary ,
+            '&$checked': {
+                color: primary,
+            },
         }
     },
     Radio: props => {
         return {
-            color: ThemeDark
+            color: primary ,
+            '&$checked': {
+                color: primary,
+            },
         }
     },
 }))
@@ -81,7 +87,7 @@ export const Button = (props) => {
             onClick={onClick}
             {...other}
             className={classes.button}
-            classes={{label: classes.label }}>
+            classes={{ label: classes.label }}>
             {text}
         </MuiButton>
     )
@@ -115,7 +121,7 @@ export const Select = (props) => {
     )
 }
 
-export const RadioGroup = (props) =>{
+export const RadioGroup = (props) => {
     const classes = useStyles(props);
     let key = 0
     const { name, label, value, onChange, options, optionsValue, optionsDisplay } = props;
@@ -129,12 +135,12 @@ export const RadioGroup = (props) =>{
             <MuiRadioGroup row
                 name={name}
                 value={value}
-                className={classes.Radio} 
+                className={classes.Radio}
                 onChange={onChange}>
                 {
                     options.map(
                         item => (
-                            <FormControlLabel key={keygen()} value={item[optionsValue]} control={<Radio className={classes.Radio} />} label={item[optionsDisplay]}/>
+                            <FormControlLabel key={keygen()} value={item[optionsValue]} control={<Radio className={classes.Radio} />} label={item[optionsDisplay]} />
                         )
                     )
                 }

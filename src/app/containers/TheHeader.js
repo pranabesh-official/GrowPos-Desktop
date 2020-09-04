@@ -1,5 +1,6 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import {connect, useSelector, useDispatch } from 'react-redux'
+
 import {
   CHeader,
   CToggler,
@@ -21,11 +22,10 @@ import {
   TheHeaderDropdownNotif,
 }  from './index'
 
+
 const TheHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector(state => state.changeState.sidebarShow)
-  
-  
 
   const toggleSidebar = () => {
     const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
@@ -65,5 +65,10 @@ const TheHeader = () => {
     </CHeader>
   )
 }
+const mapStateToProps = (state) => {
+  return {
+    Auth: state.Auth,
+  }
+}
+export default connect(mapStateToProps)(TheHeader);
 
-export default TheHeader

@@ -1,12 +1,46 @@
 import React, { Component } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import { connect } from 'react-redux'
 import { Tab } from 'semantic-ui-react'
 import DataProvider from '../../LocalDB'
-import { View } from 'react-desktop/macOs';
+import CartItem from './Cart/cartItem'
 import OrderSource from './OrderSource/index'
 import ClientProvider from '../../LocalDB/ClientDB'
-import {ThemeBackground} from '../LayoutManeger/Themes'
+import { ThemeBackground } from '../LayoutManeger/Themes'
+import OrderPane from './OrderPane'
+import { withStyles } from '@material-ui/core/styles';
+const style = (theme) => ({
+    CartBody: {
+        borderRadius: 0,
+        border: 0,
+        padding: '0 0px',
+        boxShadow: '0 0px 0px 0px ',
+        background: 'white',
+        overflow: 'auto',
+    },
+    CartTitel: {
+        borderRadius: 0,
+        border: 0,
+        height: '40px',
+        padding: '0 0px',
+        boxShadow: '0 0px 0px 0px ',
+        background: 'white',
+        overflow: 'auto',
+        borderBottom: '1px solid #f0f0f0'
+    },
+    CartAction: {
+        borderRadius: 0,
+        border: 0,
+        height: '60px',
+        padding: '0 0px',
+        boxShadow: '0 0px 0px 0px ',
+        background: 'white',
+        overflow: 'auto',
+        borderTop: '1px solid #f0f0f0'
+    },
+
+});
+
 class Pos extends Component {
     constructor(props) {
         super(props)
@@ -20,13 +54,9 @@ class Pos extends Component {
     render() {
         localStorage.setItem('lastPage', '/CategorySetup')
         const { height } = this.state
+        const { classes } = this.props;
         const style = {
             background: ThemeBackground,
-            display: 'flex',
-            flexWrap: 'wrap',
-            width: '100%',
-            height: '100%',
-            variant: "scrollable",
         }
         const panes = [
             {
@@ -36,7 +66,7 @@ class Pos extends Component {
                         <Grid container direction='column'>
                             <DataProvider>
                                 <ClientProvider>
-                                    <OrderSource />
+                                    <OrderSource height={height} />
                                 </ClientProvider>
                             </DataProvider>
                         </Grid>
@@ -47,13 +77,20 @@ class Pos extends Component {
                 menuItem: 'Current',
                 render: () => (
                     <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
-                        <View padding="0px" margin="0px" width='100%' height={`${height - 68}px`}>
-                            <Grid container direction="column" style={style}  >
-                                <DataProvider>
-
-                                </DataProvider>
+                        <Grid container style={style} >
+                            <Grid item xs={12} sm={7}>
+                                <OrderPane height={height} />
                             </Grid>
-                        </View>
+                            <Grid item xs={12} sm={5}>
+                                <Paper className={classes.CartTitel}>
+                                </Paper>
+                                <Paper className={classes.CartBody} style={{ height: `${(height - 68) - 100}px`, maxHeight: `${(height - 68) - 100}px` }}>
+                                    <CartItem/>
+                                </Paper>
+                                <Paper className={classes.CartAction} >
+                                </Paper>
+                            </Grid>
+                        </Grid>
                     </Tab.Pane>
                 )
             }
@@ -91,4 +128,5 @@ const mapStateToProps = (state) => {
 
     }
 }
-export default connect(mapStateToProps)(Pos)
+
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(Pos))

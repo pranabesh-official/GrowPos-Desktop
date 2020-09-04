@@ -34,9 +34,7 @@ def token_required(f):
 def get_all_users(current_user):
     users = User.query.all()  
     output = []
-    # if not current_user.admin:
-    #     return jsonify({'message' : 'Cannot perform that function!'})
-    
+
     
     for user in users:
         user_data = {}
@@ -59,8 +57,6 @@ def get_all_users(current_user):
 @token_required
 def get_one_user(current_user, public_id):
 
-    # if not current_user.admin:
-    #     return jsonify({'message' : 'Cannot perform that function!'})
 
     user = User.query.filter_by(public_id=public_id).first()
 
@@ -79,6 +75,8 @@ def get_one_user(current_user, public_id):
     user_data['Type'] = user.Type
     user_data['Salary'] = user.Salary
     user_data['admin'] = user.admin
+    
+    return jsonify(user_data)
 
 @app.route('/user', methods =['POST'])
 def create_user():
@@ -104,8 +102,6 @@ def create_user():
 @app.route('/user/<public_id>', methods=['PUT'])
 @token_required
 def promote_user(current_user, public_id):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
 
     user = User.query.filter_by(public_id=public_id).first()
 
@@ -120,9 +116,7 @@ def promote_user(current_user, public_id):
 @app.route('/user/<public_id>', methods=['DELETE'])
 @token_required
 def delete_user(current_user, public_id):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
+    
     user = User.query.filter_by(public_id=public_id).first()
 
     if not user:
@@ -138,12 +132,12 @@ def login():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return jsonify({'message' : 'Invalid User Name and Password'})
 
     user = User.query.filter_by(name=auth.username).first()
 
     if not user:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return jsonify({'message' :' Could not verify'})
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=180)}, app.config['SECRET_KEY'])
@@ -155,7 +149,7 @@ def login():
                         'public_id' : user.public_id,
                         'isadmin' : user.admin})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    return jsonify({'message' : 'Password Not Valid'})
 
 
 

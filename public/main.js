@@ -10,12 +10,12 @@ const bodyParser = require('body-parser');
 // const cors = require('cors')
 // const { fork } = require('child_process');
 // const { PythonShell } = require('python-shell')
-let mongoclient =false
+let mongoclient = false
 let mongoServermsg = 'Mongodb Start Sucsess!'
-if(mongoclient){
+if (mongoclient) {
     mongoServermsg = 'MongoClient Connected!'
 }
-let mongoServer =null
+let mongoServer = null
 const dbserver = () => {
     mongoServer = spawn(path.join(__dirname, './mongodb/mongod.exe'), ['--dbpath', '/data/db'], {
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
@@ -24,7 +24,7 @@ const dbserver = () => {
         // let sucsess = false
         console.log('[Mongod] Mongodb Server Starting!')
         mongoServer.stdout.on('data', (d) => {
-            console.log('[Mongod]' ,mongoServermsg);
+            console.log('[Mongod]', mongoServermsg);
             // sucsess = true
             resolve(d)
         });
@@ -59,7 +59,19 @@ const SocketSrver = () => {
         console.log('[Socket.io] listening Port 4000!')
     })
 }
+// const installExtensions = async () => {
+//     const installer = require('electron-devtools-installer')
+//     const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+//     const extensions = [
+//         'REACT_DEVELOPER_TOOLS',
+//         'REDUX_DEVTOOLS',
+//         'DEVTRON'
+//     ]
 
+//     return Promise
+//         .all(extensions.map(name => installer.default(installer[name], forceDownload)))
+//         .catch(console.log)
+// }
 // if (isDev) {
 //     const { default: installExtension, REDUX_DEVTOOLS } = require('electron-devtools-installer')
 //     app.whenReady().then(() => {
@@ -68,7 +80,7 @@ const SocketSrver = () => {
 //             .catch((err) => err);
 //     });
 // }
-app.on('ready', () => {
+app.on('ready', async () => {
     let main = null
     let loading = new BrowserWindow({
         width: 200,
@@ -98,8 +110,8 @@ app.on('ready', () => {
                     batchLimit: 1000,
                 });
                 db.start()
-                mongoclient=true
-            } 
+                mongoclient = true
+            }
         })
         main = new BrowserWindow({
             width: 1000,
@@ -147,7 +159,7 @@ app.on('ready', () => {
             // db.dropDB().then(() =>{
             //     console.log('[dropDB] quit')
             // })
-            
+
         });
     })
     loading.loadURL(isDev ? `file://${path.join(__dirname, './loading/loading.html')}` : `file://${path.join(__dirname, '../build/loading/loading.html')}`)

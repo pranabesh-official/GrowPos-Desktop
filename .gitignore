@@ -11,7 +11,13 @@
 # production
 /build
 /bak
-/public/mongodb
+/public/mongodb/mongo.exe
+/public/mongodb/mongo.pdb
+/public/mongodb/mongod.exe
+/public/mongodb/mongod.pdb
+/public/mongodb/mongos.exe
+/public/mongodb/mongos.pdb
+
 
 # misc
 .DS_Store

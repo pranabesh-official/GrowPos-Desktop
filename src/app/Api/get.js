@@ -31,8 +31,6 @@ export const axoisgetData = (auth, url) => {
             'x-access-token': auth,
             'Content-Type': 'application/json'
         },
-
-
     }
     return new Promise((resolve, reject) => {
         axios(getitem)

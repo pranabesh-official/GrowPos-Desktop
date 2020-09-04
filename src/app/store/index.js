@@ -3,8 +3,9 @@ import changeState from './Reducer/sidebar'
 import thunk from 'redux-thunk'
 import DataStore from './Reducer/DataStore'
 import SyncData from './Reducer/syncManeger'
-// import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import Shop from './Reducer/Shop'
+import Auth from './Reducer/Auth'
 import {createLogger} from 'redux-logger'
 
 
@@ -22,15 +23,16 @@ const rootReducer = combineReducers({
   changeState,
   DataStore,
   SyncData,
-  Shop
+  Shop,
+  Auth
 })
 
 
 
 const store = createStore(
   rootReducer,
-  // composeWithDevTools(applyMiddleware(...middleware)),
-  applyMiddleware(...middleware)
+  composeWithDevTools(applyMiddleware(...middleware)),
+  // applyMiddleware(...middleware)
   
 )
 export default store
