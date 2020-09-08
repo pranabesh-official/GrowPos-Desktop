@@ -12,7 +12,7 @@ import {
 
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import logofull from '../../logofull.png';
+import logofull from '../../logoFullDark.png';
 
 // // routes config
 // import routes from '../routes'

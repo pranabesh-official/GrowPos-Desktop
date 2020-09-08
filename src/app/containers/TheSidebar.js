@@ -18,7 +18,7 @@ import CIcon from '@coreui/icons-react'
 
 
 import logo from '../../logo.png';
-// import logofull from '../../logofull.png';
+import logofull from '../../logoFullLite.png';
 
 
 import navigation from './_nav'
@@ -28,7 +28,7 @@ import navigation from './_nav'
 const TheSidebar = () => {
   const dispatch = useDispatch()
   const show = useSelector(state => state.changeState.sidebarShow)
-  
+
 
   return (
     <CSidebar
@@ -37,14 +37,12 @@ const TheSidebar = () => {
       minimize={true}
     >
       <CSidebarBrand className="d-md-down-none" to="/">
-        <div className="c-sidebar-brand-full">
-          <CIcon
-            name="logo"
-            src={logo}
-            height={35}
-          />
-          AFEGROW
-        </div>
+        <CIcon
+          name="logo"
+          src={logofull}
+          height={35}
+          className="c-sidebar-brand-full"
+        />
         <CIcon
           className="c-sidebar-brand-minimized"
           name="logo"

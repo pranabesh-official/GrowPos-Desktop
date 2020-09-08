@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { DataConsumer, DataContext} from '../../../../LocalDB'
 import ClientButton from '../../../LayoutManeger/ClientButton'
 import { Grid } from '@material-ui/core';
+import { connect } from 'react-redux'
+import { SelectClient} from '../../../../store/action/Cart'
 
 
 class Tables extends Component {
@@ -10,19 +12,27 @@ class Tables extends Component {
         this.state = {
         }
     }
-    render() {
+    selectTable(table){
         const {handleTabChange}=this.props.props
+        handleTabChange(1,table)
+        this.props.SelectClient(table)
+    }
+    render() {
+        
+        const {Tables} = this.context
+        const sortItem = Tables.sort((a, b) => a.No - b.No)
         return (
             <DataConsumer>
-                {({ Tables }) => (
-                    Tables.map((item) => (
-                        <Grid item xs={3} sm={3} md={2} lg={1} xl={1} key={item._id}>
+                {() => (
+                    sortItem.map((item) => (
+                        <Grid item xs={3} sm={3} md={2}  key={item._id}>
                             <ClientButton
-                                onClick={()=>handleTabChange(1,item)}
+                                onClick={()=>this.selectTable(item)}
                                 label={`TABLE ${item.No}`}
                                 status={item.table_Status}
                                 Type='Table'
                                 size={110}
+                                amount={560.00}
                                 key={item._id}
                             />
                         </Grid>
@@ -33,4 +43,10 @@ class Tables extends Component {
     }
 }
 Tables.contextType = DataContext
-export default Tables;
+
+const mapStateToProps = (state) => {
+    return {
+
+    }
+}
+export default connect(mapStateToProps ,{SelectClient})(Tables) ;

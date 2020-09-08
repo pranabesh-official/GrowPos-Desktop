@@ -9,8 +9,8 @@ import { userPostFetch, getProfileFetch } from '../../store/action/Auth'
 import './css/style.css'
 import './css/font-awesome-4.7.0/css/font-awesome.min.css'
 import './css/main.css'
-import NewWave from './css/img/NewWave.png';
-import bg from './css/img/bg.png';
+import NewWave from './NewWave.png';
+import bg from '../../../logo.png';
 
 
 

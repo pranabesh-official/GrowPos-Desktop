@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers"
 import DateFnsUtils from '@date-io/date-fns';
-import { danger, secondary, primary, success, info, warning, light, dark} from '../Themes'
+import { danger, secondary, primary, success, info, warning, light, dark } from '../Themes'
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel, RadioGroup as MuiRadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     },
     Checkbox: props => {
         return {
-            color: primary ,
+            color: primary,
             '&$checked': {
                 color: primary,
             },
@@ -51,12 +51,13 @@ const useStyles = makeStyles(theme => ({
     },
     Radio: props => {
         return {
-            color: primary ,
+            color: primary,
             '&$checked': {
                 color: primary,
             },
         }
     },
+   
 }))
 export const Input = (props) => {
     const { name, label, value, error = null, onChange, size, type, disabled } = props;
@@ -110,7 +111,8 @@ export const Select = (props) => {
             fullWidth
             value={value}
             onChange={onChange}
-            error={error}>
+            error={error}
+        >
             <MenuItem value="">None</MenuItem>
             {
                 options.map(
@@ -124,17 +126,19 @@ export const Select = (props) => {
 export const RadioGroup = (props) => {
     const classes = useStyles(props);
     let key = 0
-    const { name, label, value, onChange, options, optionsValue, optionsDisplay } = props;
+    const { name, label, value, onChange, options, optionsValue, optionsDisplay , size } = props;
     const keygen = () => {
         key = key + 1
         return key
     }
     return (
         <FormControl>
-            <FormLabel>{label}</FormLabel>
-            <MuiRadioGroup row
+            <FormLabel size={size || 'small'}>{label}</FormLabel>
+            <MuiRadioGroup 
+                row
                 name={name}
                 value={value}
+                size={size || 'small'}
                 className={classes.Radio}
                 onChange={onChange}>
                 {

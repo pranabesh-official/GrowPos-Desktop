@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react'
-import { connect } from 'react-redux'
 import {
   Redirect,
   Route,
@@ -13,13 +12,9 @@ import { themeColor} from '../views/LayoutManeger/Themes'
 
 class TheContent extends Component {
   state = {
-    width: 0,
-    height: 0,
   };
 
-  render() {
-    const { currentTab } = this.props.sync
-    const [lastRoute] = routes.filter(tab => tab.name === currentTab)
+  render() { 
     return (
       <>
         <Fragment>
@@ -39,36 +34,15 @@ class TheContent extends Component {
                     )} />
                 )
               })}
-              <Redirect from="/" to={lastRoute.path} />
+              <Redirect from="/" to='/Pos' />
             </Switch>
           </React.Suspense>
         </Fragment>
       </>
     )
   }
-  updateDimensions = () => {
-    this.setState({ width: document.getElementById('Content').clientWidth, height: document.getElementById('Content').clientHeight });
-  };
-  componentDidMount() {
-    if (this.state.width !== document.getElementById('Content').clientWidth) {
-      this.updateDimensions()
-    }
-    if (this.state.height !== document.getElementById('Content').clientHeight) {
-      this.updateDimensions()
-    }
-    window.addEventListener('resize', this.updateDimensions);
-
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateDimensions);
-  }
+ 
 }
 
-const mapStateToProps = (state) => {
-  return {
-    data: state.DataStore,
-    sync: state.SyncData,
-    Auth: state.Auth,
-  }
-}
-export default React.memo(connect(mapStateToProps)(TheContent))
+
+export default React.memo(TheContent)

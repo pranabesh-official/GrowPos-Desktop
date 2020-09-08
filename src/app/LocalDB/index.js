@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { ReadData, LoadStart, LoadSucsess, LoadFail } from '../store/action/DataStore'
 import { SyncDb, SyncDbReset, isSyncStart, isSyncDone } from '../store/action/syncAction'
 import TurtleDB from 'turtledb';
-import { ReadShop, UserData} from '../store/action/Shop'
-
+import { ReadShop, UserData } from '../store/action/Shop'
+import { getCart } from '../store/action/Cart'
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
@@ -27,8 +27,8 @@ class DataProvider extends Component {
         this.BulkAdd = this.BulkAdd.bind(this);
     }
     componentDidMount() {
-        const {dataload} = this.props.data
-        if(dataload === false){
+        const { dataload } = this.props.data
+        if (dataload === false) {
             this.loadAllData();
         }
     }
@@ -52,6 +52,8 @@ class DataProvider extends Component {
                         this.props.ReadShop(Shop)
                         const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
                         this.props.UserData(CurrentUser)
+                        const Cart = Data.filter((item) => item.dbName === 'Cart')
+                        this.props.getCart(Cart, Tables)
                         resolve('load done')
                     })
                     .catch((err) => {
@@ -74,7 +76,8 @@ class DataProvider extends Component {
     addItem(name, Data) {
         return new Promise((resolve, reject) => {
             const updatedItems = [...this.state.items];
-            const newItem = Object.assign(Data, { isSync: false, dbName: name })
+            const ftlter = this.state.items.filter((item) => item.dbName === name)
+            const newItem = Object.assign(Data, { isSync: false, dbName: name, sno: ftlter.length + 1 })
             this.db.create(newItem)
                 .then((Data) => {
                     updatedItems.push(Data);
@@ -91,7 +94,7 @@ class DataProvider extends Component {
         })
     }
     BulkAdd(name, arr) {
-        this.setState({BulkLodding: true})
+        this.setState({ BulkLodding: true })
         return new Promise((resolve, reject) => {
             let updatedItems = [...this.state.items];
             const updateData = (Data) => {
@@ -130,12 +133,12 @@ class DataProvider extends Component {
             }
             filterLoop()
                 .then((d) => {
-                    this.setState({ items: updatedItems , BulkLodding: false })
+                    this.setState({ items: updatedItems, BulkLodding: false })
                     this.loadAllData()
                     resolve(d)
                 })
                 .catch((err) => {
-                    this.setState({BulkLodding: false})
+                    this.setState({ BulkLodding: false })
                     reject(err)
                 });
         })
@@ -241,6 +244,7 @@ class DataProvider extends Component {
 
     }
     render() {
+
         return (
             <Provider
                 value={{
@@ -281,5 +285,6 @@ export default connect(mapStateToProps, {
     isSyncStart,
     isSyncDone,
     ReadShop,
-    UserData
+    UserData,
+    getCart
 })(DataProvider) 

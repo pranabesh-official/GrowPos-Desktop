@@ -1,13 +1,15 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeLite , ThemeDark, success , secondary, warning, danger , info} from '../../LayoutManeger/Themes'
+import { ThemeLite, ThemeDark, success, secondary, warning, danger, info , light } from '../../LayoutManeger/Themes'
 import table from './dinner.png'
 import delivery from './food-delivery.png'
 import takeAway from './take-away.png'
-import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import ButtonBase from '@material-ui/core/ButtonBase';
 
-
-const getStatus= (status) => {
+const getStatus = (status) => {
     switch (status) {
         case 'Active': return success
         case 'Inactive': return secondary
@@ -16,31 +18,61 @@ const getStatus= (status) => {
         default: return info
     }
 }
+const getType = (Type) => {
+    switch (Type) {
+        case 'Table': return table
+        case 'Delivery': return delivery
+        case 'TakeAway': return takeAway
+        default: return takeAway
+    }
+}
 const useStyles = makeStyles(theme => ({
-    logo: {
-        height: '35px' ,
-        width: '30px' 
+    details: {
+        display: 'flex',
+        // flexDirection: 'column',
+        height: 'auto',
     },
-    buttonStatus: props=> {
+    content: {
+        flex: '1 0 auto',
+    },
+    heading: {
+        fontSize: theme.typography.pxToRem(12),
+        flexBasis: '33.33%',
+        flexShrink: 0,
+        color: light,
+    },
+    secondaryHeading: {
+        fontSize: theme.typography.pxToRem(10),
+        color: success,
+
+    },
+    logo: () => {
+        return {
+            width: '30%',
+            padding:'2px'
+        }
+    },
+    buttonStatus: props => {
         const color = getStatus(props.status)
-        return{
-            // margin: theme.spacing(0.5),
+        return {
             borderBottom: `5px solid ${color}`,
-            maxWidth:props.size,
+            maxWidth: '100%',
+            minheight: 40,
         }
     }
-    
+
 }))
 
 
 const StyledButton = withStyles({
     root: {
+        display: 'flex',
         background: ThemeLite,
         borderRadius: 0,
-        color: 'white',
-        height: 48,
         padding: '0 0px',
-        margin: '1px',
+        margin: '2px',
+        
+        textAlign: 'initial',
         "&:hover": {
             backgroundColor: ThemeDark,
 
@@ -49,37 +81,40 @@ const StyledButton = withStyles({
             }
         }
     },
-    label: {
-        textTransform: 'capitalize',
-    },
-
-})(Button);
+    // cardAction: {
+        
+    // }
+})(Card);
 
 export default function ClientButton(props) {
     const classes = useStyles(props);
-    const { onClick, label , Type , } = props
-    const getType= (Type) => {
-        switch (Type) {
-            case 'Table': return table
-            case 'Delivery': return delivery
-            case 'TakeAway': return takeAway
-            default: return takeAway
-        }
-    }
+    const { onClick, label, Type, amount} = props
+
     let key = 0
     const keygen = () => {
         key = key + 1
         return key
     }
     return (
-        <StyledButton
-        className={classes.buttonStatus}
-        startIcon={<img src={getType(Type)} alt="" className={classes.logo}/>}
-        onClick={onClick}
-        fullWidth
-        key={keygen()}
-        >
-            {label}
+        <StyledButton className={classes.buttonStatus} key={keygen()}>
+            <ButtonBase
+                // className={classes.cardAction}
+                onClick={onClick}
+                
+            >
+                <img
+                    className={classes.logo}
+                    src={getType(Type)}
+                    alt="Paella dish"
+                    
+                />
+                <div className={classes.details}>
+                    <CardContent className={classes.content} key={keygen()}>
+                    <Typography className={classes.heading}>{label}</Typography>
+                    {amount && <Typography className={classes.secondaryHeading}>{amount.toFixed(2)}</Typography>}
+                    </CardContent>
+                </div>
+            </ButtonBase>
         </StyledButton>
     );
 }

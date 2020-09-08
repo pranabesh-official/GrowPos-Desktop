@@ -7,9 +7,13 @@ const UI = require('express')();
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const bodyParser = require('body-parser');
+const {PosPrinter} = require('electron-pos-printer');
 // const cors = require('cors')
 // const { fork } = require('child_process');
 // const { PythonShell } = require('python-shell')
+
+
+
 let mongoclient = false
 let mongoServermsg = 'Mongodb Start Sucsess!'
 if (mongoclient) {
@@ -154,6 +158,12 @@ app.on('ready', async () => {
         ipcMain.on('dev-settings', (event, arg) => {
             settingsWin.show()
 
+        })
+        ipcMain.on('print-pos', (event, arg) => {
+            const data = JSON.parse(arg)
+            PosPrinter.print(data ,{
+                
+            })
         })
         main.on('close', (e) => {
             // db.dropDB().then(() =>{

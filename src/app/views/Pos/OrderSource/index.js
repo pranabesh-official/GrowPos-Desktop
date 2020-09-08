@@ -106,8 +106,8 @@ export default function OrderSource(props) {
         className={classes.tabs}
       >
         <Tab label="Tables" {...a11yProps(0)} wrapped />
-        <Tab label="Take Away" {...a11yProps(1)} wrapped />
-        <Tab label="Delivery" {...a11yProps(2)} wrapped />
+        {/* <Tab label="Take Away" {...a11yProps(1)} wrapped />
+        <Tab label="Delivery" {...a11yProps(2)} wrapped /> */}
         <Tab label="Active" {...a11yProps(3)} wrapped />
         <Tab label="Inactive" {...a11yProps(4)} wrapped />
         <Tab label="Pending" {...a11yProps(5)} wrapped />
@@ -120,12 +120,12 @@ export default function OrderSource(props) {
           </Grid>
         </Paper>
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      {/* <TabPanel value={value} index={1}>
         Take Away
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Delivery
-      </TabPanel>
+        Delivey
+      </TabPanel> */}
       <TabPanel value={value} index={3}>
         Active
       </TabPanel>

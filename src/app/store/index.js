@@ -6,12 +6,13 @@ import SyncData from './Reducer/syncManeger'
 import { composeWithDevTools } from 'redux-devtools-extension';
 import Shop from './Reducer/Shop'
 import Auth from './Reducer/Auth'
+import Cart from './Reducer/Cart'
 import {createLogger} from 'redux-logger'
 
 
 
 const logger = createLogger();
-const middleware = [thunk, logger]
+const middleware = [thunk , logger]
 
 if (process.env.NODE_ENV !== 'production') {
   middleware.push(createLogger());
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
   DataStore,
   SyncData,
   Shop,
-  Auth
+  Auth,
+  Cart
 })
 
 

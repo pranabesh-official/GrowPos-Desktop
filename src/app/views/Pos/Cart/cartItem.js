@@ -6,13 +6,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-
-
-const mapStateToProps = (state) => {
-    return {
-        cartItem: state.cartitem
-    }
-}
+import {add , remove, Delete} from '../../../store/action/Cart'
 class CartItem extends Component {
 
     constructor(props) {
@@ -23,8 +17,10 @@ class CartItem extends Component {
         }
         this.handleremove = this.handleremove.bind(this);
     }
-    handleremove = (qnt, id) => {
-        if (qnt >= 2) {  }
+    handleremove = (item) => {
+        if (item.cartQnt >= 2) { 
+            this.props.remove(item)
+        }
     }
 
     componentDidMount() {
@@ -34,49 +30,58 @@ class CartItem extends Component {
 
     }
     render() {
-
+        const { Cart } = this.props.Cart
+        const CartItems = Cart[this.props.id]
         return (
-            <Table striped bordered hover size="sm" className="mx-0 my-0">
-                <thead>
+            <Table bordered size="sm" className="mx-0 my-0" style={{boxShadow: '0 0px 0px 0px '}}>
+                <thead style={{boxShadow: '0 0px 0px 0px '}}>
                     <tr>
-                        <th><IconButton aria-label="delete" color="secondary" size="small" >
+                        <th><IconButton aria-label="delete" size="small" >
                             <ShoppingCartIcon fontSize="inherit" />
                         </IconButton>
 
                         </th>
-                        <th>{'          item'}</th>
+                        <th>{'item'}</th>
                         <th>Price</th>
                         <th>Qnt</th>
                         <th>total</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <IconButton aria-label="delete" color="secondary" size="small" onClick={() => this.props.Delete('name')}>
-                                <DeleteForeverIcon fontSize="inherit" />
-                            </IconButton>
-                        </td>
-                        <td>{'name'}</td>
-                        <td>{'price'}</td>
-                        <td>
-                            <IconButton aria-label="add" color="primary" size="small" onClick={() => this.props.add('name')} >
-                                <AddCircleIcon fontSize="inherit" />
-                            </IconButton>
-                            {'qnt'}
-                            <IconButton aria-label="remove" color="secondary" size="small" onClick={() => this.handleremove('qnt', 'name')} >
-                                <RemoveCircleIcon fontSize="inherit" />
-                            </IconButton>
-                        </td>
-                        <td>{'price qnt'}</td>
+                <tbody style={{boxShadow: '0 0px 0px 0px '}}>
+                    {CartItems.map((item, index) => (
+                        <tr key={index}>
+                            <td>
+                                <IconButton aria-label="delete" color="secondary" size="small" onClick={() =>this.props.Delete(item)}>
+                                    <DeleteForeverIcon fontSize="inherit" />
+                                </IconButton>
+                            </td>
+                            <td>{item.Name}</td>
+                            <td>{item.Price}</td>
+                            <td>
+                                <IconButton aria-label="add" color="primary" size="small" onClick={() => this.props.add(item)} >
+                                    <AddCircleIcon fontSize="inherit" />
+                                </IconButton>
+                                {item.cartQnt}
+                                <IconButton aria-label="remove" color="secondary" size="small" onClick={() => this.handleremove(item)} >
+                                    <RemoveCircleIcon fontSize="inherit" />
+                                </IconButton>
+                            </td>
+                            <td>{item.Price * item.cartQnt}</td>
 
-                    </tr>
+                        </tr>
+
+                    ))}
                 </tbody>
             </Table>
         )
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        data: state.DataStore,
+        Cart: state.Cart,
+    }
+}
 
-
-export default connect(mapStateToProps)(CartItem)
+export default connect(mapStateToProps, {add , remove , Delete })(CartItem)
