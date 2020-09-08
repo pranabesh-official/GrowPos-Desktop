@@ -4,10 +4,10 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-// import Avatar from '@material-ui/core/Avatar';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import Typography from '@material-ui/core/Typography';
-
-
+import IconButton from '@material-ui/core/IconButton';
+import { DataConsumer } from '../../../LocalDB'
 import { ShopData } from '../../../LocalDB/ShopDB'
 import icon from './location.png'
 
@@ -18,8 +18,8 @@ const style = theme => ({
     },
     avatar: {
         backgroundColor: '#00000000',
-        hiight:48,
-        width:48 
+        hiight: 48,
+        width: 48
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -45,24 +45,36 @@ class ShopProfile extends Component {
         const { classes } = this.props;
         return (
             <ShopData>
-                {({ Name, Type, Contact, About ,Bar}) => (
+                {({ ShopData, _id }) => (
                     <Card className={classes.Profile}>
-                        <CardHeader
-                            avatar={
-                                <img 
-                                src={icon}
-                                className={classes.avatar}
-                                alt="icon"
+                        <DataConsumer>
+                            {({deleteItem}) => (
+                                <CardHeader
+                                    avatar={
+                                        <img
+                                            src={icon}
+                                            className={classes.avatar}
+                                            alt="icon"
+                                        />
+                                    }
+                                    action={
+                                        <IconButton aria-label="delete" color="secondary" onClick={() =>{
+                                            deleteItem(_id)
+                                            sessionStorage.removeItem("ShopId")
+                                        }} >
+                                            <DeleteForeverIcon fontSize="inherit" />
+                                        </IconButton>
+                                    }
+                                    title={ShopData.Name && ShopData.Name}
+                                    subheader={ShopData.Type && ShopData.Bar ? `${ShopData.Type} Cum Bar` : ShopData.Type}
                                 />
-                            }
-                            title={Name}
-                            subheader={Bar ? `${Type} Cum Bar`:  Type }
-                        />
+                            )}
+                        </DataConsumer>
                         <CardContent className={classes.root}>
                             <Typography className={classes.heading}>Shop Contact</Typography>
-                            <Typography className={classes.secondaryHeading}>{Contact}</Typography>
+                            <Typography className={classes.secondaryHeading}>{ShopData.Contact ? ShopData.Contact : ''}</Typography>
                             <Typography className={classes.heading}>About</Typography>
-                            <Typography className={classes.secondaryHeading}>{About}</Typography>
+                            <Typography className={classes.secondaryHeading}>{ShopData.About ? ShopData.About : ''}</Typography>
                         </CardContent>
                         <CardActions disableSpacing>
                         </CardActions>

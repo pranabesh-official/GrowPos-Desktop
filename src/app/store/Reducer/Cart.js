@@ -5,7 +5,9 @@ const initialState = {
     tableLoad: false,
   },
   selectClient: null,
-  getData: false
+  getData: false,
+  kot: {},
+  kotPrinted: false
 }
 
 const updateObject = (oldObject, newValues) => {
@@ -65,6 +67,10 @@ const Cart = (state = initialState, action) => {
           Cart: {
             ...state.Cart,
             [state.selectClient._id]: update
+          },
+          kot: {
+            ...state.kot,
+            [state.selectClient._id]: update
           }
         }
       } else {
@@ -75,6 +81,10 @@ const Cart = (state = initialState, action) => {
           ...state,
           Cart: {
             ...state.Cart,
+            [state.selectClient._id]: oldData
+          },
+          kot: {
+            ...state.kot,
             [state.selectClient._id]: oldData
           }
         }
@@ -90,7 +100,7 @@ const Cart = (state = initialState, action) => {
         Cart: {
           ...state.Cart,
           [state.selectClient._id]: incrimentData
-        }
+        },
       }
     case REMOVE_FROM_CART:
       const oldRemove = [...state.Cart[state.selectClient._id]]

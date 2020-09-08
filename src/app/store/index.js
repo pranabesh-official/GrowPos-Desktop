@@ -7,16 +7,16 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import Shop from './Reducer/Shop'
 import Auth from './Reducer/Auth'
 import Cart from './Reducer/Cart'
-import {createLogger} from 'redux-logger'
+// import {createLogger} from 'redux-logger'
 
 
 
-const logger = createLogger();
-const middleware = [thunk , logger]
+// const logger = createLogger();
+const middleware = [thunk ]
 
-if (process.env.NODE_ENV !== 'production') {
-  middleware.push(createLogger());
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   middleware.push(createLogger());
+// }
 
 
 

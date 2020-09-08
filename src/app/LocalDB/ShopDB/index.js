@@ -9,18 +9,16 @@ import AddShop from '../../views/Setup/Shop/ShopSetup/Addshop'
 import DataProvider from '../index'
 import { ThemeDark, danger } from '../../views/LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
+import { isElectron } from 'react-device-detect'
+
+if (isElectron) {
+    var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
+}
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
 
 const style = theme => ({
-    // root: {
-    //     borderRadius: 0,
-    //     padding: '0 0px',
-    //     width: '500px',
-    //     
-    //     margin: 0
-    // },
     root: {
         margin: 0,
         padding: theme.spacing(2),
@@ -35,7 +33,8 @@ const style = theme => ({
         background: ThemeDark
     },
     content: {
-        padding: 2,
+        padding: 0,
+        margin: 0
     }
 });
 
@@ -47,11 +46,8 @@ class ShopProvider extends Component {
         }
         this.handleClickOpen = this.handleClickOpen.bind(this)
         this.handleClose = this.handleClose.bind(this)
-
-
-    }
-    componentDidMount() {
-
+        this.PrintPos = this.PrintPos.bind(this)
+        this.genKot = this.genKot.bind(this)
     }
     handleClickOpen() {
         this.setState({ open: true })
@@ -60,8 +56,100 @@ class ShopProvider extends Component {
     handleClose() {
         this.setState({ open: false })
     }
+    genKot(Data ) {
+        const generator = require('generate-serial-number');
+        const kotData = []
+        Data.Data.forEach(element => {
+            kotData.push([element.Name, element.cartQnt])
+        });
+        return [
+            {
+                type: 'text',
+                value: 'KOT',
+                style: `text-align:center;`,
+                css: { "font-weight": "700", "font-size": "18px" }
+            }, {
+                type: 'text',
+                value: `${Data.Type} No ${Data.Sno}`,
+                style: `text-align:center;`,
+                css: { "font-weight": "300", "font-size": "14px" }
+            },{
+                type: 'barCode',
+                value: generator.generate(10),
+                style: `text-align:center; justify-items: center; justify-content: center; align-items: center;`,
+                position: 'center',
+                height: 12,
+                width: 1,
+                displayValue: true,
+                fontsize: 8,
+            }, {
+                type: 'table',
+                style: 'border: 1px solid #00000000',
+                tableHeader: ['Item', 'Qnt'],
+                tableBody: kotData,
 
+                tableHeaderStyle: 'background-color: #00000000; color: black;',
 
+                tableBodyStyle: 'border: 0.5px solid #00000000; color: black;',
+            }
+        ]
+    }
+   
+
+    PrintPos(data, Type) {
+        const setData = (Type) => {
+            switch (Type) {
+                case 'KOT': return this.genKot(data)
+                case 'BILL': return data
+                default: return data
+            }
+        }
+        const setOption = (Type) => {
+            const { printSetups } = this.props.Shop
+            const [filter] = printSetups.filter(item => item.Name === Type)
+            switch (Type) {
+                case 'KOT':
+                    return {
+                        preview: filter.preview,
+                        silent: filter.silent,
+                        width: '170px',
+                        margin: '0 0 0 0',
+                        copies: filter.copies,
+                        printerName: filter.printerName,
+                        timeOutPerLine: filter.timeOutPerLine
+                    }
+                case 'BILL':
+                    return {
+                        preview: filter.preview,
+                        silent: filter.silent,
+                        width: '170px',
+                        margin: '0 0 0 0',
+                        copies: filter.copies,
+                        printerName: filter.printerName,
+                        timeOutPerLine: filter.timeOutPerLine
+                    }
+                default:
+                    return {
+                        preview: false,
+                        width: '170px',
+                        margin: '0 0 0 0',
+                        copies: 1,
+                        // printerName: '', 
+                        timeOutPerLine: 400
+
+                    }
+            }
+        }
+        return new Promise((resolve, reject) => {
+            PosPrinter.print(setData(Type), setOption(Type))
+                .then(() => {
+                    resolve('secsess')
+                })
+                .catch((error) => {
+                    reject(error)
+                });
+        })
+    }
 
     render() {
         const DialogBox = () => {
@@ -73,23 +161,21 @@ class ShopProvider extends Component {
                             <CloseIcon fontSize="inherit" />
                         </IconButton>
                     </MuiDialogTitle>
-                    <MuiDialogContent dividers >
-                        <DataProvider className={classes.content}>
+                    <MuiDialogContent dividers className={classes.content}>
+                        <DataProvider >
                             <AddShop handleClose={this.handleClose} />
                         </DataProvider>
                     </MuiDialogContent>
                 </Dialog>
             );
         };
-        const { Tables } = this.props.data
-        const TablesQnt = Tables.length
+
         return (
             <Provider
                 value={{
                     ...this.props.Shop,
-                    handleClickOpen: this.handleClickOpen,
-                    Tables,
-                    TablesQnt
+                    genKot: this.genKot,
+                    PrintPos: this.PrintPos,
                 }}
             >
                 <>

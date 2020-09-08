@@ -18,7 +18,7 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 
 export const READ_SHOP_DATA = 'READ_SHOP_DATA';
 export const GET_USER_DATA = 'GET_USER_DATA';
-
+export const GET_PRINTER_SETUP = 'GET_PRINTER_SETUP';
 
 
 export const SELECT_CLIENT = 'SELECT_CLIENT';

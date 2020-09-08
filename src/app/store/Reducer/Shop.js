@@ -1,21 +1,18 @@
-import { READ_SHOP_DATA, GET_USER_DATA} from '../action/types'
+import { READ_SHOP_DATA, GET_USER_DATA , GET_PRINTER_SETUP} from '../action/types'
 
 const initialState = {
-    logdin:false,
+    logdin: false,
     shopAdd: false,
     ShopData: null,
-    Name: null,
-    Type: null,
-    Contact: null,
-    About: null,
-    Location: null,
-    Bar: null,
-    _id:null,
-    userData:null,
+    _id: null,
+    userData: null,
     ShopType: [
         { name: 'Resturant', id: 1 },
         { name: 'Shop', id: 2 },
     ],
+    printSetups: [],
+    printers: false
+
 }
 
 const Shop = (state = initialState, action) => {
@@ -24,40 +21,51 @@ const Shop = (state = initialState, action) => {
         case READ_SHOP_DATA:
             if (action.data.length === 1) {
                 const [Shop] = action.data
+                localStorage.setItem("ShopId", Shop._id)
                 return {
                     ...state,
-                    Name: Shop.Name,
-                    Type: Shop.Type,
-                    Contact: Shop.Contact,
-                    About: Shop.About,
-                    Location: Shop.Location,
-                    Bar: Shop.Bar,
-                    _id:Shop._id,
-                    shopAdd: Shop.shopAdd,
-                    ShopData: action.data
+                    _id: Shop._id,
+                    ShopData: Shop,
+                    shopAdd: true,
                 }
 
-            } else {
+            } else if (action.data.length === 0) {
                 return {
                     ...state,
-                    ShopData: action.data
+                    shopAdd: false,
+                    ShopData: {},
+                }
+            } else {
+                const ShopId = localStorage.getItem("ShopId")
+                const [existShop] = action.data.filter(item => item._id === ShopId)
+                return {
+                    ...state,
+                    _id: existShop._id,
+                    ShopData: existShop,
+                    shopAdd: true,
                 }
             }
-            case GET_USER_DATA:
+
+        case GET_USER_DATA:
             if (action.data.length === 1) {
                 const [user] = action.data
                 return {
                     ...state,
-                    userData:user,
-                    logdin:true,
+                    userData: user,
+                    logdin: true,
                 }
             } else {
                 return {
                     ...state,
-                    
+
                 }
             }
-
+        case GET_PRINTER_SETUP:
+            return {
+                ...state,
+                printSetups: action.data,
+                printers: true,
+            }
 
         default: return state
     }

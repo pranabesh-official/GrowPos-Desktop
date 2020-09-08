@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { ReadData, LoadStart, LoadSucsess, LoadFail } from '../store/action/DataStore'
 import { SyncDb, SyncDbReset, isSyncStart, isSyncDone } from '../store/action/syncAction'
 import TurtleDB from 'turtledb';
-import { ReadShop, UserData } from '../store/action/Shop'
-import { getCart } from '../store/action/Cart'
+import { ReadShop, UserData, getPrint } from '../store/action/Shop'
+import { getCart, } from '../store/action/Cart'
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
@@ -25,6 +25,7 @@ class DataProvider extends Component {
         this.loadAllData = this.loadAllData.bind(this);
         this.toggleSync = this.toggleSync.bind(this);
         this.BulkAdd = this.BulkAdd.bind(this);
+        this.editItem = this.editItem.bind(this);
     }
     componentDidMount() {
         const { dataload } = this.props.data
@@ -54,6 +55,8 @@ class DataProvider extends Component {
                         this.props.UserData(CurrentUser)
                         const Cart = Data.filter((item) => item.dbName === 'Cart')
                         this.props.getCart(Cart, Tables)
+                        const Print = Data.filter((item) => item.dbName === 'Print')
+                        this.props.getPrint(Print)
                         resolve('load done')
                     })
                     .catch((err) => {
@@ -144,17 +147,22 @@ class DataProvider extends Component {
         })
     }
     editItem(_id, editItem) {
-        let updatedItems;
-        const oldItems = this.state.items;
-        const oldItem = oldItems.find(item => item._id === _id);
-        const newItem = Object.assign(oldItem, editItem);
-        this.db.update(_id, newItem)
-            .then((updatedData) => {
-                updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
-                this.setState({ items: updatedItems });
-                this.loadAllData()
-            })
-            .catch((err) => console.log('Error:', err));
+        return new Promise((resolve, reject) => {
+            let updatedItems;
+            const oldItems = this.state.items;
+            const oldItem = oldItems.find(item => item._id === _id);
+            const newItem = Object.assign(oldItem, editItem);
+            this.db.update(_id, newItem)
+                .then((updatedData) => {
+                    updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
+                    this.setState({ items: updatedItems });
+                    this.loadAllData()
+                    resolve(updatedItems)
+                })
+                .catch((err) => {
+                    reject(err)
+                });
+        })
     }
     toggleSync() {
         return new Promise((resolve, reject) => {
@@ -244,7 +252,7 @@ class DataProvider extends Component {
 
     }
     render() {
-
+        
         return (
             <Provider
                 value={{
@@ -253,6 +261,7 @@ class DataProvider extends Component {
                     addItem: this.addItem,
                     loadAllData: this.loadAllData,
                     deleteItem: this.deleteItem,
+                    editItem: this.editItem,
                     syncData: this.syncData,
                     BulkAdd: this.BulkAdd
                 }}
@@ -286,5 +295,6 @@ export default connect(mapStateToProps, {
     isSyncDone,
     ReadShop,
     UserData,
-    getCart
+    getCart,
+    getPrint
 })(DataProvider) 

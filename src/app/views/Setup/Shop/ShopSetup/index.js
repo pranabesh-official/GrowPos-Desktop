@@ -8,8 +8,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Chip } from '@material-ui/core';
-import AddTable from './addTable'
-
+import AddTable from './Prefarence/addTable'
+import PrintSetup from './Prefarence/PrintSetup'
 
 const style = theme => ({
     Accordion: {
@@ -92,6 +92,18 @@ class Shop extends Component {
                             </AccordionSummary>
                             <AccordionDetails style={{ borderTop: '1px solid #f0f0f0' }}>
                                 <AddTable />
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion className={classes.Accordion} >
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                            >
+                                <Typography className={classes.heading}>Print Setup</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails style={{ borderTop: '1px solid #f0f0f0' }}>
+                                <PrintSetup />
                             </AccordionDetails>
                         </Accordion>
                     </Card>

@@ -13,6 +13,7 @@ import Header from '../LayoutManeger/header'
 import tables from '../LayoutManeger/icons/dinner.png'
 import ActionButton from './Payment'
 import Typography from '@material-ui/core/Typography';
+import ShopProvider from '../../LocalDB/ShopDB'
 
 const style = (theme) => ({
     CartBody: {
@@ -112,7 +113,9 @@ class Pos extends Component {
                                         <Grid item xs={8} sm={8}>
                                             <DataProvider>
                                                 <ClientProvider>
-                                                    <ActionButton />
+                                                    <ShopProvider>
+                                                        <ActionButton />
+                                                    </ShopProvider>
                                                 </ClientProvider>
                                             </DataProvider>
                                         </Grid>
