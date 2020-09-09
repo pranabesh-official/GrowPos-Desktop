@@ -10,6 +10,8 @@ import DataProvider from '../index'
 import { ThemeDark, danger } from '../../views/LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
+import { GetKot } from '../../store/action/Kot'
+import { PrintLayout } from '../../Utils/PrintLayout'
 
 if (isElectron) {
     var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
@@ -48,6 +50,7 @@ class ShopProvider extends Component {
         this.handleClose = this.handleClose.bind(this)
         this.PrintPos = this.PrintPos.bind(this)
         this.genKot = this.genKot.bind(this)
+        this.kotHandler = this.kotHandler.bind(this)
     }
     handleClickOpen() {
         this.setState({ open: true })
@@ -56,45 +59,83 @@ class ShopProvider extends Component {
     handleClose() {
         this.setState({ open: false })
     }
-    genKot(Data ) {
+    genKot(Data) {
         const generator = require('generate-serial-number');
-        const kotData = []
-        Data.Data.forEach(element => {
-            kotData.push([element.Name, element.cartQnt])
-        });
-        return [
-            {
-                type: 'text',
-                value: 'KOT',
-                style: `text-align:center;`,
-                css: { "font-weight": "700", "font-size": "18px" }
-            }, {
-                type: 'text',
-                value: `${Data.Type} No ${Data.Sno}`,
-                style: `text-align:center;`,
-                css: { "font-weight": "300", "font-size": "14px" }
-            },{
-                type: 'barCode',
-                value: generator.generate(10),
-                style: `text-align:center; justify-items: center; justify-content: center; align-items: center;`,
-                position: 'center',
-                height: 12,
-                width: 1,
-                displayValue: true,
-                fontsize: 8,
-            }, {
-                type: 'table',
-                style: 'border: 1px solid #00000000',
+        const { Print, Kot } = this.props.Kot
+        const datetime = () => {
+            const currentdate = new Date();
+            const datetime = "DATE: " + currentdate.getDate() + "/"
+            + (currentdate.getMonth() + 1) + "/"
+            + currentdate.getFullYear() + " TIME "
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":"
+            + currentdate.getSeconds();
+            return datetime
+          }
+        
+        if (Print === false) {
+            let tableBody = []
+            Data.Data.forEach(element => {
+                tableBody.push({ Item: element.Name, Qnt: element.cartQnt, _id: element._id })
+            });
+            const PrintData = {
+                header: 'KOT',
+                DateTime:datetime(),
+                subHeader: `${Data.client.dbName} No ${Data.client.No}`,
+                barCode: generator.generate(10),
                 tableHeader: ['Item', 'Qnt'],
-                tableBody: kotData,
-
-                tableHeaderStyle: 'background-color: #00000000; color: black;',
-
-                tableBodyStyle: 'border: 0.5px solid #00000000; color: black;',
+                tableBody: tableBody
             }
-        ]
+            this.props.GetKot(tableBody, Data.client._id)
+            return PrintLayout(PrintData)
+        } else {
+            let tableBody = []
+            Data.Data.forEach(element => {
+                tableBody.push({ Item: element.Name, Qnt: element.cartQnt, _id: element._id })
+            });
+            Kot[Data.client._id].forEach((OldItem) => {
+                const existItem = tableBody.find(item => item.Item === OldItem.Item)
+                if (existItem) {
+                    tableBody.pop(existItem)
+                    const newQnt = existItem.Qnt - OldItem.Qnt
+                    if (newQnt !== 0 && newQnt > 0) {
+                        const NewItem = Object.assign(existItem, { Qnt: newQnt })
+                        tableBody.push(NewItem)
+                    }
+                }
+            })
+            const PrintData = {
+                header: 'KOT',
+                DateTime:datetime(),
+                subHeader: `${Data.client.dbName} No ${Data.client.No}`,
+                barCode: generator.generate(10),
+                tableHeader: ['Item', 'Qnt'],
+                tableBody: tableBody
+            }
+            this.props.GetKot(tableBody, Data.client._id)
+            return PrintLayout(PrintData)
+        }
     }
-   
+    kotHandler(Data, Table) {
+        const send = () => {
+            return new Promise((resolve, reject) => {
+                try {
+
+                    resolve('done')
+                } catch (error) {
+                    reject(error)
+                }
+            })
+        }
+        return new Promise((resolve, reject) => {
+            send().then((r) => {
+                const { Kot } = this.props.Kot
+                resolve(Kot)
+            }).catch((err) => {
+                reject(err)
+            });
+        })
+    }
 
     PrintPos(data, Type) {
         const setData = (Type) => {
@@ -176,6 +217,7 @@ class ShopProvider extends Component {
                     ...this.props.Shop,
                     genKot: this.genKot,
                     PrintPos: this.PrintPos,
+                    kotHandler: this.kotHandler,
                 }}
             >
                 <>
@@ -191,13 +233,14 @@ const mapStateToProps = (state) => {
     return {
         Shop: state.Shop,
         data: state.DataStore,
+        Kot: state.Kot,
     }
 }
 
 
 export { Consumer as ShopData, context as ShopHandeler }
 
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(ShopProvider))
+export default connect(mapStateToProps, { GetKot })(withStyles(style, { withTheme: true })(ShopProvider))
 
 
 

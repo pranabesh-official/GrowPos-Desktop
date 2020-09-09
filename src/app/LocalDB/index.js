@@ -34,46 +34,51 @@ class DataProvider extends Component {
         }
     }
     loadAllData() {
-        const loadData = () => {
-            return new Promise((resolve, reject) => {
-                this.db.readAll()
-                    .then((Data) => {
-                        this.setState({ items: Data });
-                        const Source = Data.filter((item) => item.dbName === 'Source')
-                        this.props.ReadData('Source', Source)
-                        const Category = Data.filter((item) => item.dbName === 'Category')
-                        this.props.ReadData('Category', Category)
-                        const Tax = Data.filter((item) => item.dbName === 'Tax')
-                        this.props.ReadData('Tax', Tax)
-                        const Tables = Data.filter((item) => item.dbName === 'Tables')
-                        this.props.ReadData('Tables', Tables)
-                        const Products = Data.filter((item) => item.dbName === 'Products')
-                        this.props.ReadData('Products', Products)
-                        const Shop = Data.filter((item) => item.dbName === 'Shop')
-                        this.props.ReadShop(Shop)
-                        const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
-                        this.props.UserData(CurrentUser)
-                        const Cart = Data.filter((item) => item.dbName === 'Cart')
-                        this.props.getCart(Cart, Tables)
-                        const Print = Data.filter((item) => item.dbName === 'Print')
-                        this.props.getPrint(Print)
-                        resolve('load done')
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    });
+        return new Promise((resolve, reject) => {
+            const loadData = () => {
+                return new Promise((resolve, reject) => {
+                    this.db.readAll()
+                        .then((Data) => {
+                            this.setState({ items: Data });
+                            const Source = Data.filter((item) => item.dbName === 'Source')
+                            this.props.ReadData('Source', Source)
+                            const Category = Data.filter((item) => item.dbName === 'Category')
+                            this.props.ReadData('Category', Category)
+                            const Tax = Data.filter((item) => item.dbName === 'Tax')
+                            this.props.ReadData('Tax', Tax)
+                            const Tables = Data.filter((item) => item.dbName === 'Tables')
+                            this.props.ReadData('Tables', Tables)
+                            const Products = Data.filter((item) => item.dbName === 'Products')
+                            this.props.ReadData('Products', Products)
+                            const Shop = Data.filter((item) => item.dbName === 'Shop')
+                            this.props.ReadShop(Shop)
+                            const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
+                            this.props.UserData(CurrentUser)
+                            const Cart = Data.filter((item) => item.dbName === 'Cart')
+                            this.props.getCart(Cart, Tables)
+                            const Print = Data.filter((item) => item.dbName === 'Print')
+                            this.props.getPrint(Print)
+                            resolve('load done')
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        });
 
-            })
-        }
-        this.props.LoadStart()
-        loadData()
-            .then((sucsess) => {
-                this.props.LoadSucsess()
-            })
-            .catch((err) => {
-                console.log('Error:', err)
-                this.props.LoadFail()
-            });
+                })
+            }
+            this.props.LoadStart()
+            loadData()
+                .then((sucsess) => {
+                    this.props.LoadSucsess()
+                    resolve(sucsess)
+                })
+                .catch((err) => {
+                    console.log('Error:', err)
+                    this.props.LoadFail()
+                    reject(err)
+                });
+
+        })
     }
 
     addItem(name, Data) {
@@ -147,21 +152,22 @@ class DataProvider extends Component {
         })
     }
     editItem(_id, editItem) {
-        return new Promise((resolve, reject) => {
-            let updatedItems;
-            const oldItems = this.state.items;
-            const oldItem = oldItems.find(item => item._id === _id);
-            const newItem = Object.assign(oldItem, editItem);
-            this.db.update(_id, newItem)
-                .then((updatedData) => {
-                    updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
-                    this.setState({ items: updatedItems });
-                    this.loadAllData()
-                    resolve(updatedItems)
-                })
-                .catch((err) => {
-                    reject(err)
-                });
+        this.loadAllData().then((d) => {
+            return new Promise((resolve, reject) => {
+                let updatedItems;
+                const oldItems = this.state.items;
+                const oldItem = oldItems.find(item => item._id === _id);
+                const newItem = Object.assign(oldItem, editItem);
+                this.db.update(_id, newItem)
+                    .then((updatedData) => {
+                        updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
+                        this.setState({ items: updatedItems });
+                        resolve(updatedItems)
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    });
+            })
         })
     }
     toggleSync() {
@@ -213,20 +219,22 @@ class DataProvider extends Component {
         })
     }
     deleteItem(_id) {
-        return new Promise((resolve, reject) => {
-            this.db.delete(_id)
-                .then(() => {
-                    let updatedItems = [...this.state.items].filter(item => item._id !== _id)
-                    this.setState({ items: updatedItems });
-                    this.props.SyncDb('DeleteItem')
-                    this.loadAllData()
-                    resolve('Delete Done')
-                })
-                .catch((err) => {
-                    console.log('Error:', err)
-                    reject(err)
-                });
+        this.loadAllData().then(() => {
+            return new Promise((resolve, reject) => {
+                this.db.delete(_id)
+                    .then(() => {
+                        let updatedItems = [...this.state.items].filter(item => item._id !== _id)
+                        this.setState({ items: updatedItems });
+                        this.props.SyncDb('DeleteItem')
+                        resolve('Delete Done')
+                    })
+                    .catch((err) => {
+                        console.log('Error:', err)
+                        reject(err)
+                    });
+            })
         })
+
     }
 
     syncData() {
@@ -252,7 +260,7 @@ class DataProvider extends Component {
 
     }
     render() {
-        
+
         return (
             <Provider
                 value={{

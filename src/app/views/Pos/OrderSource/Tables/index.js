@@ -18,9 +18,14 @@ class Tables extends Component {
         this.props.SelectClient(table)
     }
     render() {
-        
         const {Tables} = this.context
-        const sortItem = Tables.sort((a, b) => a.No - b.No)
+        let sortItem =[]
+        if(this.props.Status){
+            const StatusShort = Tables.filter(item => item.table_Status === this.props.Status)
+            sortItem = StatusShort.sort((a, b) => a.No - b.No)
+        }else{
+            sortItem = Tables.sort((a, b) => a.No - b.No)
+        }
         return (
             <DataConsumer>
                 {() => (

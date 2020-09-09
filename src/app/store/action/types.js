@@ -27,3 +27,5 @@ export const DELETE_FROM_CART = 'DELETE_FROM_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const ADD_FROM_CART = 'ADD_FROM_CART';
 export const GET_CART_DATA = 'GET_CART_DATA';
+
+export const GET_KOT = 'GET_KOT';

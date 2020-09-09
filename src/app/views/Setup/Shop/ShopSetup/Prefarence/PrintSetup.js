@@ -47,7 +47,7 @@ class PrintSetup extends Component {
         this.handleEdit = this.handleEdit.bind(this);
     }
     componentDidMount() {
-        this.context.loadAllData()
+
     }
     handleReset() {
         this.setState({
@@ -110,9 +110,8 @@ class PrintSetup extends Component {
             timeOutPerLine: this.state.timeOutPerLine || 400
         }
         if (this.state.Type && this.state.printerName) {
-            this.context.editItem(id, data).then(()=>{
-                this.handleReset()
-            })
+            this.context.editItem(id, data)
+            this.handleReset()
         }
 
     };
@@ -195,7 +194,7 @@ class PrintSetup extends Component {
                                         type="submit"
                                         text="Set"
                                         color="primary"
-                                        onClick={()=>this.handleEdit(filter._id)}
+                                        onClick={() => this.handleEdit(filter._id)}
                                     />
                                     :
                                     <Button
@@ -209,17 +208,17 @@ class PrintSetup extends Component {
                                     <Button
                                         type="submit"
                                         text="Delete"
-                                        
-                                        onClick={()=>deletetem(filter._id)}
+
+                                        onClick={() => deletetem(filter._id)}
                                     />
                                     :
                                     <Button
-                                    text="Reset"
-                                    color="default"
-                                    onClick={this.handleReset}
-                                />
+                                        text="Reset"
+                                        color="default"
+                                        onClick={this.handleReset}
+                                    />
                                 }
-                               
+
                             </div>
                         </Grid>
                     </>

@@ -14,6 +14,16 @@ class TheFooter extends Component {
   render() {
     const { change, isSync } = this.props.sync
     const { dataload } = this.props.data
+    const lastSync = () => {
+      const currentdate = new Date();
+      const datetime = "Last Sync: " + currentdate.getDate() + "/"
+        + (currentdate.getMonth() + 1) + "/"
+        + currentdate.getFullYear() + " @ "
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":"
+        + currentdate.getSeconds();
+      return datetime
+    }
     const SyncData = () => {
       return (
         <DataConsumer>
@@ -39,7 +49,10 @@ class TheFooter extends Component {
                 }}
               >
                 {change !== 0 ? <h6 style={{ fontSize: '10px', color: 'black' }}>{'Sync now'}</h6> :
-                  <h6 style={{ fontSize: '10px', color: 'black' }}>{'Sync'}</h6>}
+                  <>
+                    <h6 style={{ fontSize: '10px', color: 'black' }}>{lastSync()}</h6>
+                  </>
+                }
               </IconButton>
             </>
           )}
