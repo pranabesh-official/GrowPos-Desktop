@@ -1,4 +1,4 @@
-import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA } from '../action/types'
+import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, KOT_RESET } from '../action/types'
 
 const initialState = {
   Cart: {
@@ -44,11 +44,20 @@ const Cart = (state = initialState, action) => {
         action.cartData.forEach((element) => {
           NewCarts = Object.assign(Carts, element)
         })
-        return {
-          ...state,
-          Cart: NewCarts,
-          getData:true,
-        }
+        if(state.kotPrinted === false ){
+          return {
+            ...state,
+            Cart: NewCarts,
+            getData:true,
+            kot:NewCarts
+          }
+        }else{
+          return {
+            ...state,
+            Cart: NewCarts,
+            getData:true,
+          }
+        } 
       }else{
         return {
           ...state,
@@ -101,6 +110,10 @@ const Cart = (state = initialState, action) => {
           ...state.Cart,
           [state.selectClient._id]: incrimentData
         },
+        kot: {
+          ...state.Cart,
+          [state.selectClient._id]: incrimentData
+        },
       }
     case REMOVE_FROM_CART:
       const oldRemove = [...state.Cart[state.selectClient._id]]
@@ -110,6 +123,10 @@ const Cart = (state = initialState, action) => {
       return {
         ...state,
         Cart: {
+          ...state.Cart,
+          [state.selectClient._id]: dicrimentData
+        },
+        kot: {
           ...state.Cart,
           [state.selectClient._id]: dicrimentData
         }
@@ -122,6 +139,20 @@ const Cart = (state = initialState, action) => {
         Cart: {
           ...state.Cart,
           [state.selectClient._id]: oldDelete
+        },
+        kot: {
+          ...state.Cart,
+          [state.selectClient._id]: oldDelete
+        }
+      }
+      case KOT_RESET:
+        console.log(action.payload)
+      return {
+        ...state,
+        kot: {
+          ...state.kot,
+          [action.payload]:[],
+          kotPrinted:true
         }
       }
     default:

@@ -108,7 +108,7 @@ app.on('ready', async () => {
             SocketSrver()
             if (sucsess) {
                 db = new TortoiseDB({
-                    name: 'Myshop',
+                    name: 'Database',
                     port: 4040,
                     mongoURI: 'mongodb://localhost:27017',
                     batchLimit: 1000,

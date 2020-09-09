@@ -29,20 +29,23 @@ class AddTax extends Component {
   }
   handlesubmit() {
     const { TaxName, TaxPercent, SelectCategory } = this.state
-    let name= TaxName.toUpperCase()
     const {Category}= this.context
-    const [filter] = Category.filter(item=>item._id === SelectCategory)
-    if (TaxName && SelectCategory) {
-      var groupName = `${filter.Name.toUpperCase()}-${TaxName.toUpperCase()}`
+    if(Category && TaxName){
+      var name= TaxName.toUpperCase()
+      var [filter] = Category.filter(item=>item._id === SelectCategory)
+      if (TaxName && SelectCategory) {
+        var groupName = `${filter.Name.toUpperCase()}-${TaxName.toUpperCase()}`
+      }
+      var data = {
+        Name: name,
+        Tax_Group_Name: groupName,
+        Category:filter.Name,
+        Category_Id:filter._id,
+        Percent: TaxPercent
+      }
     }
-    const data = {
-      Name: name,
-      Tax_Group_Name: groupName,
-      Category:filter.Name,
-      Category_Id:filter._id,
-      Percent: TaxPercent
-    }
-    console.log(data)
+    
+    
     if (TaxName && TaxPercent && SelectCategory) {
       this.context.addItem('Tax', data)
     }

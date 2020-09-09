@@ -1,4 +1,4 @@
-import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA} from './types.js'
+import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA , KOT_RESET} from './types.js'
 
 
 export const SelectClient = ( payload) => {
@@ -38,6 +38,8 @@ export const add = ( payload) => {
     }
 }
 
+
+
 export const remove = ( payload) => {
     return (dispatch) => {
         dispatch({
@@ -51,6 +53,15 @@ export const Delete = ( payload) => {
     return (dispatch) => {
         dispatch({
             type: DELETE_FROM_CART,
+            payload: payload
+        })
+    }
+}
+
+export const PrintDone = ( payload) => {
+    return (dispatch) => {
+        dispatch({
+            type: KOT_RESET,
             payload: payload
         })
     }

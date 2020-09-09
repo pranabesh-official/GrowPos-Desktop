@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Header from '../LayoutManeger/header'
 import tables from '../LayoutManeger/icons/dinner.png'
 import ActionButton from './Payment'
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 import ShopProvider from '../../LocalDB/ShopDB'
 
 const style = (theme) => ({
@@ -119,7 +119,7 @@ class Pos extends Component {
                                                 </ClientProvider>
                                             </DataProvider>
                                         </Grid>
-                                        <Grid item xs={2} sm={2} style={{ borderLeft: '1px solid #f0f0f0' }}>
+                                        {/* <Grid item xs={2} sm={2} style={{ borderLeft: '1px solid #f0f0f0' }}>
                                             <Typography className={classes.heading} >
                                                 Amount
                                         </Typography>
@@ -140,7 +140,7 @@ class Pos extends Component {
                                             <Typography className={classes.heading} >
                                                 {540.00}
                                             </Typography>
-                                        </Grid>
+                                        </Grid> */}
                                     </Grid>
                                 </Paper>
                             </Grid>
