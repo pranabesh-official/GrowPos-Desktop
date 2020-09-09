@@ -12,7 +12,7 @@ const {PosPrinter} = require('electron-pos-printer');
 // const { fork } = require('child_process');
 // const { PythonShell } = require('python-shell')
 
-
+const PyServer = require('./pyServer/PyServer');
 
 let mongoclient = false
 let mongoServermsg = 'Mongodb Start Sucsess!'
@@ -63,6 +63,10 @@ const SocketSrver = () => {
         console.log('[Socket.io] listening Port 4000!')
     })
 }
+
+PyServer().then((msg)=>{
+    console.log(msg)
+})
 // const installExtensions = async () => {
 //     const installer = require('electron-devtools-installer')
 //     const forceDownload = !!process.env.UPGRADE_EXTENSIONS

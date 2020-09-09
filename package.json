@@ -6,11 +6,11 @@
   "build": {
     "appId": "com.GrowPos.app",
     "win": {
-      "icon": "build/icon.png"
+      "icon": "build/logo.png"
     }
   },
   "homepage": "./",
-  "main": "public/main.js",
+  "main": "public/electron.js",
   "dependencies": {
     "@coreui/coreui": "^3.2.2",
     "@coreui/icons": "2.0.0-beta.4",

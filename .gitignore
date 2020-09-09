@@ -17,7 +17,8 @@
 /public/mongodb/mongod.pdb
 /public/mongodb/mongos.exe
 /public/mongodb/mongos.pdb
-
+/dist
+/public/pyServer
 
 # misc
 .DS_Store

@@ -15,7 +15,7 @@ buildOptions = dict(
         'libssl.so.1.0.1e',
         'libssl.so.10'
     ],
-    icon = ["icon.ico"]
+    
 )
 
 executables = [
@@ -23,8 +23,7 @@ executables = [
         'run.py',
         base = None,
         targetName = 'DB',
-       
-    
+        # icon = ["sql.ico"]
     )
 ]
 

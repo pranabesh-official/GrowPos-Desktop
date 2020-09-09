@@ -5,14 +5,14 @@ import os
 import sys
 
 
-if getattr(sys, 'frozen', False):
-    template_folder = os.path.join(sys._MEIPASS, 'templates')
-    static_folder = os.path.join(sys._MEIPASS, 'static')
-    app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
-    CORS(app)
-else:
-    app = Flask(__name__)
-    CORS(app)
+# if getattr(sys, 'frozen', False):
+#     template_folder = os.path.join(sys._MEIPASS, 'templates')
+#     static_folder = os.path.join(sys._MEIPASS, 'static')
+#     app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
+#     CORS(app)
+# else:
+app = Flask(__name__)
+CORS(app)
     
 
 
