@@ -1,12 +1,12 @@
-import React from 'react';
+// import React from 'react';
+import Pos from './views/Pos'
+import CategorySetup from './views/Setup/CategorySetup'
+import ProuductSetup from './views/Setup/ProuductSetup'
+import TaxSetup from './views/Setup/TaxSetup'
+import Employe from './views/Employe'
+import ShopSetup from './views/Setup/Shop'
 
-const Pos = React.lazy(() => import('./views/Pos'));
-const CategorySetup = React.lazy(() => import('./views/Setup/CategorySetup'));
-const ProuductSetup = React.lazy(() => import('./views/Setup/ProuductSetup'));
-// const TableSetup = React.lazy(() => import('./views/Setup/TableSetup'));
-const TaxSetup = React.lazy(() => import('./views/Setup/TaxSetup'));
-const Employe = React.lazy(() => import('./views/Employe'));
-const ShopSetup = React.lazy(() => import('./views/Setup/Shop'));
+
 
 
 const routes = [
@@ -16,7 +16,6 @@ const routes = [
   { path: '/CategorySetup', name: 'Addcategory', component: CategorySetup },
   { path: '/CategorySetup', name: 'AddSource', component: CategorySetup },
   { path: '/ProuductSetup', name: 'ProuductSetup', component: ProuductSetup },
-  
   { path: '/ShopSetup', name: 'ShopSetup', component: ShopSetup },
   { path: '/TaxSetup', name: 'TaxSetup', component: TaxSetup },
   { path: '/Employe', name: 'Employe', component: Employe },

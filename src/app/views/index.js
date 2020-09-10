@@ -14,7 +14,7 @@ const Lodding=()=>{
   )
 }
 
-class View extends Component {
+class dashbord extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -50,5 +50,5 @@ const mapStateToProps = (state) => {
     Auth: state.Auth,
   }
 }
-export default connect(mapStateToProps, { getProfileFetch })(View);
+export default connect(mapStateToProps, { getProfileFetch })(dashbord);
 

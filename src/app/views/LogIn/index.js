@@ -5,7 +5,6 @@ import { isElectron } from 'react-device-detect'
 import Titlebar from '../../TitleBar'
 import { userPostFetch, getProfileFetch } from '../../store/action/Auth'
 
-
 import './css/style.css'
 import './css/font-awesome-4.7.0/css/font-awesome.min.css'
 import './css/main.css'
@@ -93,7 +92,7 @@ class Login extends Component {
 
         if (logIn) {
             return (
-                <Redirect to={'/dashbord'} />
+                <Redirect to={'/'} />
             )
         } else {
             return (

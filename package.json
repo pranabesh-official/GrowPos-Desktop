@@ -6,7 +6,21 @@
   "build": {
     "appId": "com.GrowPos.app",
     "win": {
+      "target": "NSIS",
       "icon": "build/logo.png"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     },
     "extraResources": [
       {
@@ -25,6 +39,7 @@
       }
     ]
   },
+ 
   "homepage": "./",
   "main": "public/electron.js",
   "dependencies": {

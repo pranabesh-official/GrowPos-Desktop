@@ -1,5 +1,12 @@
 
 export default [
+  // {
+  //   _tag: 'CSidebarNavItem',
+  //   name: 'HOME',
+  //   to: '/Home',
+  //   icon: 'cil-home',
+  
+  // },
   {
     _tag: 'CSidebarNavItem',
     name: 'POS',
