@@ -7,7 +7,23 @@
     "appId": "com.GrowPos.app",
     "win": {
       "icon": "build/logo.png"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "./public/mongoddb",
+        "to": "mongoddb",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./public/pyServer",
+        "to": "pyServer",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   },
   "homepage": "./",
   "main": "public/electron.js",
@@ -41,6 +57,7 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "express": "^4.17.1",
+    "extract-css-chunks-webpack-plugin": "^4.7.5",
     "generate-serial-number": "0.0.3",
     "jquery": "^3.5.1",
     "material-table": "^1.67.1",

@@ -25,6 +25,23 @@
   <div id="root"></div>
 
   <script type="text/babel" src="js/main.js"></script>
+  <script>
+    window.addEventListener('error', function (e) {
+      // workaround for chrome bug where SW loaded css doesn't always work
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=968444
+      var ele = e.target;
+      if (
+        ele.tagName === 'LINK' &&
+        ele.getAttribute('rel') === 'stylesheet' &&
+        ele.href.indexOf('ngsw-bypass') === -1
+      ) {
+        var link = document.createElement('link');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('href', ele.href + '?ngsw-bypass=1');
+        ele.parentNode.insertBefore(link, ele.nextSibling);
+      }
+    }, true);
+  </script>
  
 </body>
 

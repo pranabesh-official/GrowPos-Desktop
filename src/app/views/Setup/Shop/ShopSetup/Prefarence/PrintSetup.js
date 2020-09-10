@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RadioGroup, Button, Input, Checkbox } from '../../../../LayoutManeger/FormManager'
+import { RadioGroup, Button, Input, Checkbox, Select } from '../../../../LayoutManeger/FormManager'
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import { DataContext, DataConsumer } from '../../../../../LocalDB'
@@ -38,7 +38,8 @@ class PrintSetup extends Component {
                 { name: 'Kot', id: '1', value: 'KOT' },
                 { name: 'Bill', id: '2', value: 'BILL' }
             ],
-            Error: null
+            Error: null,
+            Source_id:''
         }
         this.handleChange = this.handleChange.bind(this);
         this.handlesubmit = this.handlesubmit.bind(this);
@@ -81,17 +82,19 @@ class PrintSetup extends Component {
 
     }
     handlesubmit() {
-        const data = {
-            Name: this.state.Type,
-            preview: this.state.preview,
-            silent: this.state.silent,
-            width: '170px',
-            margin: '0 0 0 0',
-            copies: this.state.copies || 1,
-            printerName: this.state.printerName || null,
-            timeOutPerLine: this.state.timeOutPerLine || 400
-        }
-        if (this.state.Type && this.state.printerName) {
+        const { Source } = this.context
+        if (this.state.Type && this.state.printerName && this.state.Source_id) {
+            const [filter] = Source.filter(item => item._id === this.state.Source_id)
+            const data = {
+                Name: this.state.Type,
+                printFor: filter.Name,
+                printForId:filter._id,
+                preview: this.state.preview,
+                silent: this.state.silent,
+                copies: this.state.copies || 1,
+                printerName: this.state.printerName || null,
+                timeOutPerLine: this.state.timeOutPerLine || 400
+            }
             this.context.addItem('Print', data).then(() => {
                 this.handleReset()
             })
@@ -99,17 +102,19 @@ class PrintSetup extends Component {
 
     };
     handleEdit(id) {
-        const data = {
-            Name: this.state.Type,
-            preview: this.state.preview,
-            silent: this.state.silent,
-            width: '170px',
-            margin: '0 0 0 0',
-            copies: this.state.copies || 1,
-            printerName: this.state.printerName || null,
-            timeOutPerLine: this.state.timeOutPerLine || 400
-        }
-        if (this.state.Type && this.state.printerName) {
+        const { Source } = this.context
+        if (this.state.Type && this.state.printerName && this.state.Source_id) {
+            const [filter] = Source.filter(item => item._id === this.state.Source_id)
+            const data = {
+                Name: this.state.Type,
+                printFor: filter.Name,
+                printForId:filter._id,
+                preview: this.state.preview,
+                silent: this.state.silent,
+                copies: this.state.copies || 1,
+                printerName: this.state.printerName || null,
+                timeOutPerLine: this.state.timeOutPerLine || 400
+            }
             this.context.editItem(id, data)
             this.handleReset()
         }
@@ -129,7 +134,7 @@ class PrintSetup extends Component {
         }
         return (
             <DataConsumer>
-                {({ deletetem }) => (
+                {({ Source, deletetem }) => (
                     <>
                         <Grid container spacing={1}>
                             {this.state.Error &&
@@ -137,7 +142,18 @@ class PrintSetup extends Component {
                                     <Typography color='error'>{this.state.Error}</Typography>
                                 </Grid>
                             }
-                            <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                            <Grid item xs={6} sm={6} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                <Select
+                                    label="Select Source"
+                                    name="Source_id"
+                                    value={this.state.Source_id}
+                                    options={Source}
+                                    optionsValue={'_id'}
+                                    optionsDisplay={'Name'}
+                                    onChange={this.handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={6} sm={6} style={{ borderBottom: '1px solid #f0f0f0' }}>
                                 <RadioGroup
                                     name="Type"
                                     value={this.state.Type}

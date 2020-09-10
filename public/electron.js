@@ -3,11 +3,9 @@ const path = require("path")
 const isDev = require("electron-is-dev")
 const { ipcMain } = require('electron')
 const spawn = require('child_process').spawn;
-const UI = require('express')();
-const http = require('http').Server(app)
-const io = require('socket.io')(http)
+
 const bodyParser = require('body-parser');
-const {PosPrinter} = require('electron-pos-printer');
+const { PosPrinter } = require('electron-pos-printer');
 // const cors = require('cors')
 // const { fork } = require('child_process');
 // const { PythonShell } = require('python-shell')
@@ -44,15 +42,34 @@ const dbserver = () => {
 }
 
 const SocketSrver = () => {
+    const express = require('express');
+    // const UI = require('express')();
+    const http = require('http').Server(app)
+    const io = require('socket.io')(http)
+    const UI = express();
     UI.use(bodyParser.json({ limit: '50mb' }));
+    UI.use(bodyParser.urlencoded({ extended: false }));
     UI.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
     });
-    UI.get('/', function (req, res) {
-        res.send('<h1> hi... </h1>')
+    // UI.get('/', function (req, res) {
+    //     res.send('<h1> hi... </h1>')
+    // })
+    UI.use(express.static(path.join(__dirname, 'public')));
+    
+    UI.get('/', (req, res) => {
+        res.send(path.join(__dirname, 'public/index.html'));
     })
+    UI.get('/test', (req, res) => {
+        res.send('Welcome to your express API');
+    });
+    io.use((req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
     io.on('connection', function (socket) {
         socket.on('message', ({ name, Massage }) => {
             io.emit('message', { name, Massage })
@@ -60,11 +77,17 @@ const SocketSrver = () => {
         console.log('[Socket.io] Connected!')
     })
     UI.listen(4000, function () {
-        console.log('[Socket.io] listening Port 4000!')
+        console.log('[Socket.io] listening Port 4000! 🔥')
     })
+
+
+
+
+
+
 }
 
-PyServer().then((msg)=>{
+PyServer().then((msg) => {
     console.log(msg)
 })
 // const installExtensions = async () => {
@@ -165,8 +188,8 @@ app.on('ready', async () => {
         })
         ipcMain.on('print-pos', (event, arg) => {
             const data = JSON.parse(arg)
-            PosPrinter.print(data ,{
-                
+            PosPrinter.print(data, {
+
             })
         })
         main.on('close', (e) => {
