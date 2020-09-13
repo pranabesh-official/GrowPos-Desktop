@@ -1,13 +1,13 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeLite, ThemeDark, success, secondary, warning, danger, info  } from '../../LayoutManeger/Themes'
+import { ThemeLite, ThemeDark, success,  danger, info , warning } from '../../LayoutManeger/Themes'
 import Button from '@material-ui/core/Button';
-
+import { Icon } from 'semantic-ui-react'
 
 const getStatus = (status) => {
     switch (status) {
         case 'Active': return success
-        case 'Inactive': return secondary
+        case 'Inactive': return info
         case 'Pending': return warning
         case 'Banned': return danger
         default: return info
@@ -20,10 +20,8 @@ const useStyles = makeStyles(theme => ({
         return {
             margin: theme.spacing(0.5),
             borderBottom: `5px solid ${color}`,
-            // maxWidth: props.size,
         }
     }
-
 }))
 
 
@@ -51,16 +49,12 @@ const StyledButton = withStyles({
 
 export default function Statusbutton(props) {
     const classes = useStyles(props);
-    const { onClick, label} = props
-    // let key = 0
-    // const keygen = () => {
-    //     key = key + 1
-    //     return key
-    // }
+    const { onClick, label , loading} = props
     return (
         <StyledButton
             className={classes.buttonStatus}
             onClick={onClick}
+            startIcon={loading && <Icon loading name='spinner'  size="small" style={{color:getStatus(props.status)}} />}
             // fullWidth
             // key={keygen()}
         >

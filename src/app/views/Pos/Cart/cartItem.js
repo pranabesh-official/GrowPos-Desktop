@@ -30,8 +30,7 @@ class CartItem extends Component {
 
     }
     render() {
-        const { Cart } = this.props.Cart
-        const CartItems = Cart[this.props.id]
+        const { Active } = this.props.Cart
         return (
             <Table bordered size="sm" className="mx-0 my-0" style={{boxShadow: '0 0px 0px 0px '}}>
                 <thead style={{boxShadow: '0 0px 0px 0px '}}>
@@ -48,7 +47,7 @@ class CartItem extends Component {
                     </tr>
                 </thead>
                 <tbody style={{boxShadow: '0 0px 0px 0px '}}>
-                    {CartItems.map((item, index) => (
+                    {Active.Cart.map((item, index) => (
                         <tr key={index}>
                             <td>
                                 <IconButton aria-label="delete" color="secondary" size="small" onClick={() =>this.props.Delete(item)}>

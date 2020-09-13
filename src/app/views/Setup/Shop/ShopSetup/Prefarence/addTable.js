@@ -55,7 +55,16 @@ class AddTable extends Component {
             table_Status: 'Inactive'
         }
         if (No) {
-            this.context.addItem('Tables', data)
+            this.context.addItem('Tables', data).then((d)=>{
+                const Active = {
+                    ClientId: d._id,
+                    Cart: [],
+                    Ot: [],
+                    OTPrint:0,
+                    OTSno:null
+                }
+                this.context.addItem('Cart', Active)
+            })
             this.handleReset() 
         }
     };

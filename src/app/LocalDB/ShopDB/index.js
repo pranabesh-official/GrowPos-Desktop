@@ -11,8 +11,7 @@ import { ThemeDark, danger } from '../../views/LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
 import { GetKot } from '../../store/action/Kot'
-import { PrintDone } from '../../store/action/Cart'
-import { PrintLayout, BillLayout } from '../../Utils/PrintLayout'
+import { BillLayout } from '../../Utils/PrintLayout'
 
 if (isElectron) {
     var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
@@ -62,33 +61,9 @@ class ShopProvider extends Component {
         this.setState({ open: false })
     }
     genKot(Data) {
-        const generator = require('generate-serial-number');
-        const datetime = () => {
-            const currentdate = new Date();
-            const datetime = "DATE: " + currentdate.getDate() + "/"
-                + (currentdate.getMonth() + 1) + "/"
-                + currentdate.getFullYear() + " TIME "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-            return datetime
-        }
+        
 
-        let tableBody = []
-        Data.Data.forEach(element => {
-            tableBody.push({ Item: element.Name, Qnt: element.cartQnt, _id: element._id })
-        });
-        const PrintData = {
-            header: 'KOT',
-            DateTime: datetime(),
-            subHeader: `${Data.client.dbName} No ${Data.client.No}`,
-            barCode: generator.generate(10),
-            tableHeader: ['Item', 'Qnt'],
-            tableBody: tableBody
-        }
-        this.props.GetKot(tableBody, Data.client._id)
-        this.props.PrintDone(Data.client._id)
-        return PrintLayout(PrintData)
+        
     }
 
     genBill(Data) {
@@ -125,13 +100,6 @@ class ShopProvider extends Component {
     }
 
     PrintPos(data, Type) {
-        const setData = (Type) => {
-            switch (Type) {
-                case 'KOT': return this.genKot(data)
-                case 'BILL': return this.genBill(data)
-                default: return data
-            }
-        }
         const setOption = (Type) => {
             const { printSetups } = this.props.Shop
             const [filter] = printSetups.filter(item => item.Name === Type)
@@ -162,14 +130,13 @@ class ShopProvider extends Component {
                         width: '170px',
                         margin: '0 0 0 0',
                         copies: 1,
-                        // printerName: '', 
+                        silent:true,
                         timeOutPerLine: 400
-
                     }
             }
         }
         return new Promise((resolve, reject) => {
-            PosPrinter.print(setData(Type), setOption(Type))
+            PosPrinter.print(data, setOption(Type))
                 .then(() => {
                     resolve('secsess')
                 })
@@ -227,7 +194,7 @@ const mapStateToProps = (state) => {
 
 export { Consumer as ShopData, context as ShopHandeler }
 
-export default connect(mapStateToProps, { GetKot, PrintDone })(withStyles(style, { withTheme: true })(ShopProvider))
+export default connect(mapStateToProps, { GetKot })(withStyles(style, { withTheme: true })(ShopProvider))
 
 
 

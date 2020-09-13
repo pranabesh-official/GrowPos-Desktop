@@ -1,6 +1,21 @@
-import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA , KOT_RESET} from './types.js'
+import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA , RESET_OT , GET_ACTIVE} from './types.js'
 
-
+export const getClient = ( payload ) => {
+    return (dispatch) => {
+        dispatch({
+            type: GET_CART_DATA,
+            payload: payload
+        })
+    }
+}
+export const GetActive = ( payload) => {
+    return (dispatch) => {
+        dispatch({
+            type: GET_ACTIVE,
+            payload: payload
+        })
+    }
+}
 export const SelectClient = ( payload) => {
     return (dispatch) => {
         dispatch({
@@ -10,16 +25,7 @@ export const SelectClient = ( payload) => {
     }
 }
 
-export const getCart = ( cartData , tabels) => {
 
-    return (dispatch) => {
-        dispatch({
-            type: GET_CART_DATA,
-            cartData: cartData,
-            tabels: tabels
-        })
-    }
-}
 export const addToCart = ( payload) => {
     return (dispatch) => {
         dispatch({
@@ -58,11 +64,12 @@ export const Delete = ( payload) => {
     }
 }
 
-export const PrintDone = ( payload) => {
+export const Refresh = ( payload) => {
     return (dispatch) => {
         dispatch({
-            type: KOT_RESET,
+            type: RESET_OT,
             payload: payload
         })
     }
 }
+

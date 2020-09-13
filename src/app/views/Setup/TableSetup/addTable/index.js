@@ -32,7 +32,7 @@ class AddTable extends Component {
             table_Status: 'Inactive'
         }
         if (No) {
-            this.context.handlesubmit('Tables', data)
+            this.context.addItem('Tables', data)
         }
     };
     render() {

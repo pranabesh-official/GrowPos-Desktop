@@ -4,7 +4,7 @@ import { ReadData, LoadStart, LoadSucsess, LoadFail } from '../store/action/Data
 import { SyncDb, SyncDbReset, isSyncStart, isSyncDone } from '../store/action/syncAction'
 import TurtleDB from 'turtledb';
 import { ReadShop, UserData, getPrint } from '../store/action/Shop'
-import { getCart, } from '../store/action/Cart'
+import { GetActive, getClient} from '../store/action/Cart'
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
@@ -33,7 +33,7 @@ class DataProvider extends Component {
             this.loadAllData();
         }
     }
-    loadAllData() {
+    async loadAllData() {
         return new Promise((resolve, reject) => {
             const loadData = () => {
                 return new Promise((resolve, reject) => {
@@ -48,6 +48,7 @@ class DataProvider extends Component {
                             this.props.ReadData('Tax', Tax)
                             const Tables = Data.filter((item) => item.dbName === 'Tables')
                             this.props.ReadData('Tables', Tables)
+                            this.props.getClient(Tables)
                             const Products = Data.filter((item) => item.dbName === 'Products')
                             this.props.ReadData('Products', Products)
                             const Shop = Data.filter((item) => item.dbName === 'Shop')
@@ -55,7 +56,7 @@ class DataProvider extends Component {
                             const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
                             this.props.UserData(CurrentUser)
                             const Cart = Data.filter((item) => item.dbName === 'Cart')
-                            this.props.getCart(Cart, Tables)
+                            this.props.GetActive(Cart)
                             const Print = Data.filter((item) => item.dbName === 'Print')
                             this.props.getPrint(Print)
                             resolve('load done')
@@ -81,7 +82,7 @@ class DataProvider extends Component {
         })
     }
 
-    addItem(name, Data) {
+    async addItem(name, Data) {
         return new Promise((resolve, reject) => {
             const updatedItems = [...this.state.items];
             const ftlter = this.state.items.filter((item) => item.dbName === name)
@@ -92,7 +93,8 @@ class DataProvider extends Component {
                     this.setState({ items: updatedItems })
                     this.props.SyncDb('AddItem')
                     this.loadAllData()
-                    resolve(`Add ${name} Done! `)
+                    resolve(Data)
+                    console.log('Table', Data)
                 })
                 .catch((err) => {
                     console.log('Error:', err)
@@ -101,7 +103,7 @@ class DataProvider extends Component {
 
         })
     }
-    BulkAdd(name, arr) {
+    async BulkAdd(name, arr) {
         this.setState({ BulkLodding: true })
         return new Promise((resolve, reject) => {
             let updatedItems = [...this.state.items];
@@ -151,18 +153,20 @@ class DataProvider extends Component {
                 });
         })
     }
-    editItem(_id, editItem) {
-        this.loadAllData().then((d) => {
-            return new Promise((resolve, reject) => {
+    async editItem(_id, editItem) {
+        
+        return new Promise((resolve, reject) => {
+            this.loadAllData().then((d) => {
                 let updatedItems;
                 const oldItems = this.state.items;
                 const oldItem = oldItems.find(item => item._id === _id);
-                const newItem = Object.assign(oldItem, editItem);
+                const newItem = Object.assign(oldItem, editItem)
                 this.db.update(_id, newItem)
                     .then((updatedData) => {
                         updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
                         this.setState({ items: updatedItems });
-                        resolve(updatedItems)
+                        resolve(updatedData)
+                        this.loadAllData()
                     })
                     .catch((err) => {
                         reject(err)
@@ -170,7 +174,7 @@ class DataProvider extends Component {
             })
         })
     }
-    toggleSync() {
+    async toggleSync() {
         return new Promise((resolve, reject) => {
             let updatedItems
             const updateData = (_id) => {
@@ -218,7 +222,7 @@ class DataProvider extends Component {
                 });
         })
     }
-    deleteItem(_id) {
+    async deleteItem(_id) {
         this.loadAllData().then(() => {
             return new Promise((resolve, reject) => {
                 this.db.delete(_id)
@@ -226,6 +230,7 @@ class DataProvider extends Component {
                         let updatedItems = [...this.state.items].filter(item => item._id !== _id)
                         this.setState({ items: updatedItems });
                         this.props.SyncDb('DeleteItem')
+                        this.loadAllData()
                         resolve('Delete Done')
                     })
                     .catch((err) => {
@@ -303,6 +308,7 @@ export default connect(mapStateToProps, {
     isSyncDone,
     ReadShop,
     UserData,
-    getCart,
-    getPrint
+    GetActive,
+    getPrint,
+    getClient
 })(DataProvider) 

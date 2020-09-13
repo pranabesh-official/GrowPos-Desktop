@@ -1,13 +1,26 @@
-import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, KOT_RESET } from '../action/types'
+import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, RESET_OT, GET_ACTIVE } from '../action/types'
 
 const initialState = {
-  Cart: {
-    tableLoad: false,
-  },
+  Cart: {},
+  createCart: false,
   selectClient: null,
   getData: false,
   kot: {},
-  kotPrinted: false
+  kotPrinted: false,
+  Clients: [],
+  ActiveData: [],
+  Active: {
+    Cart: [],
+    Ot: [],
+    ClientId: null,
+    displayNo: null,
+    Stutas: null,
+    OTPrint: 0,
+    OTSno: null,
+    BillSno: null,
+    isActive: false,
+    Type: null
+  }
 }
 
 const updateObject = (oldObject, newValues) => {
@@ -24,137 +37,228 @@ const cartItemInArray = (array, itemId, updateItemCallback) => {
   })
   return updatedItems
 }
-
+const addNew = (arry, product) => {
+  const AddNew = [...arry]
+  const AddProduct = Object.assign(product, { cartQnt: 1 })
+  AddNew.push(AddProduct)
+  return AddNew
+}
+const IsExist = (arry, product) => {
+  const find = arry.find(item => item._id === product._id)
+  if (find) {
+    return true
+  } else {
+    return false
+  }
+}
+const CheakActive = (array, id) => {
+  const find = array.find(item => item.ClientId === id)
+  if (find) {
+    return true
+  } else {
+    return false
+  }
+}
 const Cart = (state = initialState, action) => {
   switch (action.type) {
-    case SELECT_CLIENT:
+    case GET_CART_DATA:
       return {
         ...state,
-        selectClient: action.payload,
+        Clients: action.payload
       }
-    case GET_CART_DATA:
-      if (state.getData === false) {
-        const Carts = state.Cart
-        let NewCarts = null
-        action.tabels.forEach((element) => {
-          if (element._id) {
-            NewCarts = Object.assign(Carts, { [element._id]: [], tableLoad: true })
-          }
-        })
-        action.cartData.forEach((element) => {
-          NewCarts = Object.assign(Carts, element)
-        })
-        if(state.kotPrinted === false ){
-          return {
-            ...state,
-            Cart: NewCarts,
-            getData:true,
-            kot:NewCarts
-          }
-        }else{
-          return {
-            ...state,
-            Cart: NewCarts,
-            getData:true,
-          }
-        } 
-      }else{
+    case GET_ACTIVE:
+      return {
+        ...state,
+        ActiveData: action.payload
+      }
+    case SELECT_CLIENT:
+      const client = action.payload
+      const find = state.Clients.find(item => item._id === client._id)
+      const Status = CheakActive(state.ActiveData, find._id)
+      if (Status) {
+        const ActiveData = state.ActiveData.find(item => item.ClientId === find._id)
+      
         return {
           ...state,
+          selectClient: find,
+          Active: {
+            ...state.Active,
+            Cart: ActiveData.Cart,
+            Ot: ActiveData.Ot,
+            ClientId: find._id,
+            Stutas: find.table_Status,
+            _id: ActiveData._id,
+            displayNo: find.No,
+            isActive: ActiveData.isActive || false,
+            OTPrint: ActiveData.OTPrint,
+            OTSno: ActiveData.OTSno,
+            Type: 'Table'
+          }
+        }
+      } else {
+        
+        return {
+          ...state,
+          selectClient: find,
+          Active: {
+            ...state.Active,
+            Cart: [],
+            Ot: [],
+            ClientId: find._id,
+            Stutas: find.table_Status,
+            isActive: false,
+            displayNo: find.No,
+            Type: 'Table'
+          }
         }
       }
 
     case ADD_TO_CART:
-      const [filter] = state.Cart[state.selectClient._id].filter((item) => item._id === action.payload._id)
-      if (filter) {
-        const oldData = [...state.Cart[state.selectClient._id]]
-        const update = cartItemInArray(oldData, action.payload, add => {
+      const ProductExist = IsExist(state.Active.Cart, action.payload)
+      if (ProductExist) {
+        const kotExist = IsExist(state.Active.Ot, action.payload)
+        const OldCart = [...state.Active.Cart]
+        const updatedCart = cartItemInArray(OldCart, action.payload, add => {
           return updateObject(add, add.cartQnt = add.cartQnt + 1)
         })
-        return {
-          ...state,
-          Cart: {
-            ...state.Cart,
-            [state.selectClient._id]: update
-          },
-          kot: {
-            ...state.kot,
-            [state.selectClient._id]: update
+        if (kotExist) {
+          const OldOt = [...state.Active.Ot]
+          const updatedOt = cartItemInArray(OldOt, action.payload, add => {
+            return updateObject(add, add.cartQnt = add.cartQnt + 1)
+          })
+          return {
+            ...state,
+            Active: {
+              ...state.Active,
+              Cart: updatedCart,
+              Ot: updatedOt,
+            }
+          }
+        } else {
+          const newOt = addNew(state.Active.Ot, action.payload)
+          return {
+            ...state,
+            Active: {
+              ...state.Active,
+              Cart: updatedCart,
+              Ot: newOt,
+            }
           }
         }
       } else {
-        const oldData = [...state.Cart[state.selectClient._id]]
-        const addQnt = Object.assign(action.payload, { cartQnt: 1 })
-        oldData.push(addQnt)
+        const newdata = addNew(state.Active.Cart, action.payload)
+        const newOt = addNew(state.Active.Ot, action.payload)
         return {
           ...state,
-          Cart: {
-            ...state.Cart,
-            [state.selectClient._id]: oldData
-          },
-          kot: {
-            ...state.kot,
-            [state.selectClient._id]: oldData
+          Active: {
+            ...state.Active,
+            Cart: newdata,
+            Ot: newOt,
           }
         }
       }
 
     case ADD_FROM_CART:
-      const old = [...state.Cart[state.selectClient._id]]
-      const incrimentData = cartItemInArray(old, action.payload, incriment => {
-        return updateObject(incriment, incriment.cartQnt = incriment.cartQnt + 1)
+      const kotExist = IsExist(state.Active.Ot, action.payload)
+      const OldCart = [...state.Active.Cart]
+      const updatedCart = cartItemInArray(OldCart, action.payload, add => {
+        return updateObject(add, add.cartQnt = add.cartQnt + 1)
       })
-      return {
-        ...state,
-        Cart: {
-          ...state.Cart,
-          [state.selectClient._id]: incrimentData
-        },
-        kot: {
-          ...state.Cart,
-          [state.selectClient._id]: incrimentData
-        },
+      if (kotExist) {
+        const OldOt = [...state.Active.Ot]
+        const updatedOt = cartItemInArray(OldOt, action.payload, add => {
+          return updateObject(add, add.cartQnt = add.cartQnt + 1)
+        })
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: updatedCart,
+            Ot: updatedOt,
+          }
+        }
+      } else {
+        const newOt = addNew(state.Active.Ot, action.payload)
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: updatedCart,
+            Ot: newOt,
+          }
+        }
       }
     case REMOVE_FROM_CART:
-      const oldRemove = [...state.Cart[state.selectClient._id]]
-      const dicrimentData = cartItemInArray(oldRemove, action.payload, dicriment => {
-        return updateObject(dicriment, dicriment.cartQnt = dicriment.cartQnt - 1)
+      const OtExist = IsExist(state.Active.Ot, action.payload)
+      const OldCartData = [...state.Active.Cart]
+      const updatedCartdata = cartItemInArray(OldCartData, action.payload, add => {
+        return updateObject(add, add.cartQnt = add.cartQnt - 1)
       })
-      return {
-        ...state,
-        Cart: {
-          ...state.Cart,
-          [state.selectClient._id]: dicrimentData
-        },
-        kot: {
-          ...state.Cart,
-          [state.selectClient._id]: dicrimentData
+      if (OtExist) {
+        const OldOt = [...state.Active.Ot]
+        const updatedOt = cartItemInArray(OldOt, action.payload, add => {
+          return updateObject(add, add.cartQnt = add.cartQnt - 1)
+        })
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: updatedCartdata,
+            Ot: updatedOt,
+          }
+        }
+      } else {
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: updatedCartdata,
+          }
         }
       }
     case DELETE_FROM_CART:
-      const oldDelete = [...state.Cart[state.selectClient._id]]
-      oldDelete.pop(action.payload)
-      return {
-        ...state,
-        Cart: {
-          ...state.Cart,
-          [state.selectClient._id]: oldDelete
-        },
-        kot: {
-          ...state.Cart,
-          [state.selectClient._id]: oldDelete
+      const Exist = IsExist(state.Active.Ot, action.payload)
+      const OldCartDelete = [...state.Active.Cart]
+      OldCartDelete.pop(action.payload)
+      if (Exist) {
+        const OldoldDelete = [...state.Active.Ot]
+        OldoldDelete.pop(action.payload)
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: OldCartDelete,
+            Ot: OldoldDelete,
+          }
+        }
+      } else {
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: OldCartDelete,
+          }
         }
       }
-      case KOT_RESET:
-        console.log(action.payload)
-      return {
-        ...state,
-        kot: {
-          ...state.kot,
-          [action.payload]:[],
-          kotPrinted:true
+
+    case RESET_OT:
+      const ActiveData = state.ActiveData.find(item => item.ClientId === state.selectClient._id)
+        return {
+          ...state,
+          Active: {
+            ...state.Active,
+            Cart: ActiveData.Cart,
+            Ot: ActiveData.Ot,
+            ClientId: ActiveData._id,
+            Stutas: ActiveData.table_Status,
+            _id: ActiveData._id,
+            displayNo: ActiveData.No,
+            isActive: true,
+            OTPrint: ActiveData.OTPrint,
+            OTSno: ActiveData.OTSno,
+            Type: 'Table'
+          }
         }
-      }
     default:
       return state
   }

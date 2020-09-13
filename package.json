@@ -4,44 +4,10 @@
   "author": "spiderwave",
   "description": "pos billing app",
   "build": {
-    "appId": "com.GrowPos.app",
-    "win": {
-      "target": "NSIS",
-      "icon": "build/logo.png"
-    },
-    "files": [
-      "build/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "buildResources": "public"
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
-    "extraResources": [
-      {
-        "from": "./public/mongoddb",
-        "to": "mongoddb",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "./public/pyServer",
-        "to": "pyServer",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ]
+    "appId": "com.server.app"
   },
- 
-  "homepage": "./",
-  "main": "public/electron.js",
+  "homepage": ".",
+  "main": "public/main.js",
   "dependencies": {
     "@coreui/coreui": "^3.2.2",
     "@coreui/icons": "2.0.0-beta.4",
@@ -116,6 +82,7 @@
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "build": "npm run react-build && npm run electron-build",
+    "build:package": "npm run react-build && electron-packager .",
     "start": "concurrently \"cross-env BROWSER=none npm run react-start\"  \"wait-on http://localhost:3000 && electron .\" "
   },
   "eslintConfig": {
