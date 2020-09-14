@@ -1,15 +1,15 @@
 import React, {useContext} from 'react';
 import { connect } from 'react-redux'
 import ActiveHandler from './Active'
-// import { ClientHandeler } from '../../../LocalDB/ClientDB'
+import { ClientHandeler } from '../../../LocalDB/ClientDB'
 import { ShopHandeler } from '../../../LocalDB/ShopDB'
 
 const ActionButton = () => {
     const { PrintPos } = useContext(ShopHandeler) //PrintPos
-    // const { Active } = useContext(ClientHandeler)
+    const {getBilldetails}  = useContext(ClientHandeler)
     return (
         <div>
-           <ActiveHandler PrintPos={PrintPos} />
+           <ActiveHandler PrintPos={PrintPos} getBilldetails={getBilldetails}/>
         </div>
     )
 

@@ -12,10 +12,7 @@ import {
 
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import logofull from '../../logoFullDark.png';
 
-// // routes config
-// import routes from '../routes'
 
 import { 
 
@@ -50,7 +47,7 @@ const TheHeader = () => {
         onClick={toggleSidebar}
       />
       <CHeaderBrand className="mx-auto d-lg-none" to="/">
-        <CIcon name="logo" height="48" src = {logofull} alt="Logo"/>
+        <CIcon name="logo" height="48" src = {'http://localhost:4545/static/img/logoFullDark.png'} alt="Logo"/>
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">

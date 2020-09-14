@@ -10,7 +10,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Chip } from '@material-ui/core';
 import AddTable from './Prefarence/addTable'
 import PrintSetup from './Prefarence/PrintSetup'
-
+import AddShop from './Addshop'
 const style = theme => ({
     Accordion: {
         borderRadius: 0,
@@ -46,7 +46,7 @@ class Shop extends Component {
         this.openDilog = this.openDilog.bind(this)
     }
     componentDidMount() {
-        this.openDilog()
+        // this.openDilog()
     }
     componentWillUnmount() {
         this.abortController.abort()
@@ -72,16 +72,16 @@ class Shop extends Component {
                                 <Typography className={classes.heading}>General settings</Typography>
                             </AccordionSummary>
                             <AccordionDetails style={{ borderTop: '1px solid #f0f0f0' }}>
-
+                                <AddShop/>
                             </AccordionDetails>
                         </Accordion>
-                        <Accordion className={classes.Accordion} >
+                        <Accordion className={classes.Accordion} expanded>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1bh-content"
                                 id="panel1bh-header"
                             >
-                                <Typography className={classes.heading}>Table Setup</Typography>
+                                <Typography className={classes.heading}>Dine In</Typography>
                                 <Chip
                                     variant="outlined"
                                     size="small"
@@ -94,7 +94,7 @@ class Shop extends Component {
                                 <AddTable />
                             </AccordionDetails>
                         </Accordion>
-                        <Accordion className={classes.Accordion} >
+                        <Accordion className={classes.Accordion} expanded>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1bh-content"

@@ -57,6 +57,11 @@ export default [
         name: 'Employe',
         to: '/Employe',  
       },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Test',
+        to: '/Test',  
+      },
     ],
     
   },

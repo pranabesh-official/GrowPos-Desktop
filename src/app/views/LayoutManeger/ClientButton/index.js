@@ -1,9 +1,6 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeLite, ThemeDark, success, secondary, warning, danger, info , light } from '../../LayoutManeger/Themes'
-import table from './dinner.png'
-import delivery from './food-delivery.png'
-import takeAway from './take-away.png'
+import { ThemeLite, ThemeDark, success, secondary, warning, danger, info, light } from '../../LayoutManeger/Themes'
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,12 +15,13 @@ const getStatus = (status) => {
         default: return info
     }
 }
+
 const getType = (Type) => {
     switch (Type) {
-        case 'Table': return table
-        case 'Delivery': return delivery
-        case 'TakeAway': return takeAway
-        default: return takeAway
+        case 'Table': return 'http://localhost:4545/static/img/dinner.png'
+        case 'Delivery': return 'http://localhost:4545/static/img/food-delivery.png'
+        case 'TakeAway': return 'http://localhost:4545/static/img/take-away.png'
+        default: return 'http://localhost:4545/static/img/take-away.png'
     }
 }
 const useStyles = makeStyles(theme => ({
@@ -49,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     logo: () => {
         return {
             width: '30%',
-            padding:'2px'
+            padding: '2px'
         }
     },
     buttonStatus: props => {
@@ -71,7 +69,7 @@ const StyledButton = withStyles({
         borderRadius: 0,
         padding: '0 0px',
         margin: '2px',
-        
+
         textAlign: 'initial',
         "&:hover": {
             backgroundColor: ThemeDark,
@@ -82,36 +80,41 @@ const StyledButton = withStyles({
         }
     },
     // cardAction: {
-        
+
     // }
 })(Card);
 
 export default function ClientButton(props) {
     const classes = useStyles(props);
-    const { onClick, label, Type, amount} = props
+    const { onClick, label, Type, amount } = props
 
     let key = 0
     const keygen = () => {
         key = key + 1
         return key
     }
+   
+    
     return (
         <StyledButton className={classes.buttonStatus} key={keygen()}>
             <ButtonBase
                 // className={classes.cardAction}
                 onClick={onClick}
-                
+
             >
                 <img
                     className={classes.logo}
                     src={getType(Type)}
                     alt="Paella dish"
-                    
+
                 />
+                
                 <div className={classes.details}>
                     <CardContent className={classes.content} key={keygen()}>
-                    <Typography className={classes.heading}>{label}</Typography>
-                    {amount && <Typography className={classes.secondaryHeading}>{amount.toFixed(2)}</Typography>}
+                        <Typography className={classes.heading}>{label}</Typography>
+                        {amount === 0 ? <Typography className={classes.secondaryHeading}>{"New Order"}</Typography>
+                            : <Typography className={classes.secondaryHeading}>{amount.toFixed(2)}</Typography>
+                        }
                     </CardContent>
                 </div>
             </ButtonBase>

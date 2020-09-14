@@ -1,4 +1,4 @@
-import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, RESET_OT, GET_ACTIVE } from '../action/types'
+import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, RESET_OT, GET_ACTIVE, GET_BILLING_DETAILS } from '../action/types'
 
 const initialState = {
   Cart: {},
@@ -24,8 +24,10 @@ const initialState = {
 }
 
 const updateObject = (oldObject, newValues) => {
+ 
   return Object.assign({}, oldObject, newValues)
 }
+
 
 const cartItemInArray = (array, itemId, updateItemCallback) => {
   const updatedItems = array.map(item => {
@@ -37,9 +39,16 @@ const cartItemInArray = (array, itemId, updateItemCallback) => {
   })
   return updatedItems
 }
+
 const addNew = (arry, product) => {
   const AddNew = [...arry]
   const AddProduct = Object.assign(product, { cartQnt: 1 })
+  AddNew.push(AddProduct)
+  return AddNew
+}
+const NewOt = (arry, product) => {
+  const AddNew = [...arry]
+  const AddProduct = Object.assign(product, { PrintQnt: 1 })
   AddNew.push(AddProduct)
   return AddNew
 }
@@ -77,7 +86,7 @@ const Cart = (state = initialState, action) => {
       const Status = CheakActive(state.ActiveData, find._id)
       if (Status) {
         const ActiveData = state.ActiveData.find(item => item.ClientId === find._id)
-      
+
         return {
           ...state,
           selectClient: find,
@@ -96,7 +105,7 @@ const Cart = (state = initialState, action) => {
           }
         }
       } else {
-        
+
         return {
           ...state,
           selectClient: find,
@@ -119,12 +128,12 @@ const Cart = (state = initialState, action) => {
         const kotExist = IsExist(state.Active.Ot, action.payload)
         const OldCart = [...state.Active.Cart]
         const updatedCart = cartItemInArray(OldCart, action.payload, add => {
-          return updateObject(add, add.cartQnt = add.cartQnt + 1)
+          return updateObject(add, add.cartQnt = add.cartQnt + 1,)
         })
         if (kotExist) {
           const OldOt = [...state.Active.Ot]
-          const updatedOt = cartItemInArray(OldOt, action.payload, add => {
-            return updateObject(add, add.cartQnt = add.cartQnt + 1)
+          const updatedOt = cartItemInArray(OldOt, action.payload, addot => {
+            return updateObject(addot, addot.PrintQnt = addot.PrintQnt + 1)
           })
           return {
             ...state,
@@ -135,7 +144,7 @@ const Cart = (state = initialState, action) => {
             }
           }
         } else {
-          const newOt = addNew(state.Active.Ot, action.payload)
+          const newOt = NewOt(state.Active.Ot, action.payload)
           return {
             ...state,
             Active: {
@@ -147,7 +156,7 @@ const Cart = (state = initialState, action) => {
         }
       } else {
         const newdata = addNew(state.Active.Cart, action.payload)
-        const newOt = addNew(state.Active.Ot, action.payload)
+        const newOt = NewOt(state.Active.Ot, action.payload)
         return {
           ...state,
           Active: {
@@ -166,8 +175,8 @@ const Cart = (state = initialState, action) => {
       })
       if (kotExist) {
         const OldOt = [...state.Active.Ot]
-        const updatedOt = cartItemInArray(OldOt, action.payload, add => {
-          return updateObject(add, add.cartQnt = add.cartQnt + 1)
+        let updatedOt = cartItemInArray(OldOt, action.payload, add => {
+          return updateObject(add, add.PrintQnt = add.PrintQnt + 1)
         })
         return {
           ...state,
@@ -178,7 +187,7 @@ const Cart = (state = initialState, action) => {
           }
         }
       } else {
-        const newOt = addNew(state.Active.Ot, action.payload)
+        const newOt = NewOt(state.Active.Ot, action.payload)
         return {
           ...state,
           Active: {
@@ -197,7 +206,7 @@ const Cart = (state = initialState, action) => {
       if (OtExist) {
         const OldOt = [...state.Active.Ot]
         const updatedOt = cartItemInArray(OldOt, action.payload, add => {
-          return updateObject(add, add.cartQnt = add.cartQnt - 1)
+          return updateObject(add, add.PrintQnt = add.PrintQnt - 1)
         })
         return {
           ...state,
@@ -243,22 +252,30 @@ const Cart = (state = initialState, action) => {
 
     case RESET_OT:
       const ActiveData = state.ActiveData.find(item => item.ClientId === state.selectClient._id)
-        return {
-          ...state,
-          Active: {
-            ...state.Active,
-            Cart: ActiveData.Cart,
-            Ot: ActiveData.Ot,
-            ClientId: ActiveData._id,
-            Stutas: ActiveData.table_Status,
-            _id: ActiveData._id,
-            displayNo: ActiveData.No,
-            isActive: true,
-            OTPrint: ActiveData.OTPrint,
-            OTSno: ActiveData.OTSno,
-            Type: 'Table'
-          }
+      return {
+        ...state,
+        Active: {
+          ...state.Active,
+          Cart: ActiveData.Cart,
+          Ot: ActiveData.Ot,
+          ClientId: ActiveData._id,
+          Stutas: ActiveData.table_Status,
+          _id: ActiveData._id,
+          displayNo: ActiveData.No,
+          isActive: true,
+          OTPrint: ActiveData.OTPrint,
+          OTSno: ActiveData.OTSno,
+          Type: 'Table'
         }
+      }
+    case GET_BILLING_DETAILS:
+      return {
+        ...state,
+        Active: {
+          ...state.Active,
+          [action.name]: action.value
+        }
+      }
     default:
       return state
   }

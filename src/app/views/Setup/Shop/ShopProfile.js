@@ -9,7 +9,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import { DataConsumer } from '../../../LocalDB'
 import { ShopData } from '../../../LocalDB/ShopDB'
-import icon from './location.png'
+import { Grid } from '@material-ui/core';
+
 
 const style = theme => ({
     root: {
@@ -48,17 +49,17 @@ class ShopProfile extends Component {
                 {({ ShopData, _id }) => (
                     <Card className={classes.Profile}>
                         <DataConsumer>
-                            {({deleteItem}) => (
+                            {({ deleteItem }) => (
                                 <CardHeader
                                     avatar={
                                         <img
-                                            src={icon}
+                                            src={'http://localhost:4545/static/img/location.png'}
                                             className={classes.avatar}
                                             alt="icon"
                                         />
                                     }
                                     action={
-                                        <IconButton aria-label="delete" color="secondary" onClick={() =>{
+                                        <IconButton aria-label="delete" color="secondary" disabled={_id ? false : true} onClick={() => {
                                             deleteItem(_id)
                                             sessionStorage.removeItem("ShopId")
                                         }} >
@@ -71,10 +72,35 @@ class ShopProfile extends Component {
                             )}
                         </DataConsumer>
                         <CardContent className={classes.root}>
-                            <Typography className={classes.heading}>Shop Contact</Typography>
-                            <Typography className={classes.secondaryHeading}>{ShopData.Contact ? ShopData.Contact : ''}</Typography>
-                            <Typography className={classes.heading}>About</Typography>
-                            <Typography className={classes.secondaryHeading}>{ShopData.About ? ShopData.About : ''}</Typography>
+                            <Grid container spacing={1}>
+                                <Grid iteam xs={6} sm={6}>
+                                    <Typography className={classes.heading}>Shop Contact</Typography>
+                                </Grid>
+                                <Grid iteam xs={6} sm={6}>
+                                    <Typography className={classes.secondaryHeading}>{ShopData.Contact ? ShopData.Contact : ''}</Typography>
+                                </Grid>
+                                <Grid iteam xs={6} sm={6}>
+                                    <Typography className={classes.heading}>Location</Typography>
+                                </Grid>
+                                <Grid iteam xs={6} sm={6}>
+                                    <Typography className={classes.secondaryHeading}>{ShopData.Location ? ShopData.Location : 'Location Not Set'}</Typography>
+                                </Grid>
+                                {ShopData.TaxName &&
+                                    <>
+                                        <Grid iteam xs={6} sm={6}>
+                                            <Typography className={classes.heading}>{ShopData.TaxName.toUpperCase()}</Typography>
+                                        </Grid>
+                                        <Grid iteam xs={6} sm={6}>
+                                            <Typography className={classes.secondaryHeading}>{ShopData.TaxNo ? ShopData.TaxNo : ''}</Typography>
+                                        </Grid>
+                                    </>
+                                }
+
+                                <Grid iteam xs={6} sm={6}>
+                                    <Typography className={classes.heading}>About</Typography>
+                                    <Typography className={classes.secondaryHeading}>{ShopData.About ? ShopData.About : ''}</Typography>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                         <CardActions disableSpacing>
                         </CardActions>

@@ -41,6 +41,7 @@ class ClientProvider extends Component {
         }
         this.billDetails = this.billDetails.bind(this);
         this.addCart = this.addCart.bind(this);
+        this.getBilldetails = this.getBilldetails.bind(this);
     }
     componentDidMount() {
 
@@ -57,7 +58,11 @@ class ClientProvider extends Component {
         this.setState({ [name]: value });
     }
 
-
+    getBilldetails(){
+        return {
+            ...this.state
+        }
+    }
 
     render() {
       
@@ -65,9 +70,9 @@ class ClientProvider extends Component {
             <Provider
                 value={{
                     ...this.state,
-                    ...this.props.Cart,
                     billDetails: this.billDetails,
-                    addCart : this.addCart,
+                    addCart : this.addCart, 
+                    getBilldetails : this.getBilldetails,
                 }}
             >
                 <>

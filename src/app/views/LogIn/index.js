@@ -8,8 +8,7 @@ import { userPostFetch, getProfileFetch } from '../../store/action/Auth'
 import './css/style.css'
 import './css/font-awesome-4.7.0/css/font-awesome.min.css'
 import './css/main.css'
-import NewWave from './NewWave.png';
-import bg from '../../../logo.png';
+
 
 
 
@@ -55,10 +54,10 @@ class Login extends Component {
                 <>
                     {isElectron && <Titlebar />}
                     <div>
-                        <img className="wave" src={NewWave} alt="NewWave"></img>
+                        <img className="wave" src={'http://localhost:4545/static/img/NewWave.png'} alt="NewWave"></img>
                         <div className="container">
                             <div className="img">
-                                <img src={bg} alt="bg" />
+                                <img src={'http://localhost:4545/static/img/logo.png'} alt="bg" />
                             </div>
                             <div className="login-content">
                                 <form className="form" name="form" onSubmit={this.handleSubmit}>

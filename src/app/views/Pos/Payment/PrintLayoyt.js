@@ -182,7 +182,7 @@ export const BillLayout = (Data) => {
     if(Data.netAmount){
         const Net = {
             type: 'text',
-            value: `NET AMOUNT : ${Data.netAmount}` ,
+            value: `NET AMOUNT : ${Data.netAmount.toFixed(2)}` ,
             style: `background: #EEE; text-align: end;`,
             css:  { "font-weight": "bold", "font-size": "11px", "margin-top": "2px", 'margin': '0px', "padding":"5px"}
             
@@ -192,7 +192,7 @@ export const BillLayout = (Data) => {
     if(Data.tax){
         const Tax = {
             type: 'text',
-            value: `TAX : ${Data.tax}` ,
+            value: `TAX : ${Data.tax.toFixed(2)}` ,
             style: `background: #EEE; text-align: end;`,
             css:  { "font-weight": "bold", "font-size": "10px", 'margin': '0px', "padding":"5px"}
             
@@ -200,9 +200,10 @@ export const BillLayout = (Data) => {
         layout.push(Tax)
     }
     if(Data.discount){
+        console.log(typeof(Data.discount))
         const Tax = {
             type: 'text',
-            value: `DISCOUNT : ${Data.discount}` ,
+            value: `DISCOUNT : ${Data.discount.toFixed(2)}` ,
             style: `background: #EEE; text-align: end;`,
             css:  { "font-weight": "bold", "font-size": "10px", 'margin': '0px', "padding":"5px"}
             
@@ -212,12 +213,30 @@ export const BillLayout = (Data) => {
     if(Data.total){
         const total = {
             type: 'text',
-            value: `TOTAL : ${Data.total}` ,
+            value: `TOTAL : ${Data.total.toFixed(2)}` ,
             style: `background: #EEE; text-align: end;`,
             css:  { "font-weight": "bold", "font-size": "11px",'margin': '0px' , "padding":"5px"}
             
         }
         layout.push(total)
+    }
+    if(Data.complementary){
+        const total = {
+            type: 'text',
+            value: `NOW TOTAL : 00.00` ,
+            style: `background: #EEE; text-align: end;`,
+            css:  { "font-weight": "bold", "font-size": "11px",'margin': '0px' , "padding":"5px"}
+            
+        }
+        layout.push(total)
+        const complementary = {
+            type: 'text',
+            value: `complementary !` ,
+            style: ` text-align: center;`,
+            css:  { "font-weight": "bold", "font-size": "11px",'margin': '5px' , "padding":"5px"}
+            
+        }
+        layout.push(complementary)
     }
     
     const Footerheading = {
@@ -244,5 +263,6 @@ export const BillLayout = (Data) => {
         css: { "font-size": "10px", "color": "#666", "line-height": "1.2em", "margin": "2px" }
     }
     layout.push(TC)
+
     return layout
 }

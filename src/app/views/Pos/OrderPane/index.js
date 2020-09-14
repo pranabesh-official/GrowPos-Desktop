@@ -8,7 +8,7 @@ import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { TableBilling } from './BillingDetails'
+import  TableBilling  from './BillingDetails'
 import Items from './Items'
 // import SearchField from '../../LayoutManeger/SearchField'
 

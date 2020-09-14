@@ -5,7 +5,7 @@ import ProuductSetup from './views/Setup/ProuductSetup'
 import TaxSetup from './views/Setup/TaxSetup'
 import Employe from './views/Employe'
 import ShopSetup from './views/Setup/Shop'
-
+import Test from './views/Setup/test'
 
 
 
@@ -19,6 +19,7 @@ const routes = [
   { path: '/ShopSetup', name: 'ShopSetup', component: ShopSetup },
   { path: '/TaxSetup', name: 'TaxSetup', component: TaxSetup },
   { path: '/Employe', name: 'Employe', component: Employe },
+  { path: '/Test', name: 'Test', component: Test },
 ];
 
 export default routes;

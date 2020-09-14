@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, Paper } from '@material-ui/core'
-import { Input, Checkbox, Button, RadioGroup } from '../../../LayoutManeger/FormManager'
+import { Input, Checkbox, Button, Select } from '../../../LayoutManeger/FormManager'
 import { connect } from 'react-redux'
 import { DataContext } from '../../../../LocalDB'
 import { withStyles } from '@material-ui/core/styles';
@@ -8,11 +8,11 @@ const style = (theme) => ({
     Card: {
         borderRadius: 0,
         border: 0,
-        padding: 5,
+        padding: 2,
         boxShadow: '0 0px 0px 0px ',
         background: 'white',
-        overflow: 'auto',
-        width: 600,
+        // overflow: 'auto',
+        width: '100%',
         // height:
     },
     CardBody: {
@@ -43,8 +43,10 @@ class AddShop extends Component {
             Contact: '',
             About: '',
             Location: '',
+            TaxName: '',
+            TaxNo: '',
             Bar: false,
-            Kitchen:false,
+            Kitchen: false,
         }
         this.handlesubmit = this.handlesubmit.bind(this)
         this.handleReset = this.handleReset.bind(this)
@@ -54,13 +56,13 @@ class AddShop extends Component {
         const addData = () => {
             return new Promise((resolve, reject) => {
                 let ResturantType = null
-                if(this.state.Type === 'Resturant'){
+                if (this.state.Type === 'Resturant') {
                     ResturantType = []
-                    if(this.state.Bar){
-                        ResturantType.push({name:'Bar', id: 1 })
+                    if (this.state.Bar) {
+                        ResturantType.push({ name: 'Bar', id: 1 })
                     }
-                    if(this.state.Bar){
-                        ResturantType.push({Kitchen:'Bar', id: 2 })
+                    if (this.state.Bar) {
+                        ResturantType.push({ Kitchen: 'Bar', id: 2 })
                     }
                 }
                 let data = {
@@ -72,9 +74,11 @@ class AddShop extends Component {
                     Bar: this.state.Bar,
                     Kitchen: this.state.Kitchen,
                     shopAdd: true,
-                    ResturantType:ResturantType 
+                    ResturantType: ResturantType,
+                    TaxName: this.state.TaxName || null,
+                    TaxNo: this.state.TaxNo || null,
                 }
-                if(this.state.Type === 'Resturant'){
+                if (this.state.Type === 'Resturant') {
                     if (this.state.Type && this.state.Name) {
                         this.context.addItem('Shop', data).then((d) => {
                             resolve(d)
@@ -86,7 +90,7 @@ class AddShop extends Component {
             })
         }
         addData().then((d) => {
-            this.props.handleClose()
+            this.handleReset()
         })
     }
     handleChange(e) {
@@ -101,11 +105,13 @@ class AddShop extends Component {
             About: '',
             Location: '',
             Bar: false,
-            Kitchen:false,
+            Kitchen: false,
+            TaxName: '',
+            TaxNo: '',
         });
     }
     render() {
-        const { ShopType } = this.props.Shop
+        const { ShopType, _id} = this.props.Shop
         const { classes } = this.props;
         return (
             <Paper className={classes.Card} >
@@ -125,12 +131,13 @@ class AddShop extends Component {
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={12} >
-                                            <RadioGroup
+                                            <Select
                                                 name="Type"
+                                                label="Business Type"
                                                 value={this.state.Type}
                                                 options={ShopType}
                                                 optionsValue={'name'}
-                                                optionsDisplay={'name'}
+                                                optionsDisplay={'display'}
                                                 onChange={this.handleChange}
                                             />
                                         </Grid>
@@ -138,7 +145,7 @@ class AddShop extends Component {
                                 </Grid>
                                 <Grid item xs={6} sm={6} >
                                     <Grid container spacing={1} >
-                                    <Grid item xs={12} sm={12} style={{borderLeft: '1px solid #f0f0f0'}}>
+                                        <Grid item xs={12} sm={12} style={{ borderLeft: '1px solid #f0f0f0' }}>
                                             <Checkbox
                                                 label="Kitchen"
                                                 name="Kitchen"
@@ -160,6 +167,25 @@ class AddShop extends Component {
                                 </Grid>
                                 <Grid item xs={12} sm={12} >
                                     <Grid container spacing={1} >
+                                        <Grid item xs={5} sm={5} >
+                                            <Input
+                                                name="TaxName"
+                                                label="Tax Name ( Optional ) "
+                                                type='text'
+                                                value={this.state.TaxName.toUpperCase()}
+                                                onChange={this.handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={7} sm={7} >
+                                            <Input
+                                                name="TaxNo"
+                                                label={this.state.TaxName ? `${this.state.TaxName.toUpperCase()} No` : "Tax No"}
+                                                type='text'
+                                                disabled={this.state.TaxName ? false : true}
+                                                value={this.state.TaxNo}
+                                                onChange={this.handleChange}
+                                            />
+                                        </Grid>
                                         <Grid item xs={6} sm={6} >
                                             <Input
                                                 name="Contact"
@@ -198,11 +224,11 @@ class AddShop extends Component {
                                 <Button
                                     type="submit"
                                     text="Submit"
-                                    onClick={this.handlesubmit}
+                                    color="primary"
+                                    onClick={_id ? null :this.handlesubmit}
                                 />
                                 <Button
                                     text="Reset"
-                                    color="default"
                                     onClick={this.handleReset}
                                 />
                             </div>

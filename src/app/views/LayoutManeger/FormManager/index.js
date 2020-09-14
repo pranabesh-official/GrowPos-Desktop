@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
    
 }))
 export const Input = (props) => {
-    const { name, label, value, error = null, onChange, size, type, disabled } = props;
+    const { name, label, value, error = null, onChange, size, type, disabled, defaultValue } = props;
     return (
         <TextField
             variant="outlined"
@@ -72,6 +72,7 @@ export const Input = (props) => {
             size={size || 'small'}
             type={type || 'text'}
             fullWidth
+            defaultValue={defaultValue}
             error={error}
         />
     )
@@ -94,7 +95,7 @@ export const Button = (props) => {
     )
 }
 export const Select = (props) => {
-    const { name, label, value, error = null, onChange, options, optionsValue, optionsDisplay, size, disabled } = props;
+    const { name, label, value, error = null, onChange, options, optionsValue, optionsDisplay, size, disabled ,defaultValue} = props;
     let key = 0
     const keygen = () => {
         key = key + 1
@@ -110,6 +111,7 @@ export const Select = (props) => {
             disabled={disabled}
             fullWidth
             value={value}
+            defaultValue={defaultValue}
             onChange={onChange}
             error={error}
         >

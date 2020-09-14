@@ -115,6 +115,7 @@ class AddTable extends Component {
                                                         status={tableExsits() && filter.table_Status}
                                                         Type='Table'
                                                         size={110}
+                                                        amount={0}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6} sm={6}>

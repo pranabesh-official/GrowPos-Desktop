@@ -7,8 +7,7 @@ const initialState = {
     _id: null,
     userData: null,
     ShopType: [
-        { name: 'Resturant', id: 1 },
-        { name: 'Shop', id: 2 },
+        { name: 'Resturant', id: 1 , display:"Food And Drink" },
     ],
     printSetups: [],
     printers: false

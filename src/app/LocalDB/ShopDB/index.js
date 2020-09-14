@@ -11,7 +11,7 @@ import { ThemeDark, danger } from '../../views/LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
 import { GetKot } from '../../store/action/Kot'
-import { BillLayout } from '../../Utils/PrintLayout'
+
 
 if (isElectron) {
     var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
@@ -49,8 +49,6 @@ class ShopProvider extends Component {
         this.handleClickOpen = this.handleClickOpen.bind(this)
         this.handleClose = this.handleClose.bind(this)
         this.PrintPos = this.PrintPos.bind(this)
-        this.genKot = this.genKot.bind(this)
-        this.genBill = this.genBill.bind(this)
 
     }
     handleClickOpen() {
@@ -59,45 +57,7 @@ class ShopProvider extends Component {
 
     handleClose() {
         this.setState({ open: false })
-    }
-    genKot(Data) {
-        
-
-        
-    }
-
-    genBill(Data) {
-        const generator = require('generate-serial-number');
-        const datetime = () => {
-            const currentdate = new Date();
-            const datetime = "DATE: " + currentdate.getDate() + "/"
-                + (currentdate.getMonth() + 1) + "/"
-                + currentdate.getFullYear() + " TIME "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
-                + currentdate.getSeconds();
-            return datetime
-        }
-        let total = 0
-        let tableBody = []
-        Data.Data.forEach(element => {
-            tableBody.push({ Item: element.Name, Qnt: element.cartQnt, _id: element._id, Subtotal: element.cartQnt * element.Price })
-            total = total + element.cartQnt * element.Price
-        });
-    
-        const { ShopData } = this.props.Shop
-        const PrintData = {
-            header: `${ShopData.Name}`,
-            DateTime: datetime(),
-            subHeader: 'BILL',
-            barCode: generator.generate(10),
-            tableHeader: ['Item', 'Qnt', 'Subtotal'],
-            tableBody: tableBody,
-            TotalAmount: `TOTAL AMOUNT :${total}`,
-            Regard: 'Thank You For Comming'
-        }
-        return BillLayout(PrintData)
-    }
+    } 
 
     PrintPos(data, Type) {
         const setOption = (Type) => {
@@ -169,7 +129,6 @@ class ShopProvider extends Component {
             <Provider
                 value={{
                     ...this.props.Shop,
-                    genKot: this.genKot,
                     PrintPos: this.PrintPos,
                     handleClickOpen: this.handleClickOpen,
                 }}

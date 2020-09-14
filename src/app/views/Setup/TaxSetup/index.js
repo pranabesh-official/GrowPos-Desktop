@@ -1,71 +1,102 @@
 import React, { Component } from 'react';
 import { Grid } from '@material-ui/core';
-import ViewData from './ViweTax'
-import AddTax from './AddTax'
+import { connect } from 'react-redux'
 import { Tab } from 'semantic-ui-react'
+import { ThemeBackground } from '../../LayoutManeger/Themes'
+import { withStyles } from '@material-ui/core/styles';
 import DataProvider from '../../../LocalDB'
-import { View } from 'react-desktop/macOs';
-// import DataTableUtils from '../../LayoutManeger/Datatable/utils'
+import Taxes from './TaxSetup'
+
+const style = (theme) => ({
+  CartBody: {
+    borderRadius: 0,
+    border: 0,
+    padding: '0 0px',
+    boxShadow: '0 0px 0px 0px ',
+    background: 'white',
+    overflow: 'auto',
+  },
+  CartAction: {
+    borderRadius: 0,
+    border: 0,
+    height: '60px',
+    padding: '0 0px',
+    boxShadow: '0 0px 0px 0px ',
+    background: 'white',
+    // overflow: 'auto',
+    borderTop: '1px solid #f0f0f0'
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: '40%',
+    flexShrink: 0,
+    alignItems: 'center',
+    borderBottom: '1px solid #f0f0f0'
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+    alignItems: 'center',
+    borderBottom: '1px solid #f0f0f0'
+  },
+
+});
 
 class TaxSetup extends Component {
   constructor(props) {
     super(props)
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
     this.state = {
       width: 0,
       height: 0,
+      activeIndex: 0,
+      current: null
     };
   }
-  
+  handleTabChange(activeIndex, current) {
+    this.setState({ activeIndex, current })
+  }
   render() {
-    localStorage.setItem('lastPage', '/CategorySetup')
-    const { height } = this.state
+    const { height, activeIndex } = this.state
+    // const { classes } = this.props;
+    const style = {
+      background: ThemeBackground,
+    }
     const panes = [
+
       {
-        menuItem: 'Add TAX',
+        menuItem: 'TAX',
         render: () => (
-          <Tab.Pane attached={false}>
-            <Grid container direction='column'>
-              <DataProvider>
-                <AddTax />
-              </DataProvider>
+          <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
+            <Grid container style={style} >
+              <Grid item xs={12} sm={12}>
+                <DataProvider>
+                  <Taxes height={height} />
+                </DataProvider>
+              </Grid>
             </Grid>
           </Tab.Pane>
         )
-      },
-    
+      }
     ]
-    const style = {
-      background: "white",
-      display: 'flex',
-      flexWrap: 'wrap',
-      width: '100%',
-      height: '100%',
-      variant: "scrollable",
-    }
+
     return (
       <Grid container spacing={1} style={{ padding: '5px' }}>
-        <Grid item xs={12} sm={5} id='FormCategory' style={{ height: `${height - 10}px` }}>
+        <Grid item xs={12} sm={12} >
           <Tab
             menu={{ borderless: true, attached: false, tabular: false, }}
             panes={panes}
+            activeIndex={activeIndex}
+            onTabChange={() => this.handleTabChange(0, null)}
           />
-        </Grid>
-        <Grid item xs={12} sm={7} id='ViewCategory' style={{ height: `${height - 10}px` }}>
-          <View padding="0px" margin="0px" width='100%' height={`${height - 10}px`}>
-            <Grid container direction="column" style={style}  >
-              <DataProvider>
-                <ViewData />
-              </DataProvider>
-            </Grid>
-          </View>
         </Grid>
       </Grid>
     );
   }
+
   updateDimensions = () => {
     this.setState({ width: document.getElementById('Content').clientWidth, height: document.getElementById('Content').clientHeight });
-    // this.reset()
   };
   componentDidMount() {
     if (this.state.width !== document.getElementById('Content').clientWidth) {
@@ -75,11 +106,16 @@ class TaxSetup extends Component {
   }
 
   componentWillUnmount() {
-    // this.reset()
     window.removeEventListener('resize', this.updateDimensions);
   }
 
 }
+const mapStateToProps = (state) => {
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(TaxSetup))
 
 
-export default TaxSetup
