@@ -1,8 +1,7 @@
 import React from 'react'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, makeStyles, IconButton } from '@material-ui/core'
 import Controls from "./controls/Controls";
-import NotListedLocationIcon from '@material-ui/icons/NotListedLocation';
-
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const useStyles = makeStyles(theme => ({
     dialog: {
@@ -41,7 +40,7 @@ export default function ConfirmDialog(props) {
         <Dialog open={confirmDialog.isOpen} classes={{ paper: classes.dialog }}>
             <DialogTitle className={classes.dialogTitle}>
                 <IconButton disableRipple className={classes.titleIcon}>
-                    <NotListedLocationIcon />
+                    <DeleteForeverIcon />
                 </IconButton>
             </DialogTitle>
             <DialogContent className={classes.dialogContent}>

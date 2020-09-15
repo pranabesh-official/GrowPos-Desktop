@@ -12,7 +12,8 @@ import Dot from '../../../../components/statusDot'
 import Popup from '../../../../components/Popup'
 import AddTax from '../AddTax'
 import { connect } from 'react-redux'
-
+import Notification from "../../../../components/Notification";
+import ConfirmDialog from "../../../../components/ConfirmDialog";
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -68,13 +69,15 @@ const headCells = [
 ]
 
 const Taxes = (props) => {
-    const { addItem , editItem} = useContext(DataContext) //
+    const { addItem , editItem , deleteItem} = useContext(DataContext) //
     const { Tax } = props.data
     const [records, setRecords] = useState(Tax)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
+    const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+    const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
     const {
         TblContainer,
         TblHead,
@@ -103,6 +106,11 @@ const Taxes = (props) => {
                 resetForm()
                 setOpenPopup(false)
                 setRecords(Tax)
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
+                })
             })
         if(data._id)
             editItem(data._id, data).then(() => {
@@ -110,21 +118,33 @@ const Taxes = (props) => {
                 setOpenPopup(false)
                 setRecords(Tax)
                 setRecordForEdit(null)
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
+                })
             })
 
-
-
-        // setRecordForEdit(null)
-        // setNotify({
-        //     isOpen: true,
-        //     message: 'Submitted Successfully',
-        //     type: 'success'
-        // })
     }
 
     const openInPopup = item => {
         setRecordForEdit(item)
         setOpenPopup(true)
+    }
+    const onDelete = id => {
+        setConfirmDialog({
+            ...confirmDialog,
+            isOpen: false
+        })
+        deleteItem(id).then(() => {
+            setRecords(Tax)
+            setNotify({
+                isOpen: true,
+                message: 'Deleted Successfully',
+                type: 'error'
+            })
+            
+        })
     }
     return (
         <>
@@ -173,8 +193,14 @@ const Taxes = (props) => {
                                         </Controls.ActionButton>
                                         <Controls.ActionButton
                                             color="secondary"
-
-                                        >
+                                            onClick={() => {
+                                                setConfirmDialog({
+                                                    isOpen: true,
+                                                    title: 'Are you sure to delete this record?',
+                                                    subTitle: "You can't undo this operation",
+                                                    onConfirm: () => { onDelete(item._id) }
+                                                })
+                                            }}>
                                             <CloseIcon fontSize="inherit" />
                                         </Controls.ActionButton>
                                     </TableCell>
@@ -197,6 +223,14 @@ const Taxes = (props) => {
                     recordForEdit={recordForEdit}
                 />
             </Popup>
+            <Notification
+                notify={notify}
+                setNotify={setNotify}
+            />
+            <ConfirmDialog
+                confirmDialog={confirmDialog}
+                setConfirmDialog={setConfirmDialog}
+            />
         </>
     )
 

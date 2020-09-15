@@ -5,7 +5,6 @@ export const ThemeLite = '#3c4b64'
 export const ThemeDark = '#2a3446'
 export const ThemeBackground = '#f0f0f0'
 export const ThemeItem = '#321fdb'
-
 export const secondary = '#ced2d8'
 export const primary = '#321fdb'
 export const success = '#21ba45'
@@ -20,6 +19,17 @@ export const theme = createMuiTheme({
         danger: danger,
     },
     palette: {
+       primary:{
+           main:primary,
+         
+           themelight:light,
+           themedark:dark,
+           success,
+           info,
+       },
+       secondary:{
+           main:danger
+       },
        
     },
     shape: {

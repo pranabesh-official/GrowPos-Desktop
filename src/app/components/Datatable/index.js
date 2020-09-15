@@ -9,8 +9,8 @@ const useStyles = makeStyles(theme => ({
             boxShadow: '0 0px 0px 0px ',
             padding: 8,
             fontWeight: '400',
-            color: theme.palette.primary.main,
-            backgroundColor: theme.palette.primary.light,
+            color: theme.palette.primary.themelight,
+            backgroundColor: theme.palette.primary.themedark,
             justifyContent:"center"
             
         },

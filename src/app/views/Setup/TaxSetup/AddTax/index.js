@@ -54,7 +54,6 @@ const AddTax = (props) => {
       })
     }
   }, [recordForEdit, setValues])
-  console.log(values)
   return (
     <DataConsumer>
       {({ Category }) => (
