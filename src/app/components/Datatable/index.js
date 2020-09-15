@@ -3,16 +3,23 @@ import { Table, TableHead, TableRow, TableCell, makeStyles, TablePagination, Tab
 
 const useStyles = makeStyles(theme => ({
     table: {
-        marginTop: 0,
+        marginTop: 5,
+        boxShadow: '0 0px 0px 0px ',
         '& thead th': {
-            // height: 30 ,
+            boxShadow: '0 0px 0px 0px ',
             padding: 8,
             fontWeight: '400',
             color: theme.palette.primary.main,
             backgroundColor: theme.palette.primary.light,
+            justifyContent:"center"
+            
         },
         '& tbody td': {
             fontWeight: '300',
+            padding: 3,
+            boxShadow: '0 0px 0px 0px ',
+            justifyContent:"center"
+            
         },
         '& tbody tr:hover': {
             backgroundColor: '#fffbf2',
@@ -80,6 +87,7 @@ export default function useTable(records, headCells,filterFn) {
         rowsPerPageOptions={pages}
         rowsPerPage={rowsPerPage}
         count={records.length}
+
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
     />)

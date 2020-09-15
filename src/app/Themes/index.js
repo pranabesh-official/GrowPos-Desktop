@@ -15,7 +15,7 @@ export const light = '#ebedef'
 export const dark = '#636f83'
 export const warning = '#f9b115'
 
-export const themeColor = createMuiTheme({
+export const theme = createMuiTheme({
     status: {
         danger: danger,
     },
@@ -23,6 +23,11 @@ export const themeColor = createMuiTheme({
        
     },
     shape: {
+        borderRadius: 0,
+        // border: '1px solid rgba(34,36,38,.15)',
+        
+    },
+    GlobalBox:{
         borderRadius: 0,
         border: 0,
         boxShadow: '0 0px 0px 0px ',

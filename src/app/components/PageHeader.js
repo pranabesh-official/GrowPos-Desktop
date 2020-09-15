@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Card, Typography, makeStyles } from '@material-ui/core'
+import { Paper, Card, Typography, makeStyles, Button } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -33,7 +33,7 @@ export default function PageHeader(props) {
                 <Card className={classes.pageIcon}>
                     {icon}
                 </Card>
-                {/* <div className={classes.pageTitle}>
+                <div className={classes.pageTitle}>
                     <Typography
                         variant="h6"
                         component="div">
@@ -42,7 +42,7 @@ export default function PageHeader(props) {
                         variant="subtitle2"
                         component="div">
                         {subTitle}</Typography>
-                </div> */}
+                </div>
             </div>
         </Paper>
     )

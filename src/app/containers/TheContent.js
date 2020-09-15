@@ -7,7 +7,7 @@ import {
 import { ThemeProvider } from '@material-ui/core/styles';
 import { Ripple } from 'react-preloaders';
 import routes from '../routes'
-import { themeColor} from '../views/LayoutManeger/Themes'
+import { theme } from '../Themes'
 
 
 class TheContent extends Component {
@@ -28,7 +28,7 @@ class TheContent extends Component {
                     exact={route.exact}
                     name={route.name}
                     render={props => (
-                      <ThemeProvider theme={themeColor}>
+                      <ThemeProvider theme={theme}>
                         <route.component {...props} />
                       </ThemeProvider>
                     )} />

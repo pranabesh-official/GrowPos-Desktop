@@ -3,11 +3,9 @@ import { Table, TableHead, TableRow, TableCell, makeStyles, TablePagination, Tab
 
 const useStyles = makeStyles(theme => ({
     table: {
-        marginTop: 0,
+        marginTop: theme.spacing(3),
         '& thead th': {
-            // height: 30 ,
-            padding: 8,
-            fontWeight: '400',
+            fontWeight: '600',
             color: theme.palette.primary.main,
             backgroundColor: theme.palette.primary.light,
         },
@@ -49,13 +47,13 @@ export default function useTable(records, headCells,filterFn) {
             <TableRow>
                 {
                     headCells.map(headCell => (
-                        <TableCell key={headCell._id}
-                            sortDirection={orderBy === headCell._id ? order : false}>
+                        <TableCell key={headCell.id}
+                            sortDirection={orderBy === headCell.id ? order : false}>
                             {headCell.disableSorting ? headCell.label :
                                 <TableSortLabel
-                                    active={orderBy === headCell._id}
-                                    direction={orderBy === headCell._id ? order : 'asc'}
-                                    onClick={() => { handleSortRequest(headCell._id) }}>
+                                    active={orderBy === headCell.id}
+                                    direction={orderBy === headCell.id ? order : 'asc'}
+                                    onClick={() => { handleSortRequest(headCell.id) }}>
                                     {headCell.label}
                                 </TableSortLabel>
                             }

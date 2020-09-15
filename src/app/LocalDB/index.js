@@ -165,6 +165,7 @@ class DataProvider extends Component {
                     .then((updatedData) => {
                         updatedItems = oldItems.filter(item => item._id === _id ? updatedData : item);
                         this.setState({ items: updatedItems });
+                        this.props.SyncDb('AddItem')
                         resolve(updatedData)
                         this.loadAllData()
                     })

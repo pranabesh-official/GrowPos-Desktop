@@ -115,7 +115,6 @@ export default function Employees() {
                         label="Search Employees"
                         className={classes.searchInput}
                         InputProps={{
-                            
                             startAdornment: (<InputAdornment position="start">
                                 <Search />
                             </InputAdornment>)

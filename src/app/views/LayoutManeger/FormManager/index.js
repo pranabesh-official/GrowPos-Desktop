@@ -95,7 +95,7 @@ export const Button = (props) => {
     )
 }
 export const Select = (props) => {
-    const { name, label, value, error = null, onChange, options, optionsValue, optionsDisplay, size, disabled ,defaultValue} = props;
+    const { name, label, value, error = null, onChange, options, optionsValue, optionsDisplay, size, disabled ,defaultValue , ...other} = props;
     let key = 0
     const keygen = () => {
         key = key + 1
@@ -114,6 +114,7 @@ export const Select = (props) => {
             defaultValue={defaultValue}
             onChange={onChange}
             error={error}
+            {...other}
         >
             <MenuItem value="">None</MenuItem>
             {

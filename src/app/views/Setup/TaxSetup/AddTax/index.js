@@ -1,128 +1,111 @@
-import React, { Component } from 'react';
-import { Input, Button, Select } from '../../../LayoutManeger/FormManager'
-import {Chip, Grid } from '@material-ui/core';
-import { DataConsumer, DataContext } from '../../../../LocalDB'
+import React, { useContext, useEffect } from 'react'
+import { Grid } from '@material-ui/core'; //Chip
+import Controls from "../../../../components/controls/Controls";
+import { useForm } from '../../../../components/useForm';
+import { DataConsumer } from '../../../../LocalDB' //DataContext
+import { ShopHandeler } from '../../../../LocalDB/ShopDB'
 
-class AddTax extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      TaxName: '',
-      TaxPercent: '',
-      SelectCategory: ''
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handlesubmit = this.handlesubmit.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-  }
-  handleReset() {
-    this.setState({
-      TaxName: '',
-      TaxPercent: '',
-      SelectCategory: ''
-    });
-  }
 
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  }
-  handlesubmit() {
-    const { TaxName, TaxPercent, SelectCategory } = this.state
-    const {Category}= this.context
-    if(Category && TaxName){
-      var name= TaxName.toUpperCase()
-      var [filter] = Category.filter(item=>item._id === SelectCategory)
-      if (TaxName && SelectCategory) {
-        var groupName = `${filter.Name.toUpperCase()}-${TaxName.toUpperCase()}`
-      }
-      var data = {
-        Name: name,
-        Tax_Group_Name: groupName,
-        Category:filter.Name,
-        Category_Id:filter._id,
-        Percent: TaxPercent
-      }
-    }
-    
-    
-    if (TaxName && TaxPercent && SelectCategory) {
-      this.context.addItem('Tax', data)
-    }
-  };
-  render() {
-    const { TaxName, TaxPercent, SelectCategory } = this.state
-    var nikename = false
-    if (TaxName && SelectCategory) {
-      nikename = true
-    }
-    const {Category}= this.context
-    const [filter] = Category.filter(item=>item._id === this.state.SelectCategory)
 
-    return (
-      <DataConsumer>
-        {({ Category }) => (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12}>
-            {nikename &&
-              <Chip
-                variant="outlined"
-                size="small"
-                label={`Tax Group Name : ${filter.Name.toUpperCase()}-${TaxName.toUpperCase()}`}
-                clickable
-                style={{ marginBottom: '5px' }}
-              />
-            }
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Input
-                name="TaxName"
-                label="Tax Name"
-                type="name"
-                value={TaxName}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <Grid item xs={7} md={7}>
-              <Select 
-                label="Select Category"
-                name="SelectCategory"
-                value={SelectCategory}
-                options={Category}
-                optionsValue={'_id'}
-                optionsDisplay={'Name'}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <Grid item xs={5} sm={5}>
-              <Input
-                name="TaxPercent"
-                label="Tax Percent"
-                type="number"
-                value={TaxPercent}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <div>
-              <Button
-                type="submit"
-                text="Submit"
-                color="primary"
-                onClick={this.handlesubmit}
-              />
-              <Button
-                text="Reset"
-                color="default"
-                onClick={this.handleReset}
-              />
-            </div>
+
+const AddTax = (props) => {
+  const { addOrEdit, recordForEdit } = props
+  const { ShopData } = useContext(ShopHandeler)
+  const initialFValues = {
+    Name: ShopData.TaxName.toUpperCase() || "",
+    Percent: '',
+    Category_Name: '',
+    _id: null
+    // Tax_Group_Name: '',
+    // Category:''
+  }
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors }
+    if ('SelectCategory' in fieldValues)
+      temp.Category_Name = fieldValues.Category_Name ? "" : "This field is required."
+    if ('TaxPercent' in fieldValues)
+      temp.Percent = fieldValues.Percent ? "" : "This field is required."
+    setErrors({
+      ...temp
+    })
+
+    if (fieldValues === values)
+      return Object.values(temp).every(x => x === "")
+  }
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    resetForm
+  } = useForm(initialFValues, true, validate);
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    if (validate()) {
+      addOrEdit(values, resetForm)
+    }
+  }
+  useEffect(() => {
+    if (recordForEdit !== null) {
+      setValues({
+        ...recordForEdit
+      })
+    }
+  }, [recordForEdit, setValues])
+  console.log(values)
+  return (
+    <DataConsumer>
+      {({ Category }) => (
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={12}>
+            <Controls.Select
+              label="Select Category"
+              name="Category_Name"
+              size="small"
+              fullWidth
+              options={Category}
+              optionsValue={'Name'}
+              optionsDisplay={'Name'}
+              value={values.Category_Name}
+              onChange={handleInputChange}
+              error={errors.Category_Name}
+            />
           </Grid>
-        )}
-      </DataConsumer>
-    )
-  }
+          <Grid item xs={12} sm={12}>
+            <Controls.Input
+              name="Percent"
+              label="Tax Percent"
+              type="number"
+              size="small"
+              fullWidth
+              value={values.Percent}
+              onChange={handleInputChange}
+              error={errors.Percent}
+            />
+          </Grid>
+
+          <div>
+            <Controls.Button
+              type="submit"
+              text="Submit"
+              color="primary"
+              onClick={handleSubmit}
+            />
+            <Controls.Button
+              text="Reset"
+              color="default"
+              onClick={() => resetForm()}
+
+            />
+          </div>
+        </Grid>
+      )}
+    </DataConsumer>
+  )
 }
 
-AddTax.contextType = DataContext
+
 
 export default AddTax 

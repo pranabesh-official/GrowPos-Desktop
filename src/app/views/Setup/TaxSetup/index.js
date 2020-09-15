@@ -5,6 +5,7 @@ import { Tab } from 'semantic-ui-react'
 import { ThemeBackground } from '../../LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
 import DataProvider from '../../../LocalDB'
+import ShopProvider from '../../../LocalDB/ShopDB'
 import Taxes from './TaxSetup'
 
 const style = (theme) => ({
@@ -42,6 +43,8 @@ const style = (theme) => ({
 
 });
 
+
+
 class TaxSetup extends Component {
   constructor(props) {
     super(props)
@@ -72,7 +75,9 @@ class TaxSetup extends Component {
             <Grid container style={style} >
               <Grid item xs={12} sm={12}>
                 <DataProvider>
-                  <Taxes height={height} />
+                  <ShopProvider>
+                    <Taxes height={height} />
+                  </ShopProvider>
                 </DataProvider>
               </Grid>
             </Grid>
