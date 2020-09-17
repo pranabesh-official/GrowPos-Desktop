@@ -1,30 +1,20 @@
 import React, { Component } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import { connect } from 'react-redux'
-import { Tab } from 'semantic-ui-react'
-import { ThemeBackground } from '../../LayoutManeger/Themes'
+import { ThemeBackground } from '../LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
-import Table from './table'
+import DashBody from "./Dashboard"
 
 const style = (theme) => ({
-    CartBody: {
+    Body: {
         borderRadius: 0,
         border: 0,
         padding: '0 0px',
         boxShadow: '0 0px 0px 0px ',
-        background: 'white',
-        overflow: 'auto',
-    },
-    CartAction: {
-        borderRadius: 0,
-        border: 0,
-        height: '60px',
-        padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
-        background: 'white',
+        background: ThemeBackground,
         // overflow: 'auto',
-        borderTop: '1px solid #f0f0f0'
     },
+
     heading: {
         fontSize: theme.typography.pxToRem(15),
         flexBasis: '40%',
@@ -41,7 +31,7 @@ const style = (theme) => ({
 
 });
 
-class Test extends Component {
+class Dashbord extends Component {
     constructor(props) {
         super(props)
         this.updateDimensions = this.updateDimensions.bind(this);
@@ -57,38 +47,17 @@ class Test extends Component {
         this.setState({ activeIndex, current })
     }
     render() {
-        const { height, activeIndex } = this.state
-        // const { classes } = this.props;
-        const style = {
-            background: ThemeBackground,
-        }
-        const panes = [
-
-            {
-                menuItem: 'Current',
-                render: () => (
-                    <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
-                        <Grid container style={style} >
-                            <Grid item xs={12} sm={12}>
-                                <Table height={height} />
-                            </Grid>
-                        </Grid>
-                    </Tab.Pane>
-                )
-            }
-        ]
-
+        const { height} = this.state
+        const { classes } = this.props;
         return (
-            <Grid container spacing={1} style={{ padding: '5px' }}>
-                <Grid item xs={12} sm={12} >
-                    <Tab
-                        menu={{ borderless: true, attached: false, tabular: false, }}
-                        panes={panes}
-                        activeIndex={activeIndex}
-                        onTabChange={() => this.handleTabChange(0, null)}
-                    />
+            <Paper className={classes.Body} style={{ height: `${height}px`, maxHeight: `${height}px` }}>
+                <Grid container spacing={1} >
+                    <Grid item xs={12} sm={12} >
+                        <DashBody/>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Paper>
+
         );
     }
 
@@ -113,4 +82,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(Test))
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(Dashbord))

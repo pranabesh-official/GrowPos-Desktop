@@ -1,310 +1,231 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { Input, Button, Select, Checkbox, DatePicker } from '../../../LayoutManeger/FormManager'
-import { DataConsumer, DataContext } from '../../../../LocalDB'
-// import Table from 'react-bootstrap/Table'
-import { ShopData } from '../../../../LocalDB/ShopDB'
-class AddProduct extends Component {
+import React, { useEffect, useContext } from 'react'
+import { Grid } from '@material-ui/core'; //Chip
+import Controls from "../../../../components/controls/Controls";
+import { useForm } from '../../../../components/useForm';
+import { DataContext } from '../../../../LocalDB'
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      Name: '',
-      Categorytype: '',
-      TaxGroup: '',
-      Price: 0,
-      Cost: 0,
-      haveCost: false,
-      Qnt: 0,
-      haveQnt: false,
-      withTax: false,
-      selectTax: false,
-      Inventory: false,
-      barItem: false,
-      pDate: false,
-      eDate: false,
-      Purchase_Date: new Date(),
-      Expire_Date: new Date()
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handlesubmit = this.handlesubmit.bind(this);
-    this.handleReset = this.handleReset.bind(this);
+
+const AddProduct = (props) => {
+  const { addOrEdit, recordForEdit } = props
+  const { Category, Tax } = useContext(DataContext)
+  const initialFValues = {
+    Name: '',
+    Category_id: '',
+    Tax_Percent: 0,
+    Price: 0,
+    Cost: 0,
+    haveCost: false,
+    Qnt: 0,
+    withTax: false,
+    AddTax: false,
+    Inventory: false,
+    Purchase_Date: new Date(),
+    Expire_Date: new Date(),
+    _id: null,
+    error: ''
   }
-  handleReset() {
-    this.setState({
-      Name: '',
-      Categorytype: '',
-      TaxGroup: '',
-      Price: 0,
-      Cost: 0,
-      haveCost: false,
-      Qnt: 0,
-      haveQnt: false,
-      withTax: false,
-      selectTax: false,
-      Inventory: false,
-      barItem: false,
-      eDate: false,
-      pDate: false,
-      Purchase_Date: new Date(),
-      Expire_Date: new Date()
-    });
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors }
+    if ('Name' in fieldValues)
+      temp.Name = fieldValues.Name ? "" : "This field is required."
+    if ('Category_id' in fieldValues)
+      temp.Category_id = fieldValues.Category_id ? "" : "This field is required."
+      if ('Price' in fieldValues)
+      temp.Price = fieldValues.Price !== 0 && fieldValues.Price > 0 ? "" : "Enter A Valid Amount!"
+    setErrors({
+      ...temp
+    })
+
+    if (fieldValues === values)
+      return Object.values(temp).every(x => x === "")
   }
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    resetForm
+  } = useForm(initialFValues, true, validate);
+ 
+  const handleSubmit = e => {
+    e.preventDefault()
+    if (validate()) {
+      if (values._id === null) {
+        const selectCategory = Category.find(item => item._id === values.Category_id)
+        const  tax = Tax.find(item => item.Category_id === values.Category_id)
+        const newvalues = Object.assign(values, {
+          Category: selectCategory.Name,
+          Tax_Name: tax.Name || "No tax Found",
+          Tax_Percent: tax.Percent || 0,
+          Source_Name: selectCategory.Source,
+          Type: selectCategory.Type
+        })
+        addOrEdit(newvalues, resetForm)
+
+      } else {
+        addOrEdit(values, resetForm)
+      }
+    }
   }
+  useEffect(() => {
+    if (recordForEdit !== null) {
+      setValues({
+        ...recordForEdit
+      })
+    }
+  }, [recordForEdit, setValues])
 
-  handelchecked(event) {
-    this.setState({ checked: event.target.checked });
-  };
-  handlesubmit() {
-    const { Category, Tax } = this.context //Source , Tax
-    let category = null
-    let tax = null
-    let Purchase_Date = null
-    let Expire_Date = null
-    console.log(this.state.Categorytype, Category, Tax)
-    
-    if (this.state.Categorytype) {
-      const  [categoryFilter] = Category.filter(item => item._id === this.state.Categorytype)
-      category = categoryFilter
-      const [taxFilter] = Tax.filter(item => item.Category_Id === category._id)
-      tax = taxFilter
-    }
-    if(this.state.selectTax && this.state.TaxGroup){
-      const [taxFilter] = Tax.filter(item => item._id === this.state.TaxGroup)
-      tax = taxFilter
-    }
-    if(this.state.pDate ){
-      Purchase_Date = this.state.Purchase_Date
-    }
-    if(this.state.eDate ){
-      Expire_Date=this.state.Expire_Date
-    }
-    const data = {
-      Name: this.state.Name,
-      Category: category.Name,
-      Category_id: category._id,
-      Tax_Name: tax.Name,
-      Tax_Percent: tax.Percent,
-      Tax_Group_Name: tax.Tax_Group_Name,
-      Tax_Include: this.state.withTax,
-      Price: this.state.Price,
-      Cost: this.state.Cost || null,
-      Qnt: this.state.Qnt || null,
-      Type: category.Type,
-      Source_Name:category.Source,
-      Source_id:category.Source_id,
-      Purchase_Date,
-      Expire_Date,
-      barItem: this.state.barItem,
-      Inventory:this.state.Inventory
-    }
-    if(this.state.Name && this.state.Categorytype && this.state.Price){
-      this.context.addItem('Products',data)
-    }
 
-  };
-  render() {
 
-    return (
-      <DataConsumer>
-        {({ Category, Tax }) => (
-          <ShopData>
-            {({ Bar }) => (
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={12}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12} sm={12}>
-                      <Input
-                        name="Name"
-                        label="ProductName"
-                        type="text"
-                        value={this.state.Name}
-                        onChange={this.handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Input
-                        name="Price"
-                        label="Product Price"
-                        type="number"
-                        value={this.state.Price}
-                        onChange={this.handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Select
-                        label="Select Category"
-                        name="Categorytype"
-                        value={this.state.Categorytype}
-                        onChange={this.handleChange}
-                        options={Category}
-                        optionsValue={'_id'}
-                        optionsDisplay={'Name'}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} sm={4}>
-                          <Input
-                            name="Cost"
-                            label="Product Cost"
-                            disabled={this.state.haveCost ? false : true}
-                            type="number"
-                            value={this.state.Cost}
-                            onChange={this.handleChange}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={8}>
-                          <Checkbox
-                            name="haveCost"
-                            value={this.state.haveCost}
-                            onChange={this.handleChange}
-                          />Paoduct Have Make/Perchase Cost
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                          <Input
-                            name="Qnt"
-                            label="Qnt"
-                            type="number"
-                            disabled={this.state.haveQnt ? false : true}
-                            value={this.state.Qnt}
-                            onChange={this.handleChange}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={8}>
-                          <Checkbox
-                            name="haveQnt"
-                            value={this.state.haveQnt}
-                            onChange={this.handleChange}
-                          />Product Have Qnt
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12} sm={6} style={{ borderLeft: '1px solid #f0f0f0' }}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} sm={5}>
-                          <DatePicker
-                            label='Purchase Date'
-                            name='Purchase_Date'
-                            disabled={this.state.pDate ? false : true}
-                            value={this.state.Purchase_Date}
-                            onChange={this.handleChange}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={7}>
-                          <Checkbox
-                            name="pDate"
-                            value={this.state.pDate}
-                            onChange={this.handleChange}
-                          />Add Purchase Date
-                        </Grid>
-                        <Grid item xs={12} sm={5}>
-                          <DatePicker
-                            label='Expire Date'
-                            name='Expire_Date'
-                            disabled={this.state.eDate ? false : true}
-                            value={this.state.Expire_Date}
-                            onChange={this.handleChange}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={7}>
-                          <Checkbox
-                            name="eDate"
-                            value={this.state.eDate}
-                            onChange={this.handleChange}
-                          />Add Expire Date
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12} sm={12} style={{ borderTop: '1px solid #f0f0f0' }}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} sm={4}>
-                          <Grid container spacing={1}>
-                            <Grid item xs={12} sm={12}>
-                              <Checkbox
-                                name="withTax"
-                                value={this.state.withTax}
-                                onChange={this.handleChange}
-                              />Include Tax
-                            </Grid>
-                            <Grid item xs={12} sm={12}>
-                              <Checkbox
-                                name="Inventory"
-                                disabled={this.state.Qnt !== 0 && this.state.Qnt > 0 && this.state.haveQnt ? false : true}
-                                value={this.state.Inventory}
-                                onChange={this.handleChange}
-                              />Add To Inventory
-                            </Grid>
-                            <Grid item xs={12} sm={12}>
-                              {Bar ?
-                                <Checkbox name="barItem" value={this.state.barItem} onChange={this.handleChange} ></Checkbox>
-                                : null}{Bar ? 'Bar Item' : null}
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                        <Grid item xs={12} sm={8} style={{ borderLeft: '1px solid #f0f0f0' }}>
-                          <Grid item xs={12} sm={12}>
-                            <Grid container spacing={1}>
-                              <Grid item xs={12} sm={6}>
-                                <Grid container spacing={1}>
-                                  <Grid item xs={12} md={12} >
-                                    <Checkbox
-                                      name="selectTax"
-                                      value={this.state.selectTax}
-                                      onChange={this.handleChange}
-                                    />Slecct Other TAX Group
-                                  </Grid>
-                                  <Grid item xs={12} md={12} >
-                                    <Select
-                                      label="Select Tax Group"
-                                      name="TaxGroup"
-                                      disabled={this.state.selectTax ? false : true}
-                                      value={this.state.TaxGroup}
-                                      options={Tax}
-                                      optionsValue={'_id'}
-                                      optionsDisplay={'Tax_Group_Name'}
-                                      onChange={this.handleChange}
-                                    />
-                                  </Grid>
-                                </Grid>
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-
-                </Grid>
-                <div style={{ borderTop: '1px solid #f0f0f0' }}>
-                  <Button
-                    type="submit"
-                    text="Submit"
-                    color="primary"
-                    onClick={this.handlesubmit}
-                  />
-                  <Button
-                    text="Reset"
-                    color="default"
-                    onClick={this.handleReset}
-                  />
-                </div>
+  return (
+    <Grid container spacing={1}>
+      <Grid item xs={6} >
+        <Grid container spacing={1}>
+          <Grid item xs={12} >
+            <Controls.Input
+              name="Name"
+              label="Product Name"
+              type="text"
+              size="small"
+              fullWidth
+              value={values.Name}
+              onChange={handleInputChange}
+              error={errors.Name}
+            />
+          </Grid>
+          <Grid item xs={5} >
+            <Controls.Input
+              label="Price"
+              name="Price"
+              type="number"
+              size="small"
+              fullWidth
+              value={values.Price}
+              onChange={handleInputChange}
+              error={errors.Price}
+            />
+          </Grid>
+          <Grid item xs={7} >
+            <Controls.Input
+              label="Cost (optional)"
+              name="Cost"
+              type="number"
+              size="small"
+              fullWidth
+              value={values.Cost}
+              onChange={handleInputChange}
+              error={errors.Cost}
+            />
+          </Grid>
+          <Grid item xs={5} >
+            <Controls.Input
+              label="Qnt (optional)"
+              name="Qnt"
+              type="number"
+              size="small"
+              fullWidth
+              value={values.Qnt}
+              onChange={handleInputChange}
+              error={errors.Qnt}
+            />
+          </Grid>
+          <Grid item xs={12} style={{ borderTop: '1px solid #f0f0f0' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Controls.Checkbox
+                  name="AddTax"
+                  label="Enter Tax Manually"
+                  value={values.AddTax}
+                  onChange={handleInputChange}
+                />
               </Grid>
-            )}
-          </ShopData>
-        )
-        }
-      </DataConsumer>
-    )
-  }
+              <Grid item xs={6} style={{ borderLeft: '1px solid #f0f0f0' }}>
+                <Controls.Input
+                  label="Tax Percent"
+                  name="Tax_Percent"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  disabled={values.AddTax ? false : true}
+                  value={values.Tax_Percent}
+                  onChange={handleInputChange}
+                  error={errors.Tax_Percent}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={6} style={{ borderLeft: '1px solid #f0f0f0' }}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} >
+            <Controls.Select
+              label="Select Category"
+              name="Category_id"
+              size="small"
+              fullWidth
+              options={Category}
+              optionsValue={'_id'}
+              optionsDisplay={'Name'}
+              value={values.Category_id}
+              onChange={handleInputChange}
+              error={errors.Category_id}
+            />
+          </Grid>
+          <Grid item xs={6} >
+            <Controls.DatePicker
+              name="Purchase_Date"
+              label="Purchase Date"
+              value={values.Purchase_Date}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={6} >
+            <Controls.DatePicker
+              name="Expire_Date"
+              label="Expire Date"
+              value={values.Expire_Date}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} >
+            <Controls.Checkbox
+              name="Inventory"
+              label="Add to Inventoty "
+              disabled={values.Qnt !== 0 && values.Qnt > 0 ? false : true}
+              value={values.Inventory}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} >
+            <Controls.Checkbox
+              name="withTax"
+              label="Include Tax "
+              value={values.withTax}
+              onChange={handleInputChange}
+            />
+          </Grid>
+        </Grid>
+        <div>
+          <Controls.Button
+            type="submit"
+            text="Submit"
+            onClick={ handleSubmit} />
+          <Controls.Button
+            text="Reset"
+            color="default"
+            onClick={resetForm} />
+        </div>
+      </Grid>
+    </Grid>
+  )
+  
 }
 
-AddProduct.contextType = DataContext
 
-export default AddProduct 
+
+export default AddProduct
+
+
+

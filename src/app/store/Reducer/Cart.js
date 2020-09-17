@@ -101,7 +101,7 @@ const Cart = (state = initialState, action) => {
             isActive: ActiveData.isActive || false,
             OTPrint: ActiveData.OTPrint,
             OTSno: ActiveData.OTSno,
-            Type: 'Table'
+            Type: ActiveData.Type
           }
         }
       } else {

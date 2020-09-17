@@ -2,20 +2,25 @@ import React from 'react'
 import { FormControl, FormLabel, RadioGroup as MuiRadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 
 export default function RadioGroup(props) {
-
-    const { name, label, value, onChange, items } = props;
-
+    let key = 0
+    const { name, label, value, onChange, options, optionsValue, optionsDisplay , ...other } = props;
+    const keygen = () => {
+        key = key + 1
+        return key
+    }
     return (
-        <FormControl>
-            <FormLabel>{label}</FormLabel>
-            <MuiRadioGroup row
+        <FormControl size="small">
+            <FormLabel  {...other} >{label}</FormLabel>
+            <MuiRadioGroup 
+                row
                 name={name}
                 value={value}
-                onChange={onChange}>
+                onChange={onChange}
+                {...other} >
                 {
-                    items.map(
+                    options.map(
                         item => (
-                            <FormControlLabel key={item.id} value={item.id} control={<Radio />} label={item.title} />
+                            <FormControlLabel key={keygen()} value={item[optionsValue]} control={<Radio />} label={item[optionsDisplay]} />
                         )
                     )
                 }

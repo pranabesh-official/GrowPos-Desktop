@@ -9,16 +9,17 @@ const useStyles = makeStyles(theme => ({
             boxShadow: '0 0px 0px 0px ',
             padding: 8,
             fontWeight: '400',
-            color: theme.palette.primary.themelight,
-            backgroundColor: theme.palette.primary.themedark,
-            justifyContent:"center"
-            
+            color: theme.palette.light.main,
+            backgroundColor: theme.palette.dark.main,
+            justifyContent:"center",
+            textAlign:'center',
         },
         '& tbody td': {
             fontWeight: '300',
             padding: 3,
             boxShadow: '0 0px 0px 0px ',
-            justifyContent:"center"
+            justifyContent:"center",
+            textAlign:'center',
             
         },
         '& tbody tr:hover': {

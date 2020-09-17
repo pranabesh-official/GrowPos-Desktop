@@ -1,249 +1,274 @@
-import React, { Component } from 'react';
-import { Grid, Paper } from '@material-ui/core'
-import { Input, Checkbox, Button, Select } from '../../../LayoutManeger/FormManager'
+import React, { useContext, useEffect, useState } from 'react'
+import { Grid, Paper } from '@material-ui/core'; //Chip
+import Controls from "../../../../components/controls/Controls";
+import { useForm } from '../../../../components/useForm';
+import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux'
 import { DataContext } from '../../../../LocalDB'
-import { withStyles } from '@material-ui/core/styles';
-const style = (theme) => ({
+import Notification from "../../../../components/Notification";
+const useStyles = makeStyles((theme) => ({
     Card: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         padding: 2,
-        boxShadow: '0 0px 0px 0px ',
         background: 'white',
-        // overflow: 'auto',
         width: '100%',
-        // height:
+        borderTop: '1px solid #f0f0f0'
     },
     CardBody: {
-        borderRadius: 0,
-        border: 0,
-        width: '100%',
+        ...theme.GlobalBox,
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
         background: 'white',
         // overflow: 'auto',
     },
     CardAction: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
         background: 'white',
         borderTop: '1px solid #f0f0f0'
     },
+}));
 
-});
-class AddShop extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            Name: '',
-            Type: '',
-            Contact: '',
-            About: '',
-            Location: '',
-            TaxName: '',
-            TaxNo: '',
-            Bar: false,
-            Kitchen: false,
-        }
-        this.handlesubmit = this.handlesubmit.bind(this)
-        this.handleReset = this.handleReset.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+
+const AddShop = (props) => {
+    const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+    const { addItem, editItem } = useContext(DataContext)
+    const { ShopType, _id, ShopData } = props.Shop
+    const initialFValues = {
+        Name: '',
+        Type: '',
+        Contact: '',
+        About: '',
+        Location: '',
+        TaxName: '' || 'zeroTax',
+        TaxNo: '',
+        Bar: false,
+        Kitchen: false,
+        // _id:null
     }
-    handlesubmit() {
-        const addData = () => {
-            return new Promise((resolve, reject) => {
-                let ResturantType = null
-                if (this.state.Type === 'Resturant') {
-                    ResturantType = []
-                    if (this.state.Bar) {
-                        ResturantType.push({ name: 'Bar', id: 1 })
-                    }
-                    if (this.state.Bar) {
-                        ResturantType.push({ Kitchen: 'Bar', id: 2 })
-                    }
-                }
-                let data = {
-                    Name: this.state.Name,
-                    Type: this.state.Type,
-                    Contact: this.state.Contact || null,
-                    About: this.state.About || null,
-                    Location: this.state.Location || null,
-                    Bar: this.state.Bar,
-                    Kitchen: this.state.Kitchen,
-                    shopAdd: true,
-                    ResturantType: ResturantType,
-                    TaxName: this.state.TaxName || null,
-                    TaxNo: this.state.TaxNo || null,
-                }
-                if (this.state.Type === 'Resturant') {
-                    if (this.state.Type && this.state.Name) {
-                        this.context.addItem('Shop', data).then((d) => {
-                            resolve(d)
-                        }).catch((err) => {
-                            reject(err)
-                        });
-                    }
-                }
+    const validate = (fieldValues = values) => {
+        let temp = { ...errors }
+        if ('Name' in fieldValues)
+            temp.Name = fieldValues.Name ? "" : "This field is required."
+        if ('Type' in fieldValues)
+            temp.Type = fieldValues.Type ? "" : "This field is required."
+        if ('Contact' in fieldValues)
+            temp.Contact = fieldValues.Contact ? "" : "This field is required."
+        if ('Location' in fieldValues)
+            temp.Location = fieldValues.Location ? "" : "This field is required."
+        setErrors({
+            ...temp
+        })
+
+        if (fieldValues === values)
+            return Object.values(temp).every(x => x === "")
+    }
+    const {
+        values,
+        setValues,
+        errors,
+        setErrors,
+        handleInputChange,
+        resetForm
+    } = useForm(initialFValues, true, validate);
+
+    const handleSubmit = e => {
+        e.preventDefault()
+        if (validate()) {
+            let ResturantType = []
+            if (values.Bar) {
+                ResturantType.push({ name: 'Bar', id: 1 })
+            }
+            if (values.Kitchen) {
+                ResturantType.push({ name: 'Kitchen', id: 2 })
+            }
+            if (_id) {
+                const newvalues = Object.assign(values, { ResturantType })
+                editItem(_id, newvalues).then(()=>{
+                    setNotify({
+                        isOpen: true,
+                        message: 'Submitted Successfully',
+                        type: 'success'
+                    })
+                })
+            } else {
+                const newvalues = Object.assign(values, { ResturantType: ResturantType, shopAdd: true , OT:null , Bill:null })
+                addItem('Shop', newvalues).then(() => {
+                    setNotify({
+                        isOpen: true,
+                        message: 'Submitted Successfully',
+                        type: 'success'
+                    })
+                })
+            }
+        }
+    }
+    useEffect(() => {
+        if (ShopData) {
+            setValues({
+                ...ShopData
             })
         }
-        addData().then((d) => {
-            this.handleReset()
-        })
-    }
-    handleChange(e) {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
-    }
-    handleReset() {
-        this.setState({
-            Name: '',
-            Type: '',
-            Contact: '',
-            About: '',
-            Location: '',
-            Bar: false,
-            Kitchen: false,
-            TaxName: '',
-            TaxNo: '',
-        });
-    }
-    render() {
-        const { ShopType, _id} = this.props.Shop
-        const { classes } = this.props;
-        return (
-            <Paper className={classes.Card} >
-                <Grid container spacing={1} >
-                    <Grid item xs={12} sm={12} >
-                        <Paper className={classes.CardBody} >
-                            <Grid container spacing={1} >
-                                <Grid item xs={6} sm={6} >
-                                    <Grid container spacing={1} >
-                                        <Grid item xs={12} sm={12} >
-                                            <Input
-                                                name="Name"
-                                                label="Shop Name"
-                                                type='text'
-                                                value={this.state.Name}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} >
-                                            <Select
-                                                name="Type"
-                                                label="Business Type"
-                                                value={this.state.Type}
-                                                options={ShopType}
-                                                optionsValue={'name'}
-                                                optionsDisplay={'display'}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
+    }, [ShopData, setValues])
+
+    const classes = useStyles();
+    return (
+        <Paper className={classes.Card} >
+            <Grid container spacing={1} >
+                <Grid item xs={12} sm={12} >
+                    <Paper className={classes.CardBody} >
+                        <Grid container spacing={1} >
+                            <Grid item xs={6} sm={6} >
+                                <Grid container spacing={1} >
+                                    <Grid item xs={12} sm={12} >
+                                        <Controls.Input
+                                            name="Name"
+                                            label="Shop Name"
+                                            type='text'
+                                            value={values.Name}
+                                            size="small"
+                                            fullWidth
+                                            error={errors.Name}
+                                            onChange={handleInputChange}
+                                        />
                                     </Grid>
-                                </Grid>
-                                <Grid item xs={6} sm={6} >
-                                    <Grid container spacing={1} >
-                                        <Grid item xs={12} sm={12} style={{ borderLeft: '1px solid #f0f0f0' }}>
-                                            <Checkbox
-                                                label="Kitchen"
-                                                name="Kitchen"
-                                                disabled={this.state.Type === 'Resturant' ? false : true}
-                                                value={this.state.Kitchen}
-                                                onChange={this.handleChange}
-                                            />Kitchen
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} >
-                                            <Checkbox
-                                                label="Bar"
-                                                name="Bar"
-                                                disabled={this.state.Type === 'Resturant' ? false : true}
-                                                value={this.state.Bar}
-                                                onChange={this.handleChange}
-                                            />Bar
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12} sm={12} >
-                                    <Grid container spacing={1} >
-                                        <Grid item xs={5} sm={5} >
-                                            <Input
-                                                name="TaxName"
-                                                label="Tax Name ( Optional ) "
-                                                type='text'
-                                                value={this.state.TaxName.toUpperCase()}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={7} sm={7} >
-                                            <Input
-                                                name="TaxNo"
-                                                label={this.state.TaxName ? `${this.state.TaxName.toUpperCase()} No` : "Tax No"}
-                                                type='text'
-                                                disabled={this.state.TaxName ? false : true}
-                                                value={this.state.TaxNo}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} sm={6} >
-                                            <Input
-                                                name="Contact"
-                                                label="Contact"
-                                                type='text'
-                                                value={this.state.Contact}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} sm={6} >
-                                            <Input
-                                                name="Location"
-                                                label="Location"
-                                                type='text'
-                                                value={this.state.Location}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} >
-                                            <Input
-                                                name="About"
-                                                label="About"
-                                                type='text'
-                                                value={this.state.About}
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid>
+                                    <Grid item xs={12} sm={12} >
+                                        <Controls.Select
+                                            name="Type"
+                                            label="Business Type"
+                                            value={values.Type}
+                                            options={ShopType}
+                                            optionsValue={'name'}
+                                            size="small"
+                                            fullWidth
+                                            error={errors.Type}
+                                            optionsDisplay={'display'}
+                                            onChange={handleInputChange}
+                                        />
                                     </Grid>
                                 </Grid>
                             </Grid>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} sm={12} >
-                        <Paper className={classes.CardAction}>
-                            <div>
-                                <Button
-                                    type="submit"
-                                    text="Submit"
-                                    color="primary"
-                                    onClick={_id ? null :this.handlesubmit}
-                                />
-                                <Button
-                                    text="Reset"
-                                    onClick={this.handleReset}
-                                />
-                            </div>
-                        </Paper>
-                    </Grid>
+                            <Grid item xs={6} sm={6} >
+                                <Grid container spacing={1} >
+                                    <Grid item xs={12} sm={12} style={{ borderLeft: '1px solid #f0f0f0' }}>
+                                        <Controls.Checkbox
+                                            label="Kitchen"
+                                            name="Kitchen"
+                                            disabled={values.Type === 'Resturant' ? false : true}
+                                            value={values.Kitchen}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} >
+                                        <Controls.Checkbox
+                                            label="Bar"
+                                            name="Bar"
+                                            disabled={values.Type === 'Resturant' ? false : true}
+                                            value={values.Bar}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} sm={12} >
+                                <Grid container spacing={1} >
+                                    <Grid item xs={5} sm={5} >
+                                        <Controls.Input
+                                            name="TaxName"
+                                            label="Tax Name ( Optional ) "
+                                            type='text'
+                                            size="small"
+                                            fullWidth
+                                            error={errors.TaxName}
+                                            value={values.TaxName}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={7} sm={7} >
+                                        <Controls.Input
+                                            name="TaxNo"
+                                            label={values.TaxName ? `${values.TaxName} No` : "Tax No"}
+                                            type='text'
+                                            size="small"
+                                            fullWidth
+                                            error={errors.TaxNo}
+                                            disabled={values.TaxName ? false : true}
+                                            value={values.TaxNo}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} >
+                                        <Controls.Input
+                                            name="Contact"
+                                            label="Contact"
+                                            type='text'
+                                            size="small"
+                                            fullWidth
+                                            error={errors.Contact}
+                                            value={values.Contact}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} >
+                                        <Controls.Input
+                                            name="Location"
+                                            label="Location"
+                                            type='text'
+                                            size="small"
+                                            fullWidth
+                                            error={errors.Location}
+                                            value={values.Location}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} >
+                                        <Controls.Input
+                                            name="About"
+                                            label="About"
+                                            type='text'
+                                            size="small"
+                                            fullWidth
+                                            error={errors.About}
+                                            value={values.About}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Paper>
                 </Grid>
-            </Paper>
-        )
-    }
+                <Grid item xs={12} sm={12} >
+                    <Paper className={classes.CardAction}>
+                        <div>
+                            <Controls.Button
+                                type="submit"
+                                text="Submit"
+                                color="primary"
+                                onClick={handleSubmit}
+                            />
+                            <Controls.Button
+                                text="Reset"
+                                color="default"
+                                onClick={resetForm}
+
+                            />
+                        </div>
+                    </Paper>
+                </Grid>
+            </Grid>
+            <Notification
+                notify={notify}
+                setNotify={setNotify}
+            />
+        </Paper>
+    )
 }
+
 
 const mapStateToProps = (state) => {
     return {
         Shop: state.Shop,
     }
 }
-AddShop.contextType = DataContext
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(AddShop));
+
+export default connect(mapStateToProps)(AddShop);

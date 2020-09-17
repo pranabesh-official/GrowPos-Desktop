@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-// import Typography from '@material-ui/core/Typography';
+import DataProvider from '../../../LocalDB'
 import Box from '@material-ui/core/Box';
 import Tables from './Tables'
 import { Grid, Paper } from '@material-ui/core';
@@ -106,34 +106,44 @@ export default function OrderSource(props) {
         className={classes.tabs}
       >
         <Tab label="Tables" {...a11yProps(0)} wrapped />
-        <Tab label="Active" {...a11yProps(1)} wrapped />
-        <Tab label="Inactive" {...a11yProps(2)} wrapped />
-        <Tab label="Pending" {...a11yProps(3)} wrapped />
+        <Tab label="Take Away" {...a11yProps(1)} wrapped />
+        <Tab label="Active" {...a11yProps(2)} wrapped />
+        <Tab label="Inactive" {...a11yProps(3)} wrapped />
+        <Tab label="Pending" {...a11yProps(4)} wrapped />
 
       </Tabs>
       <TabPanel value={value} index={0}>
         <Paper className={classes.CartBody}>
           <Grid container >
-            <Tables props={props} />
+            <Tables props={props} Type={'Table'} />
           </Grid>
         </Paper>
       </TabPanel>
       <TabPanel value={value} index={1}>
-      <Paper className={classes.CartBody}>
+        <Paper className={classes.CartBody}>
+          <Grid container >
+            <DataProvider>
+              <Tables props={props} Type={'TakeAway'} />
+            </DataProvider>
+          </Grid>
+        </Paper>
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <Paper className={classes.CartBody}>
           <Grid container >
             <Tables props={props} Status={'Active'} />
           </Grid>
         </Paper>
       </TabPanel>
-      <TabPanel value={value} index={2}>
-      <Paper className={classes.CartBody}>
+      <TabPanel value={value} index={3}>
+        <Paper className={classes.CartBody}>
           <Grid container >
             <Tables props={props} Status={'Inactive'} />
           </Grid>
         </Paper>
       </TabPanel>
-      <TabPanel value={value} index={3}>
-      <Paper className={classes.CartBody}>
+      <TabPanel value={value} index={4}>
+        <Paper className={classes.CartBody}>
           <Grid container >
             <Tables props={props} Status={'Pending'} />
           </Grid>

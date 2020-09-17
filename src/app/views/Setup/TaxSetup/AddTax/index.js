@@ -14,16 +14,20 @@ const AddTax = (props) => {
   const initialFValues = {
     Name: ShopData.TaxName.toUpperCase() || "",
     Percent: '',
-    Category_Name: '',
+    Category_id: '',
     _id: null
     // Tax_Group_Name: '',
     // Category:''
   }
   const validate = (fieldValues = values) => {
     let temp = { ...errors }
-    if ('SelectCategory' in fieldValues)
-      temp.Category_Name = fieldValues.Category_Name ? "" : "This field is required."
-    if ('TaxPercent' in fieldValues)
+    if ('Category_id' in fieldValues)
+      temp.Name = fieldValues.Name ? "" : "No Tax Name Found!"
+    if ('Percent' in fieldValues)
+      temp.Name = fieldValues.Name ? "" : "No Tax Name Found!"
+    if ('Category_id' in fieldValues)
+      temp.Category_id = fieldValues.Category_id ? "" : "This field is required."
+    if ('Percent' in fieldValues)
       temp.Percent = fieldValues.Percent ? "" : "This field is required."
     setErrors({
       ...temp
@@ -42,9 +46,17 @@ const AddTax = (props) => {
   } = useForm(initialFValues, true, validate);
 
   const handleSubmit = e => {
-    e.preventDefault()
+    // e.preventDefault()
     if (validate()) {
-      addOrEdit(values, resetForm)
+      if(values._id === null){
+        if(e.length !== 0){
+          const selctedCategory = e.find(item => item._id === values.Category_id)
+          const newvalues = Object.assign(values ,{Category_Name : selctedCategory.Name })
+          addOrEdit(newvalues, resetForm)
+        }
+      }else{
+        addOrEdit(values, resetForm)
+      }
     }
   }
   useEffect(() => {
@@ -61,15 +73,15 @@ const AddTax = (props) => {
           <Grid item xs={12} sm={12}>
             <Controls.Select
               label="Select Category"
-              name="Category_Name"
+              name="Category_id"
               size="small"
               fullWidth
               options={Category}
-              optionsValue={'Name'}
+              optionsValue={'_id'}
               optionsDisplay={'Name'}
-              value={values.Category_Name}
+              value={values.Category_id}
               onChange={handleInputChange}
-              error={errors.Category_Name}
+              error={errors.Category_id}
             />
           </Grid>
           <Grid item xs={12} sm={12}>
@@ -90,7 +102,7 @@ const AddTax = (props) => {
               type="submit"
               text="Submit"
               color="primary"
-              onClick={handleSubmit}
+              onClick={()=>handleSubmit(Category)}
             />
             <Controls.Button
               text="Reset"

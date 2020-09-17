@@ -3,7 +3,7 @@ export default [
   // {
   //   _tag: 'CSidebarNavItem',
   //   name: 'HOME',
-  //   to: '/Home',
+  //   to: '/Dashbord',
   //   icon: 'cil-home',
   
   // },
@@ -54,14 +54,14 @@ export default [
       },
       {
         _tag: 'CSidebarNavItem',
-        name: 'Employe',
-        to: '/Employe',  
+        name: 'Users',
+        to: '/UserSetup',  
       },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Test',
-        to: '/Test',  
-      },
+      // {
+      //   _tag: 'CSidebarNavItem',
+      //   name: 'DEVLOPER SETUP',
+      //   to: '/Employe',  
+      // },
     ],
     
   },

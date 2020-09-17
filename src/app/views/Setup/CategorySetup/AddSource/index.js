@@ -1,97 +1,117 @@
-import React, { Component } from 'react';
-import { Input, Button } from '../../../LayoutManeger/FormManager'
-import Grid from '@material-ui/core/Grid';
-import { connect } from 'react-redux'
-import {CurrentTab} from '../../../../store/action/syncAction'
-import {DataContext} from '../../../../LocalDB'
+import React, {  useEffect } from 'react'
+import { Grid } from '@material-ui/core'; //Chip
+import Controls from "../../../../components/controls/Controls";
+import { useForm } from '../../../../components/useForm';
 
-class AddSource extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      name: '',
-      add: '',
-      tel: ''
+
+
+const AddSource = (props) => {
+  const { addOrEdit, recordForEdit } = props
+ 
+  const initialFValues = {
+    Name:'',
+    Address: '',
+    Mobile: '',
+    _id: null
+  }
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors }
+    if ('Name' in fieldValues)
+      temp.Name = fieldValues.Name ? "" : "No Tax Name Found!"
+    if ('Mobile' in fieldValues)
+      temp.Mobile = fieldValues.Mobile.length > 9 ? "" : "Minimum 10 numbers required."
+    setErrors({
+      ...temp
+    })
+
+    if (fieldValues === values)
+      return Object.values(temp).every(x => x === "")
+  }
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    resetForm
+  } = useForm(initialFValues, true, validate);
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    if (validate()) {
+      if (values._id === null) {
+        addOrEdit(values, resetForm)
+      } else {
+        addOrEdit(values, resetForm)
+      }
     }
-    this.handleChange = this.handleChange.bind(this);
-    this.handlesubmit = this.handlesubmit.bind(this);
-    this.handleReset = this.handleReset.bind(this);
   }
-  handleReset() {
-    this.setState({
-      name: '',
-      add: '',
-      tel: ''
-    });
-  }
-  componentDidMount(){
-    this.props.CurrentTab('AddSource')
-  }
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  }
-  handlesubmit() {
-    const { name, tel, add } = this.state
-    const data = { Name: name, Address: add || "Null" , Mobile: tel }
-    if(name && tel ){
-      this.context.addItem('Source', data)
+  useEffect(() => {
+    if (recordForEdit !== null) {
+      setValues({
+        ...recordForEdit
+      })
     }
-    this.handleReset()
-  };
-  render() {
-    const { name, tel, add } = this.state
-    return (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12}>
-              <Input
-                name="name"
-                label="Source Name"
-                value={name}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Input
-                name="tel"
-                label="Source Phone no"
-                value={tel}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Input
-                name="add"
-                label="Source Address"
-                value={add}
-                onChange={this.handleChange}
-              />
-            </Grid>
-            <div>
-              <Button
-                type="submit"
-                text="Submit"
-                color="primary"
-                onClick={this.handlesubmit}
-              />
-              <Button
-                text="Reset"
-                color="default"
-                onClick={this.handleReset}
-              />
-            </div>
-          </Grid>
-    )
-  }
+  }, [recordForEdit, setValues])
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12} sm={12}>
+        <Controls.Input
+          name="Name"
+          label="Sorce Name"
+          type="text"
+          size="small"
+          fullWidth
+          value={values.Name}
+          onChange={handleInputChange}
+          error={errors.Name}
+        />
+      </Grid>
+      <Grid item xs={12} sm={12}>
+        <Controls.Input
+          name="Mobile"
+          label="Mobile"
+          type="number"
+          size="small"
+          fullWidth
+          value={values.Mobile}
+          onChange={handleInputChange}
+          error={errors.Mobile}
+        />
+
+      </Grid>
+      <Grid item xs={12} sm={12}>
+        <Controls.Input
+          name="Address"
+          label="Address"
+          type="text"
+          size="small"
+          fullWidth
+          value={values.Address}
+          onChange={handleInputChange}
+          error={errors.Address}
+        />
+      </Grid>
+      <div>
+        <Controls.Button
+          type="submit"
+          text="Submit"
+          color="primary"
+          onClick={handleSubmit}
+        />
+        <Controls.Button
+          text="Reset"
+          color="default"
+          onClick={() => resetForm()}
+
+        />
+      </div>
+    </Grid>
+
+  )
 }
 
 
-const mapStateToProps = (state) => {
-  return {
-      data: state.DataStore,
-      sync: state.SyncData,
-      Auth: state.Auth,
-  }
-}
-AddSource.contextType = DataContext
-export default connect(mapStateToProps,{CurrentTab})(AddSource) 
+
+export default AddSource
+

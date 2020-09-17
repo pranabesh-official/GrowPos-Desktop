@@ -9,29 +9,23 @@ import ClientProvider from '../../LocalDB/ClientDB'
 import { ThemeBackground } from '../LayoutManeger/Themes'
 import OrderPane from './OrderPane'
 import { withStyles } from '@material-ui/core/styles';
-import Header from '../LayoutManeger/header'
+import Header from '../../components/header/index'
 import tables from '../LayoutManeger/icons/dinner.png'
 import ActionButton from './Payment'
-// import Typography from '@material-ui/core/Typography';
 import ShopProvider from '../../LocalDB/ShopDB'
-
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 const style = (theme) => ({
     CartBody: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
         background: 'white',
         overflow: 'auto',
     },
     CartAction: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         height: '60px',
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
         background: 'white',
-        // overflow: 'auto',
         borderTop: '1px solid #f0f0f0'
     },
     heading: {
@@ -101,16 +95,20 @@ class Pos extends Component {
                             <Grid item xs={12} sm={5}>
                                 <Header
                                     height={40}
-                                    title={`Order for ${this.state.current.dbName}`}
-                                    subtitle={`No ${this.state.current.No}`}
-                                    src={tables}
+                                    title={` ${this.state.current.Type}`}
+                                    subtitle={this.state.current.Type === 'TakeAway' ?
+                                        `Order Id: ${this.state.current.No}`
+                                        :
+                                        `NO: ${this.state.current.No}`
+                                    }
+                                    src={<ShoppingCartIcon />}
                                 />
                                 <Paper className={classes.CartBody} style={{ height: `${(height - 68) - 100}px`, maxHeight: `${(height - 68) - 100}px` }}>
                                     <CartItem id={this.state.current._id} />
                                 </Paper>
                                 <Paper className={classes.CartAction} >
                                     <Grid container >
-                                        <Grid item xs={8} sm={8}>
+                                        <Grid item xs={12} sm={12}>
                                             <DataProvider>
                                                 <ClientProvider>
                                                     <ShopProvider>
@@ -119,28 +117,6 @@ class Pos extends Component {
                                                 </ClientProvider>
                                             </DataProvider>
                                         </Grid>
-                                        {/* <Grid item xs={2} sm={2} style={{ borderLeft: '1px solid #f0f0f0' }}>
-                                            <Typography className={classes.heading} >
-                                                Amount
-                                        </Typography>
-                                            <Typography className={classes.secondaryHeading} >
-                                                Tax
-                                        </Typography>
-                                            <Typography className={classes.heading} >
-                                                Total
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sm={2} style={{ borderLeft: '1px solid #f0f0f0' }}>
-                                            <Typography className={classes.heading} >
-                                                {500.00}
-                                            </Typography>
-                                            <Typography className={classes.secondaryHeading} >
-                                                {40.00}
-                                            </Typography>
-                                            <Typography className={classes.heading} >
-                                                {540.00}
-                                            </Typography>
-                                        </Grid> */}
                                     </Grid>
                                 </Paper>
                             </Grid>

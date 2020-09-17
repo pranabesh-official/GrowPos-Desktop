@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Input, Button } from '../../../../LayoutManeger/FormManager'
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import { DataContext, DataConsumer } from '../../../../../LocalDB'
 import Typography from '@material-ui/core/Typography';
-import ClientButton from '../../../../LayoutManeger/ClientButton'
-import {danger , info} from '../../../../LayoutManeger/Themes'
+import ClientButton from '../../../../../components/ClientButton'
+import { danger, info } from '../../../../LayoutManeger/Themes'
+import Controls from "../../../../../components/controls/Controls";
+// import Notification from "../../../../../components/Notification";
+
 const style = theme => ({
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -31,6 +33,11 @@ class AddTable extends Component {
         super(props)
         this.state = {
             No: '',
+            notify: {
+                isOpen: false,
+                message: '',
+                type: 'success'
+            }
         }
         this.handleChange = this.handleChange.bind(this);
         this.handlesubmit = this.handlesubmit.bind(this);
@@ -41,6 +48,7 @@ class AddTable extends Component {
     handleReset() {
         this.setState({
             No: '',
+
         });
         console.log('ClientButton')
     }
@@ -52,20 +60,21 @@ class AddTable extends Component {
         const { No } = this.state
         const data = {
             No: No,
-            table_Status: 'Inactive'
+            table_Status: 'Inactive',
+            Type: 'Table'
         }
         if (No) {
-            this.context.addItem('Tables', data).then((d)=>{
+            this.context.addItem('Tables', data).then((d) => {
                 const Active = {
                     ClientId: d._id,
                     Cart: [],
                     Ot: [],
-                    OTPrint:0,
-                    OTSno:null
+                    OTPrint: 0,
+                    OTSno: null
                 }
-                this.context.addItem('Cart', Active)
+                this.context.addItem('Cart', Active).then(() => {})
             })
-            this.handleReset() 
+            this.handleReset()
         }
     };
     render() {
@@ -91,10 +100,12 @@ class AddTable extends Component {
                         <Grid item xs={5} sm={5}>
                             <Grid container spacing={1}>
                                 <Grid item xs={12} sm={12} style={{ marginTop: '5px' }}>
-                                    <Input
+                                    <Controls.Input
                                         name="No"
                                         label="Table No"
                                         type="number"
+                                        size="small"
+                                        fullWidth
                                         value={No}
                                         onChange={this.handleChange}
                                     />
@@ -120,9 +131,9 @@ class AddTable extends Component {
                                                 </Grid>
                                                 <Grid item xs={6} sm={6}>
                                                     {tableExsits() ?
-                                                    <Typography className={classes.alart}>This Table Alredy Exists!</Typography>
-                                                    :
-                                                    <Typography className={classes.new}>Create new Table!</Typography>
+                                                        <Typography className={classes.alart}>This Table Alredy Exists!</Typography>
+                                                        :
+                                                        <Typography className={classes.new}>Create new Table!</Typography>
                                                     }
                                                 </Grid>
                                             </Grid>
@@ -137,26 +148,27 @@ class AddTable extends Component {
                         </Grid>
                         <div>
                             {tableExsits() ?
-                                <Button
+                                <Controls.Button
                                     type="delete"
                                     text="Delete"
                                     color="danger"
                                     onClick={() => deleteItem(filter._id)}
 
                                 /> :
-                                <Button
+                                <Controls.Button
                                     type="submit"
                                     text="Submit"
                                     color="primary"
                                     onClick={this.handlesubmit}
                                 />
                             }
-                            <Button
+                            <Controls.Button
                                 text="Reset"
                                 color="default"
                                 onClick={this.handleReset}
                             />
                         </div>
+                        
                     </Grid>
                 )}
             </DataConsumer>

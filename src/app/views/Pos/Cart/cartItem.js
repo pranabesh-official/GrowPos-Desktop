@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Table from 'react-bootstrap/Table'
 import IconButton from '@material-ui/core/IconButton';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+// import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import {add , remove, Delete} from '../../../store/action/Cart'
+import CloseIcon from '@material-ui/icons/Close';
 class CartItem extends Component {
 
     constructor(props) {
@@ -32,11 +33,11 @@ class CartItem extends Component {
     render() {
         const { Active } = this.props.Cart
         return (
-            <Table bordered size="sm" className="mx-0 my-0" style={{boxShadow: '0 0px 0px 0px '}}>
-                <thead style={{boxShadow: '0 0px 0px 0px '}}>
+            <Table bordered size="sm" className="mx-0 my-0" >
+                <thead >
                     <tr>
                         <th><IconButton aria-label="delete" size="small" >
-                            <ShoppingCartIcon fontSize="inherit" />
+                            <CloseIcon fontSize="inherit" />
                         </IconButton>
 
                         </th>
@@ -46,7 +47,7 @@ class CartItem extends Component {
                         <th>total</th>
                     </tr>
                 </thead>
-                <tbody style={{boxShadow: '0 0px 0px 0px '}}>
+                <tbody >
                     {Active.Cart.map((item, index) => (
                         <tr key={index}>
                             <td>

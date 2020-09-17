@@ -1,10 +1,11 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeLite, ThemeDark, success, secondary, warning, danger, info, light } from '../../LayoutManeger/Themes'
+import { ThemeLite, ThemeDark, success, secondary, warning, danger, info, light } from '../../Themes'
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import ButtonBase from '@material-ui/core/ButtonBase';
+import AddIcon from '@material-ui/icons/Add';
 
 const getStatus = (status) => {
     switch (status) {
@@ -86,15 +87,15 @@ const StyledButton = withStyles({
 
 export default function ClientButton(props) {
     const classes = useStyles(props);
-    const { onClick, label, Type, amount } = props
+    const { onClick, label, Type, amount, add } = props
 
     let key = 0
     const keygen = () => {
         key = key + 1
         return key
     }
-   
-    
+
+
     return (
         <StyledButton className={classes.buttonStatus} key={keygen()}>
             <ButtonBase
@@ -108,13 +109,26 @@ export default function ClientButton(props) {
                     alt="Paella dish"
 
                 />
-                
+
                 <div className={classes.details}>
                     <CardContent className={classes.content} key={keygen()}>
-                        <Typography className={classes.heading}>{label}</Typography>
-                        {amount === 0 ? <Typography className={classes.secondaryHeading}>{"New Order"}</Typography>
-                            : <Typography className={classes.secondaryHeading}>{amount.toFixed(2)}</Typography>
+                        {add ?
+                            <Typography className={classes.heading}><AddIcon fontSize='inherit' /> {label}</Typography>
+                            :
+                            <Typography className={classes.heading}> {label}</Typography>
                         }
+
+                        {amount === 'addNew' ?
+                            <Typography className={classes.secondaryHeading}>{Type}</Typography>
+                            :
+                            <>
+                                {amount === 0 ? <Typography className={classes.secondaryHeading}>{"New"}</Typography>
+                                    : <Typography className={classes.secondaryHeading}>{amount.toFixed(2)}</Typography>
+                                }
+                            </>
+
+                        }
+
                     </CardContent>
                 </div>
             </ButtonBase>

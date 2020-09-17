@@ -1,11 +1,33 @@
 import React, { Component } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid , Paper} from '@material-ui/core';
 import DataProvider from '../../../LocalDB'
-import { View } from 'react-desktop/macOs';
 import Shop from './ShopSetup'
 import ShopProfile from './ShopProfile'
 import ShopProvider from '../../../LocalDB/ShopDB'
+import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux'
 
+const style = (theme) => ({
+  Body: {
+    ...theme.GlobalBox,
+    background: '#f0f0f0',
+    // overflow: 'auto',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: '40%',
+    flexShrink: 0,
+    alignItems: 'center',
+    borderBottom: '1px solid #f0f0f0'
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+    alignItems: 'center',
+    borderBottom: '1px solid #f0f0f0'
+  },
+
+});
 class ShopSetup extends Component {
   constructor(props) {
     super(props)
@@ -19,14 +41,7 @@ class ShopSetup extends Component {
   render() {
     localStorage.setItem('lastPage', '/CategorySetup')
     const { height } = this.state
-    const style = {
-      background: "#f0f0f0' ",
-      display: 'flex',
-      flexWrap: 'wrap',
-      width: '100%',
-      height: '100%',
-      variant: "scrollable",
-    }
+    const { classes } = this.props;
     return (
       <Grid container spacing={1} style={{ padding: '5px' }}>
         <Grid item xs={12} sm={5} id='FormCategory' style={{ height: `${height - 10}px` }}>
@@ -37,15 +52,13 @@ class ShopSetup extends Component {
           </DataProvider>
         </Grid>
         <Grid item xs={12} sm={7} id='ViewCategory' style={{ height: `${height - 10}px` }}>
-          <View padding="0px" margin="0px" width='100%' height={`${height - 10}px`}>
-            <Grid container direction="column" style={style}  >
+          <Paper className={classes.Body} style={{height:`${height - 10}px`}}>
               <DataProvider>
                 <ShopProvider>
-                  <Shop />
+                  <Shop height={height - 10} />
                 </ShopProvider>
               </DataProvider>
-            </Grid>
-          </View>
+          </Paper>
         </Grid>
       </Grid>
     );
@@ -72,4 +85,10 @@ class ShopSetup extends Component {
 
 }
 
-export default ShopSetup
+const mapStateToProps = (state) => {
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(ShopSetup))

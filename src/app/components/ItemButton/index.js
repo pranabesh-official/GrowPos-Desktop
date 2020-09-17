@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeLite, light, success, secondary, warning, danger, dark } from '../../LayoutManeger/Themes'
+import { ThemeLite, light, success, secondary, warning, danger, dark } from '../../Themes'
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';

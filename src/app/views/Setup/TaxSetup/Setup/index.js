@@ -6,7 +6,6 @@ import { DataContext } from '../../../../LocalDB'
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from "@material-ui/icons";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import CloseIcon from '@material-ui/icons/Close';
 import Controls from '../../../../components/controls/Controls'
 import Dot from '../../../../components/statusDot'
 import Popup from '../../../../components/Popup'
@@ -14,6 +13,8 @@ import AddTax from '../AddTax'
 import { connect } from 'react-redux'
 import Notification from "../../../../components/Notification";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
+import Info from '../../../../components/infoPage'
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -57,6 +58,10 @@ const useStyles = makeStyles((theme) => ({
         height: 27,
         fontSize: 11,
         padding: '0 0px 0px 0px '
+    },
+    CellContentent: {
+        textAlign: 'center',
+        justifyContent: 'center'
     }
 }));
 
@@ -68,9 +73,9 @@ const headCells = [
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
-const Taxes = (props) => {
-    const { addItem , editItem , deleteItem} = useContext(DataContext) //
-    const { Tax } = props.data
+const Setup = (props) => {
+    const { addItem, editItem, deleteItem } = useContext(DataContext) //
+    const { Tax , Category} = props.data
     const [records, setRecords] = useState(Tax)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
@@ -112,7 +117,7 @@ const Taxes = (props) => {
                     type: 'success'
                 })
             })
-        if(data._id)
+        if (data._id)
             editItem(data._id, data).then(() => {
                 resetForm()
                 setOpenPopup(false)
@@ -143,8 +148,50 @@ const Taxes = (props) => {
                 message: 'Deleted Successfully',
                 type: 'error'
             })
-            
+
         })
+    }
+    const DataTable = () => {
+        return (
+            <TblContainer>
+                <TblHead />
+                <TableBody>
+                    {
+                        recordsAfterPagingAndSorting().map((item) => (
+                            <TableRow key={item._id}>
+                                <TableCell >
+                                    {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
+                                        : <Dot color={'red'} position="center" mx={2} Size={10} />}
+                                </TableCell>
+                                <TableCell>{item.Name}</TableCell>
+                                <TableCell>{item.Category_Name}</TableCell>
+                                <TableCell>{item.Percent}</TableCell>
+                                <TableCell>
+                                    <Controls.ActionButton
+                                        color="primary"
+                                        onClick={() => { openInPopup(item) }}
+                                    >
+                                        <EditOutlinedIcon fontSize="inherit" />
+                                    </Controls.ActionButton>
+                                    <Controls.ActionButton
+                                        color="secondary"
+                                        onClick={() => {
+                                            setConfirmDialog({
+                                                isOpen: true,
+                                                title: 'Are you sure to delete this record?',
+                                                subTitle: "You can't undo this operation",
+                                                onConfirm: () => { onDelete(item._id) }
+                                            })
+                                        }}>
+                                        <DeleteIcon fontSize="inherit" />
+                                    </Controls.ActionButton>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    }
+                </TableBody>
+            </TblContainer>
+        )
     }
     return (
         <>
@@ -171,44 +218,18 @@ const Taxes = (props) => {
                 />
             </Paper>
             <Paper className={classes.Body} >
-                <TblContainer>
-                    <TblHead />
-                    <TableBody>
-                        {
-                            recordsAfterPagingAndSorting().map((item) => (
-                                <TableRow key={item._id}>
-                                    <TableCell>
-                                        {item.isSync ? <Dot color={'green'} position="start" mx={2} Size={10} />
-                                            : <Dot color={'red'} position="start" mx={2} Size={10} />}
-                                    </TableCell>
-                                    <TableCell>{item.Name}</TableCell>
-                                    <TableCell>{item.Category_Name}</TableCell>
-                                    <TableCell>{item.Percent}</TableCell>
-                                    <TableCell>
-                                        <Controls.ActionButton
-                                            color="primary"
-                                            onClick={() => { openInPopup(item) }}
-                                        >
-                                            <EditOutlinedIcon fontSize="inherit" />
-                                        </Controls.ActionButton>
-                                        <Controls.ActionButton
-                                            color="secondary"
-                                            onClick={() => {
-                                                setConfirmDialog({
-                                                    isOpen: true,
-                                                    title: 'Are you sure to delete this record?',
-                                                    subTitle: "You can't undo this operation",
-                                                    onConfirm: () => { onDelete(item._id) }
-                                                })
-                                            }}>
-                                            <CloseIcon fontSize="inherit" />
-                                        </Controls.ActionButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                {recordsAfterPagingAndSorting().length === 0 ?
+                    <Info
+                        title="No Tax Data Found!"
+                        subTitle={Category.length !== 0 ?
+                            "Create New Tax using Add new Button ,then select Category and Add Tax Percent! this Will Effect On All Actegory In your Tax!"
+                            :
+                            "You Have No Categoy Data! Create A Category Fast! "
                         }
-                    </TableBody>
-                </TblContainer>
+                        link={Category.length !== 0 ? null : {to:'/CategorySetup' , title:"Category Setup"}}
+                    />
+                    : <DataTable />
+                }
             </Paper>
             <Paper className={classes.Footer} >
                 <TblPagination />
@@ -243,4 +264,4 @@ const mapStateToProps = (state) => {
         sync: state.SyncData,
     }
 }
-export default connect(mapStateToProps,)(Taxes)
+export default connect(mapStateToProps,)(Setup)

@@ -9,15 +9,15 @@ const initialState = {
     Products: [],
     Tables: [],
     options: [
-        { name: 'Manufactured', id: 1 },
-        { name: 'Purchased', id: 2 },
-        { name: 'Others', id: 3 }
+        { name: 'Manufactured', _id: 1,id: 1 },
+        { name: 'Purchased', _id: 2 ,id: 2  },
+        { name: 'Others', _id: 3 ,id: 3 }
     ],
     tableStatus: [
-        { name: 'Active', id: 1 },
-        { name: 'Inactive', id: 2 },
-        { name: 'Pending', id: 3 },
-        { name: 'Banned', id: 3 },
+        { name: 'Active', id: 2  ,_id: 1},
+        { name: 'Inactive', id: 2 , _id: 2 },
+        { name: 'Pending', id: 3 , _id: 3 },
+        { name: 'Banned', id: 3 , _id: 4 },
     ],
     error:null
 }

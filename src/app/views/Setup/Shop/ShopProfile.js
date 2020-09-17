@@ -73,30 +73,30 @@ class ShopProfile extends Component {
                         </DataConsumer>
                         <CardContent className={classes.root}>
                             <Grid container spacing={1}>
-                                <Grid iteam xs={6} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Typography className={classes.heading}>Shop Contact</Typography>
                                 </Grid>
-                                <Grid iteam xs={6} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Typography className={classes.secondaryHeading}>{ShopData.Contact ? ShopData.Contact : ''}</Typography>
                                 </Grid>
-                                <Grid iteam xs={6} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Typography className={classes.heading}>Location</Typography>
                                 </Grid>
-                                <Grid iteam xs={6} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Typography className={classes.secondaryHeading}>{ShopData.Location ? ShopData.Location : 'Location Not Set'}</Typography>
                                 </Grid>
                                 {ShopData.TaxName &&
                                     <>
-                                        <Grid iteam xs={6} sm={6}>
+                                        <Grid item xs={6} sm={6}>
                                             <Typography className={classes.heading}>{ShopData.TaxName.toUpperCase()}</Typography>
                                         </Grid>
-                                        <Grid iteam xs={6} sm={6}>
+                                        <Grid item xs={6} sm={6}>
                                             <Typography className={classes.secondaryHeading}>{ShopData.TaxNo ? ShopData.TaxNo : ''}</Typography>
                                         </Grid>
                                     </>
                                 }
 
-                                <Grid iteam xs={6} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Typography className={classes.heading}>About</Typography>
                                     <Typography className={classes.secondaryHeading}>{ShopData.About ? ShopData.About : ''}</Typography>
                                 </Grid>

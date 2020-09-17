@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import DataProvider from '../../../LocalDB'
 import ShopProvider from '../../../LocalDB/ShopDB'
 import Setup from './Setup'
-
+import EmployeProvider from '../../../LocalDB/EmoloyeDB'
 const style = (theme) => ({
   CartBody: {
     borderRadius: 0,
@@ -45,7 +45,7 @@ const style = (theme) => ({
 
 
 
-class TaxSetup extends Component {
+class UserSetup extends Component {
   constructor(props) {
     super(props)
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -76,7 +76,9 @@ class TaxSetup extends Component {
               <Grid item xs={12} sm={12}>
                 <DataProvider>
                   <ShopProvider>
-                    <Setup height={height} />
+                    <EmployeProvider>
+                      <Setup height={height} />
+                    </EmployeProvider>
                   </ShopProvider>
                 </DataProvider>
               </Grid>
@@ -121,6 +123,6 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(TaxSetup))
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(UserSetup))
 
 
