@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
-import { Input, Checkbox } from '../../../LayoutManeger/FormManager' // RadioGroup
+import Controls from '../../../../components/controls/Controls'
 import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {BillingDetails} from '../../../../store/action/Cart'
+import { BillingDetails } from '../../../../store/action/Cart'
 
 class TableBilling extends Component {
     constructor(props) {
         super(props)
         this.state = {
             Current: null,
-            Mobile:'',
+            Mobile: '',
             Name: '',
-            serch:'',
-            Discount:'',
-            free:false , 
-            discount:false,
-            Percent:false
+            serch: '',
+            Discount: '',
+            free: false,
+            discount: false,
+            Percent: false
         }
         this.handleChange = this.handleChange.bind(this);
     }
     handleChange(e) {
         const { name, value } = e.target;
         this.setState({ [name]: value });
-        this.props.BillingDetails(name, value )
+        this.props.BillingDetails(name, value)
     }
     render() {
         const { Mobile, Name, Discount, free, discount, Percent } = this.state
@@ -32,19 +32,24 @@ class TableBilling extends Component {
                 <Grid item xs={6} sm={6} >
                     <Grid container spacing={1}>
                         <Grid item xs={12} sm={12} >
-                            <Input
+                            <Controls.Input
                                 name='Mobile'
                                 label='Customer Mobile'
                                 type='number'
                                 value={Mobile}
+                                size="small"
+                                fullWidth
                                 onChange={this.handleChange}
+                                error={Mobile && Mobile.length < 9 ? "Minimum 10 numbers required." : ""}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} >
-                            <Input
+                            <Controls.Input
                                 name='Name'
                                 label='Customer Name'
                                 type='text'
+                                size="small"
+                                fullWidth
                                 value={Name}
                                 onChange={this.handleChange}
                             />
@@ -53,23 +58,27 @@ class TableBilling extends Component {
                 </Grid>
                 <Grid item xs={6} sm={6} style={{ borderLeft: '1px solid #f0f0f0' }}>
                     <Grid container spacing={1}>
-                        <Grid item xs={6} sm={6} >
-                            <Checkbox
+                        <Grid item xs={12} sm={12} >
+                            <Controls.Checkbox
                                 name="free"
+                                label='Free Order'
+                                size="small"
                                 value={free}
                                 onChange={this.handleChange}
-                            />Free All
-                            </Grid>
-                        <Grid item xs={6} sm={6} >
-                            <Checkbox
+                            />
+                            <Controls.Checkbox
                                 name="discount"
+                                label='Add Discount'
+                                size="small"
                                 value={discount}
                                 onChange={this.handleChange}
-                            />Add Discount
-                            </Grid>
+                            />
+                        </Grid>
                         <Grid item xs={6} sm={6} style={{ borderTop: '1px solid #f0f0f0' }}>
-                            <Input
+                            <Controls.Input
                                 name='Discount'
+                                size="small"
+                                fullWidth
                                 label={Percent ? 'Percent' : 'Amount'}
                                 type='number'
                                 disabled={discount ? false : true}
@@ -78,13 +87,14 @@ class TableBilling extends Component {
                             />
                         </Grid>
                         <Grid item xs={6} sm={6} style={{ borderTop: '1px solid #f0f0f0' }} >
-                            <Checkbox
+                            <Controls.Checkbox
                                 name="Percent"
                                 value={Percent}
+                                label='Discount as Percent'
                                 disabled={discount ? false : true}
                                 onChange={this.handleChange}
-                            />Percent
-                            </Grid>
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
@@ -99,7 +109,7 @@ const mapStateToProps = (state) => {
         Cart: state.Cart,
     }
 }
-export default connect(mapStateToProps, {BillingDetails})(TableBilling);
+export default connect(mapStateToProps, { BillingDetails })(TableBilling);
 
 
 

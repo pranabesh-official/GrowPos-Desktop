@@ -52,12 +52,19 @@ const AddProduct = (props) => {
     e.preventDefault()
     if (validate()) {
       if (values._id === null) {
+        let tax = {Name:'zeroTax',Percent: 0 }
         const selectCategory = Category.find(item => item._id === values.Category_id)
-        const  tax = Tax.find(item => item.Category_id === values.Category_id)
+        if(Tax){
+          const find = Tax.find(item => item.Category_id === values.Category_id)
+          if(find){
+            tax=find
+          }
+        }
+        console.log(tax)
         const newvalues = Object.assign(values, {
           Category: selectCategory.Name,
-          Tax_Name: tax.Name || "No tax Found",
-          Tax_Percent: tax.Percent || 0,
+          Tax_Name: tax.Name ,
+          Tax_Percent: tax.Percent ,
           Source_Name: selectCategory.Source,
           Type: selectCategory.Type
         })

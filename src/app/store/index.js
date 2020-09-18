@@ -8,16 +8,16 @@ import Shop from './Reducer/Shop'
 import Auth from './Reducer/Auth'
 import Cart from './Reducer/Cart'
 import Kot from './Reducer/Kot'
-// import {createLogger} from 'redux-logger'
+import {createLogger} from 'redux-logger'
 
 
 
-// const logger = createLogger();
-const middleware = [thunk, ]
+const logger = createLogger();
+const middleware = [thunk,logger]
 
-// if (process.env.NODE_ENV !== 'production') {
-//   middleware.push(createLogger());
-// }
+if (process.env.NODE_ENV !== 'production') {
+  middleware.push(createLogger());
+}
 
 
 

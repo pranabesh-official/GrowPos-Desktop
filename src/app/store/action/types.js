@@ -31,4 +31,7 @@ export const RESET_OT = 'RESET_OT';
 export const GET_ACTIVE = 'GET_ACTIVE'; 
 export const GET_BILLING_DETAILS = 'GET_BILLING_DETAILS';
 
-export const GET_KOT = 'GET_KOT';
+
+export const CLEAR_KOT = 'CLEAR_KOT';
+export const STORE_KOT = 'STORE_KOT';
+export const GET_ORDER_TICKETS = 'GET_ORDER_TICKETS';

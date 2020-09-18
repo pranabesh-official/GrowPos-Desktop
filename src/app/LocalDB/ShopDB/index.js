@@ -1,42 +1,44 @@
 import React, { createContext, Component } from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, IconButton } from '@material-ui/core'
 import { connect } from 'react-redux'
-import AddShop from '../../views/Setup/Shop/ShopSetup/Addshop'
-import DataProvider from '../index'
-import { ThemeDark, danger } from '../../views/LayoutManeger/Themes'
+import Controls from "../../components/controls/Controls";
 import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
-import { GetKot } from '../../store/action/Kot'
 
+import PrintIcon from '@material-ui/icons/Print';
 
-if (isElectron) {
-    var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
-}
+// if (isElectron) {
+//     // var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
+
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
 
 const style = theme => ({
-    root: {
-        margin: 0,
+    dialog: {
         padding: theme.spacing(2),
-        height: '18px',
-        background: ThemeDark
-    },
-    closeButton: {
         position: 'absolute',
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: danger,
-        background: ThemeDark
+        top: theme.spacing(5)
     },
-    content: {
-        padding: 0,
-        margin: 0
+    dialogTitle: {
+        textAlign: 'center'
+    },
+    dialogContent: {
+        textAlign: 'center'
+    },
+    dialogAction: {
+        justifyContent: 'center'
+    },
+    titleIcon: {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.secondary.main,
+        '&:hover': {
+            backgroundColor: theme.palette.secondary.light,
+            cursor: 'default'
+        },
+        '& .MuiSvgIcon-root': {
+            fontSize: '8rem',
+        }
     }
 });
 
@@ -44,83 +46,99 @@ class ShopProvider extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            open: false
+            open: false,
+            title: '',
+            subTitle: ''
         }
         this.handleClickOpen = this.handleClickOpen.bind(this)
         this.handleClose = this.handleClose.bind(this)
         this.PrintPos = this.PrintPos.bind(this)
 
     }
-    handleClickOpen() {
-        this.setState({ open: true })
+    handleClickOpen(title, subTitle) {
+        this.setState({ open: true, title, subTitle })
     }
 
     handleClose() {
         this.setState({ open: false })
-    } 
+    }
 
     PrintPos(data, Type) {
-        const setOption = (Type) => {
-            const { printSetups } = this.props.Shop
-            const [filter] = printSetups.filter(item => item.Name === Type)
-            switch (Type) {
-                case 'KOT':
-                    return {
-                        preview: filter.preview,
-                        silent: filter.silent,
+        if (isElectron) {
+            const { ShopData } = this.props.Shop
+            console.log(ShopData)
+            var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
+            if (ShopData) {
+                console.log(ShopData[Type])
+                if (ShopData[Type]) {
+                    const option = ShopData[Type]
+                    const options = {
+                        preview: option.preview,
                         width: '170px',
                         margin: '0 0 0 0',
-                        copies: filter.copies,
-                        printerName: filter.printerName,
-                        timeOutPerLine: filter.timeOutPerLine
+                        copies: option.copies,
+                        silent: option.silent,
+                        printerName: option.printerName,
+                        timeOutPerLine: option.timeOutPerLine
                     }
-                case 'BILL':
-                    return {
-                        preview: filter.preview,
-                        silent: filter.silent,
-                        width: '170px',
-                        margin: '0 0 0 0',
-                        copies: filter.copies,
-                        printerName: filter.printerName,
-                        timeOutPerLine: filter.timeOutPerLine
-                    }
-                default:
-                    return {
-                        preview: false,
-                        width: '170px',
-                        margin: '0 0 0 0',
-                        copies: 1,
-                        silent:true,
-                        timeOutPerLine: 400
-                    }
-            }
-        }
-        return new Promise((resolve, reject) => {
-            PosPrinter.print(data, setOption(Type))
-                .then(() => {
-                    resolve('secsess')
+                    return new Promise((resolve, reject) => {
+                        PosPrinter.print(data, options)
+                            .then(() => {
+                                resolve('secsess')
+                            })
+                            .catch((error) => {
+                                reject(error)
+                            });
+                    })
+                } else {
+                    return new Promise((resolve, reject) => {
+                        this.handleClickOpen(`${Type} Print Options Not Found`, 'Go to Setup And in Shop Set Options')
+                        resolve()
+                    })
+                }
+            } else {
+                return new Promise((resolve, reject) => {
+                    this.handleClickOpen(`Shop Have No Setup`, 'Go to Setup And in Shop Create Shop and Shop Set Options')
+                    resolve()
                 })
-                .catch((error) => {
-                    reject(error)
-                });
-        })
+            }
+
+        } else {
+            return new Promise((resolve, reject) => {
+                this.handleClickOpen('Print Setup Only Available On App', 'Download The app to Print Recipts! ')
+                resolve()
+            })
+        }
+
     }
 
     render() {
         const DialogBox = () => {
             const { classes } = this.props;
+            const titel = this.state.title
+            const subTitle = this.state.subTitle
+            const open = this.state.open
             return (
-                <Dialog open={this.state.open} onClose={this.handleClose} >
-                    <MuiDialogTitle disableTypography className={classes.root}>
-                        <IconButton aria-label="close" onClick={this.handleClose} size="small" className={classes.closeButton} >
-                            <CloseIcon fontSize="inherit" />
+                <Dialog open={open} classes={{ paper: classes.dialog }}>
+                    <DialogTitle className={classes.dialogTitle}>
+                        <IconButton disableRipple className={classes.titleIcon}  >
+                            <PrintIcon />
                         </IconButton>
-                    </MuiDialogTitle>
-                    <MuiDialogContent dividers className={classes.content}>
-                        <DataProvider >
-                            <AddShop handleClose={this.handleClose} />
-                        </DataProvider>
-                    </MuiDialogContent>
+                    </DialogTitle>
+                    <DialogContent className={classes.dialogContent}>
+                        <Typography variant="h6">
+                            {titel}
+                        </Typography>
+                        <Typography variant="subtitle2">
+                            {subTitle}
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions className={classes.dialogAction}>
+                        <Controls.Button
+                            text="Close"
+                            color='secondary'
+                            onClick={this.handleClose} />
+                    </DialogActions>
                 </Dialog>
             );
         };
@@ -135,7 +153,7 @@ class ShopProvider extends Component {
             >
                 <>
                     {this.props.children}
-                    {DialogBox()}
+                    <DialogBox />
                 </>
             </Provider>
         )
@@ -153,7 +171,7 @@ const mapStateToProps = (state) => {
 
 export { Consumer as ShopData, context as ShopHandeler }
 
-export default connect(mapStateToProps, { GetKot })(withStyles(style, { withTheme: true })(ShopProvider))
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(ShopProvider))
 
 
 

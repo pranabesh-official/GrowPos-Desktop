@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import ButtonBase from '@material-ui/core/ButtonBase';
+import { Icon } from 'semantic-ui-react'
 
 const getStatus = (status) => {
     switch (status) {
@@ -29,6 +30,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         // flexDirection: 'column',
         height: 'auto',
+        textAlign:'center'
     },
     content: {
         flex: '1 0 auto',
@@ -56,6 +58,8 @@ const useStyles = makeStyles(theme => ({
             borderBottom: `5px solid ${color}`,
             maxWidth: '100%',
             minheight: 40,
+            maxHeight:48,
+            justifyContent: 'center',
         }
     }
 
@@ -84,7 +88,7 @@ const StyledButton = withStyles({
 
 export default function Statusbutton(props) {
     const classes = useStyles(props);
-    const { onClick, label, Sublabel } = props //Type
+    const { onClick, label, Sublabel, src,loading } = props //Type
 
     let key = 0
     const keygen = () => {
@@ -104,6 +108,7 @@ export default function Statusbutton(props) {
                     src={getType(Type)}
                     alt="Paella dish"
                 /> */}
+                {loading ? <Icon loading name='spinner'  size='small' style={{color:getStatus(props.status)}}/>  : src }
 
                 <div className={classes.details}>
                     <CardContent className={classes.content} key={keygen()}>

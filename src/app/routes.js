@@ -6,13 +6,13 @@ import TaxSetup from './views/Setup/TaxSetup'
 import Employe from './views/Employe'
 import ShopSetup from './views/Setup/Shop'
 import UserSetup from './views/Setup/Users'
-import Dashbord from './views/DashBord'
+// import Dashbord from './views/DashBord'
 
 
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/Dashbord', name: 'Dashbord', component: Dashbord },
+  // { path: '/Dashbord', name: 'Dashbord', component: Dashbord },
   { path: '/Pos', name: 'Pos', component: Pos },
   { path: '/CategorySetup', name: 'CategorySetup', component: CategorySetup },
   { path: '/ProuductSetup', name: 'ProuductSetup', component: ProuductSetup },

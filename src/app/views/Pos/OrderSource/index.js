@@ -20,10 +20,8 @@ const useStyles = makeStyles((theme) => ({
   },
   CartBody: props => {
     return {
-      borderRadius: 0,
-      border: 0,
+      ...theme.GlobalBox,
       padding: '0 0px',
-      boxShadow: '0 0px 0px 0px ',
       background: 'white',
       overflow: 'auto',
       maxHeight: `${props.height - 90}px`,

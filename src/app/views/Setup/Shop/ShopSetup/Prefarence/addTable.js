@@ -70,7 +70,8 @@ class AddTable extends Component {
                     Cart: [],
                     Ot: [],
                     OTPrint: 0,
-                    OTSno: null
+                    OTSno: null,
+                    Type:'Table'
                 }
                 this.context.addItem('Cart', Active).then(() => {})
             })

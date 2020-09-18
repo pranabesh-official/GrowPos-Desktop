@@ -8,19 +8,19 @@ import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import  TableBilling  from './BillingDetails'
+import TableBilling from './BillingDetails'
 import Items from './Items'
-// import SearchField from '../../LayoutManeger/SearchField'
+import Controls from '../../../components/controls/Controls'
+import { Search } from "@material-ui/icons";
+import {  InputAdornment } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: (props) => {
         return {
-            borderRadius: 0,
-            border: 0,
+            ...theme.GlobalBox,
             height: `${props.height - 68}px`,
             width: '100%',
             padding: '0 0px',
-            boxShadow: '0 0px 0px 0px ',
             background: '#00000000',
             paddingRight: 5,
         }
@@ -40,42 +40,46 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '0 0px 0px 0px ',
     },
     Card: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         width: '100%',
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
         marginBottom: 10
     },
     keyBordOrder: {
         height: 62,
         boxShadow: '0 0px 0px 0px ',
     },
+    searchInput: {
+        position: 'absolute',
+        left: '10px',
+        margin: '4px',
+    },
+    resize: {
+        height: 27,
+        fontSize: 11,
+        padding: '0 0px 0px 0px '
+    },
     addCart: (props) => {
         return {
+            ...theme.GlobalBox,
             padding: '0 0px',
             height: `${props.height - 300}px`,
-            boxShadow: '0 0px 0px 0px ',
             borderTop: '1px solid #f0f0f0',
         }
     },
     body: {
-        borderRadius: 0,
-        border: 0,
+        ...theme.GlobalBox,
         borderTop: '1px solid #f0f0f0',
         height: '120px',
         width: '100%',
         padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
     },
     Products: (props) => {
         return {
-            borderRadius: 0,
-            border: 0,
+            ...theme.GlobalBox,
             height: `${props.height - 238}px`,
             width: '100%',
             padding: '0 0px',
-            boxShadow: '0 0px 0px 0px ',
             background: 'white',
         }
     },
@@ -92,12 +96,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrderPane = (props) => {
+    const [values, setValues] = React.useState('');
+
     const classes = useStyles(props);
     const [expanded, setExpanded] = React.useState(true);
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-
+    const handleInputChange = e => {
+        const {  value } = e.target
+        setValues(value)
+    }
     return (
         <Card className={classes.root}>
             <Card className={classes.Card}>
@@ -125,12 +134,22 @@ const OrderPane = (props) => {
             </Card>
             <Card className={classes.Products}>
                 <CardActions className={classes.keyBordOrder}>
-                    {/* <SearchField
-                    placeholder='Search'
-                    /> */}
+                    <Controls.Input
+                        label={'Search By Name'}
+                        type="text"
+                        className={classes.searchInput}
+                        size="small"
+                        InputProps={{
+                            classes: { input: classes.resize },
+                            startAdornment: (<InputAdornment position="start" size="small" style={{ padding: 2 }}>
+                                <Search fontSize="inherit" />
+                            </InputAdornment>)
+                        }}
+                        onChange={handleInputChange}
+                    />
                 </CardActions>
                 <CardContent className={classes.addCart} >
-                    <Items height={props.height - 300} />
+                    <Items height={props.height - 300} SearchName={values} />
                 </CardContent>
             </Card>
         </Card>

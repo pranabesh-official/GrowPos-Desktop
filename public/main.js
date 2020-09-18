@@ -150,10 +150,20 @@ if (!gotTheLock) {
 
             })
             ipcMain.on('print-pos', (event, arg) => {
-                const data = JSON.parse(arg)
-                PosPrinter.print(data, {
+                console.log(arg)
+                const Print = JSON.parse(arg)
+                console.log(Print)
+                const options = {
+                    preview: Print.option.preview,
+                    width: '170px',
+                    margin: '0 0 0 0',
+                    copies: Print.option.copies,
+                    silent: Print.option.silent,
+                    printerName: Print.option.printerName,
+                    timeOutPerLine: Print.option.timeOutPerLine
+                }
 
-                })
+                PosPrinter.print(Print.data, options)
             })
 
         })

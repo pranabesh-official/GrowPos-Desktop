@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import { ReadData, LoadStart, LoadSucsess, LoadFail } from '../store/action/DataStore'
 import { SyncDb, SyncDbReset, isSyncStart, isSyncDone } from '../store/action/syncAction'
 import TurtleDB from 'turtledb';
-import { ReadShop, UserData, getPrint } from '../store/action/Shop'
+import { ReadShop, UserData } from '../store/action/Shop'
 import { GetActive, getClient} from '../store/action/Cart'
+import { getOrderTicket } from '../store/action/Kot'
 
 let context = null;
 const { Provider, Consumer } = context = createContext()
@@ -57,8 +58,8 @@ class DataProvider extends Component {
                             this.props.UserData(CurrentUser)
                             const Cart = Data.filter((item) => item.dbName === 'Cart')
                             this.props.GetActive(Cart)
-                            const Print = Data.filter((item) => item.dbName === 'Print')
-                            this.props.getPrint(Print)
+                            const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
+                            this.props.getOrderTicket(OrderTicket)
                             resolve('load done')
                         })
                         .catch((err) => {
@@ -310,6 +311,6 @@ export default connect(mapStateToProps, {
     ReadShop,
     UserData,
     GetActive,
-    getPrint,
+    getOrderTicket,
     getClient
 })(DataProvider) 

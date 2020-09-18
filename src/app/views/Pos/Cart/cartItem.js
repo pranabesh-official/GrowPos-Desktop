@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Table from 'react-bootstrap/Table'
 import IconButton from '@material-ui/core/IconButton';
-// import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import {add , remove, Delete} from '../../../store/action/Cart'
 import CloseIcon from '@material-ui/icons/Close';
+import './cart.css'
+
+
+
 class CartItem extends Component {
 
     constructor(props) {

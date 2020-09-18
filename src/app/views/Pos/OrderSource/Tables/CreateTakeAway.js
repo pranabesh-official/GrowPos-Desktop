@@ -15,7 +15,19 @@ const CreateTakeAway = (props) => {
     }
 
     const handleSubmit = e => {
-        addItem('Tables', initialFValues)
+        addItem('Tables', initialFValues).then((d)=>{
+            
+            const Active = {
+                ClientId: d._id,
+                Cart: [],
+                Ot: [],
+                OTPrint: 0,
+                OTSno: null,
+                Type:'TakeAway'
+            }
+            console.log(d , Active)
+            addItem('Cart', Active).then(()=>{console.log('Sucsess')})
+        })
     }
 
     return (
