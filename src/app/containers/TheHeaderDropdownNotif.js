@@ -14,9 +14,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import { isElectron } from 'react-device-detect'
 // import { Redirect } from "react-router-dom"
-if (isElectron) {
-  // var { ipcRenderer } = window.require('electron');
-}
+
 
 const TheHeaderDropdownNotif = (props) => {
   const logout = ()=>{

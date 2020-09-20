@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
+import { Typography } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,6 +26,14 @@ const useStyles = makeStyles((theme) => ({
             height:`${props.height}px`
         }
     },
+    heading: {
+        fontSize: theme.typography.pxToRem(12),
+        flexBasis: '33.33%',
+        flexShrink: 0,
+    },
+    secondaryHeading: {
+        fontSize: theme.typography.pxToRem(10),
+    },
 }));
 
 export default function Header(props) {
@@ -33,19 +42,12 @@ export default function Header(props) {
     return (
         <Card className={classes.root}>
             <CardHeader
-                avatar={ src && src }
-                title={title}
-                subheader={subtitle}
+                avatar={src }
+                title={<Typography variant='body1' className={classes.heading } >{title.toUpperCase()}</Typography>}
+                subheader={<Typography variant='body2' className={classes.secondaryHeading } >{subtitle.toUpperCase()}</Typography>}
                 className={classes.header}
             />
+            
         </Card>
     );
 }
-
-// avatar={ src &&
-//     <img
-//         src={src}
-//         className={classes.avatar}
-//         alt="icon"
-//     />
-// }

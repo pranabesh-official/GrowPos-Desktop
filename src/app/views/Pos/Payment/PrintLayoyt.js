@@ -231,7 +231,7 @@ export const BillLayout = (Data) => {
         layout.push(total)
         const complementary = {
             type: 'text',
-            value: `complementary !` ,
+            value: `Complementary !` ,
             style: ` text-align: center;`,
             css:  { "font-weight": "bold", "font-size": "11px",'margin': '5px' , "padding":"5px"}
             

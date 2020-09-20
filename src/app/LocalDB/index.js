@@ -6,7 +6,7 @@ import TurtleDB from 'turtledb';
 import { ReadShop, UserData } from '../store/action/Shop'
 import { GetActive, getClient} from '../store/action/Cart'
 import { getOrderTicket } from '../store/action/Kot'
-
+import {date , time} from '../Utils'
 let context = null;
 const { Provider, Consumer } = context = createContext()
 
@@ -52,14 +52,18 @@ class DataProvider extends Component {
                             this.props.getClient(Tables)
                             const Products = Data.filter((item) => item.dbName === 'Products')
                             this.props.ReadData('Products', Products)
+                            const SellReport = Data.filter((item) => item.dbName === 'SellReport')
+                            this.props.ReadData('SellReport', SellReport)
+                            const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
+                            this.props.ReadData('OrderTicket', OrderTicket)
+                            const CustomerDetails = Data.filter((item) => item.dbName === 'CustomerDetails')
+                            this.props.ReadData('CustomerDetails', CustomerDetails)
                             const Shop = Data.filter((item) => item.dbName === 'Shop')
                             this.props.ReadShop(Shop)
                             const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
                             this.props.UserData(CurrentUser)
                             const Cart = Data.filter((item) => item.dbName === 'Cart')
                             this.props.GetActive(Cart)
-                            const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
-                            this.props.getOrderTicket(OrderTicket)
                             resolve('load done')
                         })
                         .catch((err) => {
@@ -84,10 +88,10 @@ class DataProvider extends Component {
     }
 
     async addItem(name, Data) {
+        const {currentUser} = this.props.Auth
         return new Promise((resolve, reject) => {
             const updatedItems = [...this.state.items];
-            const ftlter = this.state.items.filter((item) => item.dbName === name)
-            const newItem = Object.assign(Data, { isSync: false, dbName: name, sno: ftlter.length + 1 })
+            const newItem = Object.assign(Data, { isSync: false, dbName: name, date:date(), time:time() , createBy:currentUser.EmpolyeName})
             this.db.create(newItem)
                 .then((Data) => {
                     updatedItems.push(Data);
@@ -293,6 +297,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.DataStore,
         sync: state.SyncData,
+        Auth: state.Auth,
     }
 }
 

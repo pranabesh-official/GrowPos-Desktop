@@ -10,7 +10,6 @@ import { ThemeBackground } from '../LayoutManeger/Themes'
 import OrderPane from './OrderPane'
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../components/header/index'
-import tables from '../LayoutManeger/icons/dinner.png'
 import ActionButton from './Payment'
 import ShopProvider from '../../LocalDB/ShopDB'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
@@ -112,7 +111,7 @@ class Pos extends Component {
                                             <DataProvider>
                                                 <ClientProvider>
                                                     <ShopProvider>
-                                                        <ActionButton />
+                                                        <ActionButton handleTabChange={this.handleTabChange} />
                                                     </ShopProvider>
                                                 </ClientProvider>
                                             </DataProvider>

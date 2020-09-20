@@ -25,30 +25,6 @@ class App extends Component {
   }
 
   render() {
-    // const { logIn } = this.props.Auth
-
-    // function retry(fn, retriesLeft = 5, interval = 1000) {
-    //   return new Promise((resolve, reject) => {
-    //     fn()
-    //       .then(resolve)
-    //       .catch((error) => {
-    //         setTimeout(() => {
-    //           if (retriesLeft === 1) {
-    //             // reject('maximum retries exceeded');
-    //             reject(error);
-    //             return;
-    //           }
-    
-    //           // Passing on "reject" is the important part
-    //           retry(fn, retriesLeft - 1, interval).then(resolve, reject);
-    //         }, interval);
-    //       });
-    //   });
-    // }
-    // // const TheLayout = React.lazy(() => import('./containers/TheLayout'));
-    // // const Login = React.lazy(() => import());
-    // // const Login = React.lazy(() => retry(() => import('./views/LogIn/index')));
-    // const TheLayout = React.lazy(() => retry(() => import('./containers/TheLayout')));
     return (
       <BrowserRouter>
         <React.Suspense fallback={<Ripple />}>

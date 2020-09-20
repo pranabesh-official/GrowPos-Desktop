@@ -27,7 +27,7 @@ export const DELETE_FROM_CART = 'DELETE_FROM_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const ADD_FROM_CART = 'ADD_FROM_CART';
 export const GET_CART_DATA = 'GET_CART_DATA'; 
-export const RESET_OT = 'RESET_OT';
+export const REFRESH_ACTIVE = 'REFRESH_ACTIVE';
 export const GET_ACTIVE = 'GET_ACTIVE'; 
 export const GET_BILLING_DETAILS = 'GET_BILLING_DETAILS';
 

@@ -1,20 +1,21 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@material-ui/core';
-import useTable from '../../../../components/Datatable'
+import useTable from '../../../components/Datatable'
+// import { DataContext } from '../../../LocalDB'
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from "@material-ui/icons";
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import Controls from '../../../../components/controls/Controls'
-import Popup from '../../../../components/Popup'
-import AddEmploye from '../AddEmploye'
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import Controls from '../../../components/controls/Controls'
+import Dot from '../../../components/statusDot'
+import Popup from '../../../components/Popup'
+
 import { connect } from 'react-redux'
-import Notification from "../../../../components/Notification";
-import ConfirmDialog from "../../../../components/ConfirmDialog";
-import Info from '../../../../components/infoPage'
+import Notification from "../../../components/Notification";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { EmployeContex } from '../../../../LocalDB/EmoloyeDB'
+// import AddProduct from '../addProduct/Add'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
             border: 0,
             padding: 8,
             height: `${48}px`,
-            width: '100%',
+            // width: '100%',
             // borderBottom: '1px solid #f0f0f0'
         }
     },
@@ -32,15 +33,15 @@ const useStyles = makeStyles((theme) => ({
         return {
             ...theme.GlobalBox,
             overflow: 'auto',
-            height: `${(props.height - 68) - 100}px`,
-            width: '100%'
+            height: `${(props.height - 150) - 100}px`,
+            
         }
     },
     Footer: props => {
         return {
             ...theme.GlobalBox,
             padding: 0,
-            width: '100%',
+            // width: '100%',
             height: `${52}px`,
             borderTop: '1px solid #f0f0f0'
         }
@@ -68,23 +69,22 @@ const useStyles = makeStyles((theme) => ({
 
 const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
-    { _id: 'EmpolyeName', label: 'Name' },
-    { _id: 'Gender', label: 'Gender' },
-    { _id: 'Mobile', label: 'Mobile', },
-    { _id: 'City', label: 'City' },
-    { _id: 'Salary', label: 'Salary' },
-    { _id: 'Department', label: 'Department', },
-    { _id: 'Type', label: 'Type' },
-    { _id: 'Haier_Date', label: 'Haier Date', },
+    { _id: 'Name', label: 'Name' },
+    { _id: 'Category', label: 'Category' },
+    { _id: 'Price', label: 'Price', },
+    { _id: 'Type', label: 'Type ', },
+    { _id: 'Cost', label: 'Cost', },
+    { _id: 'Qnt', label: 'Qnt', },
+    { _id: 'Tax_Name', label: 'Tax ', },
+    { _id: 'Tax_Percent', label: ' Percent', },
+    { _id: 'Source_Name', label: 'Source ', },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
 const Setup = (props) => {
     // const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { users, handleremove } = useContext(EmployeContex)
-
-    console.log(users)
-    const [records, setRecords] = useState(users)
+    const { Products , Category} = props.data
+    const [records, setRecords] = useState(Products)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
@@ -104,31 +104,27 @@ const Setup = (props) => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.EmpolyeName.toLowerCase().includes(target.value))
+                    return items.filter(x => x.Name.toLowerCase().includes(target.value))
             }
         })
     }
 
     useEffect(() => {
-        setRecords(users)
-    }, [users])
+        setRecords(Products)
+    }, [Products])
 
-
-    const onDelete = id => {
-        setConfirmDialog({
-            ...confirmDialog,
-            isOpen: false
-        })
-        handleremove(id)
-        setNotify({
-            isOpen: true,
-            message: 'Deleted Successfully',
-            type: 'error'
-        })
-
+    const addOrEdit = (data, resetForm) => {
+     
 
     }
 
+    const openInPopup = item => {
+        setRecordForEdit(item)
+        setOpenPopup(true)
+    }
+    const onDelete = id => {
+        
+    }
     const DataTable = () => {
         return (
             <TblContainer>
@@ -136,40 +132,36 @@ const Setup = (props) => {
                 <TableBody>
                     {
                         recordsAfterPagingAndSorting().map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow key={item._id}>
                                 <TableCell >
-                                    {item.admin ?
-                                        <LockOpenIcon fontSize='inherit' />
-                                        :
-                                        <LockIcon fontSize='inherit' />
-                                    }
+                                    {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
+                                        : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                 </TableCell>
-                                <TableCell>{item.EmpolyeName}</TableCell>
-                                <TableCell>{item.Gender}</TableCell>
-                                <TableCell>{item.Mobile}</TableCell>
-                                <TableCell>{item.City}</TableCell>
-                                <TableCell>{item.Salary}</TableCell>
-                                <TableCell>{item.Department}</TableCell>
+                                <TableCell>{item.Name}</TableCell>
+                                <TableCell>{item.Category}</TableCell>
+                                <TableCell>{item.Price}</TableCell>
                                 <TableCell>{item.Type}</TableCell>
-                                <TableCell>{item.Haier_Date}</TableCell>
+                                <TableCell>{item.Cost}</TableCell>
+                                <TableCell>{item.Qnt}</TableCell>
+                                <TableCell>{item.Tax_Name}</TableCell>
+                                <TableCell>{item.Tax_Percent}</TableCell>
+                                <TableCell>{item.Source_Name}</TableCell>
                                 <TableCell>
+                                    <Controls.ActionButton
+                                        color="primary"
+                                        onClick={() => { openInPopup(item) }}
+                                    >
+                                        <EditOutlinedIcon fontSize="inherit" />
+                                    </Controls.ActionButton>
                                     <Controls.ActionButton
                                         color="secondary"
                                         onClick={() => {
-                                            if (item.Type === "SUPERUSER") {
-                                                setNotify({
-                                                    isOpen: true,
-                                                    message: "This User Created By Devloper! You can't Do this operation",
-                                                    type: 'error'
-                                                })
-                                            } else {
-                                                setConfirmDialog({
-                                                    isOpen: true,
-                                                    title: 'Are you sure to delete this record?',
-                                                    subTitle: "You can't undo this operation",
-                                                    onConfirm: () => { onDelete(item.public_id) }
-                                                })
-                                            }
+                                            setConfirmDialog({
+                                                isOpen: true,
+                                                title: 'Are you sure to delete this record?',
+                                                subTitle: "You can't undo this operation",
+                                                onConfirm: () => { onDelete(item._id) }
+                                            })
                                         }}>
                                         <DeleteIcon fontSize="inherit" />
                                     </Controls.ActionButton>
@@ -185,7 +177,7 @@ const Setup = (props) => {
         <>
             <Paper className={classes.Header} >
                 <Controls.Input
-                    label='Name'
+                    label='Category'
                     type="text"
                     className={classes.searchInput}
                     size="small"
@@ -208,11 +200,8 @@ const Setup = (props) => {
             <Paper className={classes.Body} >
                 {recordsAfterPagingAndSorting().length === 0 ?
                     <Info
-                        title="No User Data Found!"
-                        subTitle={
-                            "Create New User using Add new Button ,"
-                        }
-                    // link={Category.length !== 0 ? null : {to:'/CategorySetup' , title:"Category Setup"}}
+                        title="No Products Data Found!"
+                       
                     />
                     : <DataTable />
                 }
@@ -225,12 +214,6 @@ const Setup = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-
-                <AddEmploye
-                    recordForEdit={recordForEdit}
-                />
-
-
             </Popup>
             <Notification
                 notify={notify}

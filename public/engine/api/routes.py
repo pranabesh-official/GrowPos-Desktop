@@ -96,6 +96,7 @@ def create_user():
                     admin=False)
     db.session.add(new_user)
     db.session.commit()
+    # db.session.remove()
     return jsonify("USER CREATED")
 
 

@@ -1,40 +1,36 @@
 import React, { Component } from 'react';
 import { Grid, Paper } from '@material-ui/core';
 import { connect } from 'react-redux'
-import { ThemeBackground } from '../LayoutManeger/Themes'
-import StyledRipple from '../LayoutManeger/Ripple/Ripple'
+// import { ThemeBackground } from '../LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
-
+import Status from "./Status"
+import Setup from './Setup'
 
 const style = (theme) => ({
-    CartBody: {
-        borderRadius: 0,
-        border: 0,
-        padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
-        // background: 'white',
+    Body: {
+        ...theme.GlobalBox,
+        background: theme.palette.light.main,
         // overflow: 'auto',
-        width: '100%',
-        background: ThemeBackground,
+        width: '100%'
     },
-    Content: {
-        borderRadius: 0,
-        border: 0,
-        padding: '0 0px',
-        boxShadow: '0 0px 0px 0px ',
-        background: ThemeBackground,
-        height:'100%',
-        width: '100%',
-        justifyContent: 'center',
+
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        flexBasis: '40%',
+        flexShrink: 0,
         alignItems: 'center',
+        borderBottom: '1px solid #f0f0f0'
     },
-    Grid: {
-        justifyContent: 'center',
+    secondaryHeading: {
+        fontSize: theme.typography.pxToRem(15),
+        color: theme.palette.text.secondary,
+        alignItems: 'center',
+        borderBottom: '1px solid #f0f0f0'
     },
 
 });
 
-class Home extends Component {
+class Dashbord extends Component {
     constructor(props) {
         super(props)
         this.updateDimensions = this.updateDimensions.bind(this);
@@ -52,20 +48,20 @@ class Home extends Component {
     render() {
         const { height } = this.state
         const { classes } = this.props;
-        
-
         return (
-            <>
-                <Paper className={classes.CartBody} style={{ height: height, maxHeight: height }}>
-                    <Grid container spacing={1} >
-                        <Grid item xs={12} sm={12} >
-                            <Paper className={classes.Content} style={{ height: height, maxHeight: height }}>
-                                <StyledRipple />
-                            </Paper>
+            <Paper className={classes.Body} style={{ height: `${height}px`, maxHeight: `${height}px` }}>
+                <Grid container direction='column' spacing={1}>
+                    <Grid item xs={12} sm={12} md={12}>
+                        <Status />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12}>
+                        <Grid container>
+                            <Setup height={height} />
                         </Grid>
                     </Grid>
-                </Paper>
-            </>
+                </Grid>
+            </Paper>
+
         );
     }
 
@@ -90,4 +86,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(Home))
+export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(Dashbord))

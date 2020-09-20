@@ -1,12 +1,12 @@
 import { STORE_KOT, CLEAR_KOT, GET_ORDER_TICKETS} from '../action/types'
 
 const initialState = {
-    Kot: {},
+    Kot: {
+        crear : false,
+
+    },
     OrderTicket:[]
 }
-
-
-
 const Kot = (state = initialState, action) => {
     switch (action.type) {
         case GET_ORDER_TICKETS:
@@ -15,17 +15,25 @@ const Kot = (state = initialState, action) => {
                 OrderTicket: action.data,
             }
         case STORE_KOT:
+            const old = state.Kot[action.payload]
+            let arry = []
+            const data = {
+                SaveItem:action.Data,
+                date:action.date,
+                time:action.time,
+            }
+            if(old){
+                arry = old.saveData
+                arry.push(data)
+            }else{
+                arry.push(data)
+            }
             return {
                 ...state,
                 Kot:{
                     ...state.Kot,
                     [action.payload]:{
-                        ...state.Kot[action.payload],
-                        [action.id]:{
-                            cart:action.Data,
-                            date:action.date,
-                            time:action.time,
-                        }
+                        saveData:arry
                     }
                 }
 

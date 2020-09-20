@@ -1,0 +1,22 @@
+
+.table-bordered thead th, .table-bordered thead td {
+    border-bottom-width: 1px;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 1px solid;
+    border-bottom-color: #d8dbe0;
+}
+
+th {
+    text-align: inherit;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.table-bordered thead th, .table-bordered thead td {
+    border-bottom-width: 1px;
+}

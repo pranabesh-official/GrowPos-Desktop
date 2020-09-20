@@ -30,7 +30,7 @@ class TableBilling extends Component {
 
             <Grid container spacing={1} style={{ padding: 5 }}>
                 <Grid item xs={6} sm={6} >
-                    <Grid container spacing={1}>
+                    <Grid container spacing={2}>
                         <Grid item xs={12} sm={12} >
                             <Controls.Input
                                 name='Mobile'
@@ -61,7 +61,7 @@ class TableBilling extends Component {
                         <Grid item xs={12} sm={12} >
                             <Controls.Checkbox
                                 name="free"
-                                label='Free Order'
+                                label='Complementary'
                                 size="small"
                                 value={free}
                                 onChange={this.handleChange}

@@ -1,4 +1,4 @@
-import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, RESET_OT, GET_ACTIVE, GET_BILLING_DETAILS } from '../action/types'
+import { SELECT_CLIENT, ADD_TO_CART, DELETE_FROM_CART, REMOVE_FROM_CART, ADD_FROM_CART, GET_CART_DATA, REFRESH_ACTIVE, GET_ACTIVE, GET_BILLING_DETAILS } from '../action/types'
 
 const initialState = {
   Cart: {},
@@ -24,7 +24,7 @@ const initialState = {
 }
 
 const updateObject = (oldObject, newValues) => {
- 
+
   return Object.assign({}, oldObject, newValues)
 }
 
@@ -117,7 +117,7 @@ const Cart = (state = initialState, action) => {
             Stutas: find.table_Status,
             isActive: false,
             displayNo: find.No,
-            Type: 'Table'
+            Type: find.Type
           }
         }
       }
@@ -250,22 +250,17 @@ const Cart = (state = initialState, action) => {
         }
       }
 
-    case RESET_OT:
-      const ActiveData = state.ActiveData.find(item => item.ClientId === state.selectClient._id)
+    case REFRESH_ACTIVE:
+
       return {
         ...state,
         Active: {
           ...state.Active,
-          Cart: ActiveData.Cart,
-          Ot: ActiveData.Ot,
-          ClientId: ActiveData._id,
-          Stutas: ActiveData.table_Status,
-          _id: ActiveData._id,
-          displayNo: ActiveData.No,
-          isActive: true,
-          OTPrint: ActiveData.OTPrint,
-          OTSno: ActiveData.OTSno,
-          Type: 'Table'
+          Cart: [],
+          Ot: [],
+          OTPrint: 0,
+          OTSno: null,
+          isActive: false,
         }
       }
     case GET_BILLING_DETAILS:

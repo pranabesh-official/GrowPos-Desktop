@@ -15,16 +15,30 @@ export default [
   
   },
   {
-    _tag: 'CSidebarNavDropdown',
-    name: 'Reports',
-    icon: 'cil-print',
-    _children: [
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'All Reports',
+    _tag: 'CSidebarNavItem',
+    name: 'Coustomers',
+    to: '/Coustomers',
+    icon: 'cil-user',
+  
+  },
+  // {
+  //   _tag: 'CSidebarNavDropdown',
+  //   name: 'Reports',
+  //   icon: 'cil-print',
+  //   _children: [
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'All Reports',
        
-      },
-    ],
+  //     },
+  //   ],
+  // },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Records',
+    to: '/Reports',
+    icon: 'cil-print',
+  
   },
   {
     _tag: 'CSidebarNavDropdown',

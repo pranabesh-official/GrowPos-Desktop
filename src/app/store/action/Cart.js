@@ -1,4 +1,4 @@
-import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA , RESET_OT , GET_ACTIVE ,GET_BILLING_DETAILS} from './types.js'
+import { SELECT_CLIENT , ADD_TO_CART , DELETE_FROM_CART , REMOVE_FROM_CART , ADD_FROM_CART , GET_CART_DATA , REFRESH_ACTIVE , GET_ACTIVE ,GET_BILLING_DETAILS} from './types.js'
 
 export const getClient = ( payload ) => {
     return (dispatch) => {
@@ -67,7 +67,7 @@ export const Delete = ( payload) => {
 export const Refresh = ( payload) => {
     return (dispatch) => {
         dispatch({
-            type: RESET_OT,
+            type: REFRESH_ACTIVE,
             payload: payload
         })
     }

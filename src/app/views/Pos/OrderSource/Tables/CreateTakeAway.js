@@ -25,7 +25,6 @@ const CreateTakeAway = (props) => {
                 OTSno: null,
                 Type:'TakeAway'
             }
-            console.log(d , Active)
             addItem('Cart', Active).then(()=>{console.log('Sucsess')})
         })
     }

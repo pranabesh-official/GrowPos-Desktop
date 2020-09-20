@@ -8,6 +8,9 @@ const initialState = {
     Tax: [],
     Products: [],
     Tables: [],
+    SellReport:[],
+    OrderTicket:[],
+    CustomerDetails:[],
     options: [
         { name: 'Manufactured', _id: 1,id: 1 },
         { name: 'Purchased', _id: 2 ,id: 2  },

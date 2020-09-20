@@ -1,21 +1,21 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@material-ui/core';
-import useTable from '../../../../components/Datatable'
-import AddIcon from '@material-ui/icons/Add';
+import useTable from '../../../components/Datatable'
+import { DataContext } from '../../../LocalDB'
 import { Search } from "@material-ui/icons";
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import Controls from '../../../../components/controls/Controls'
-import Popup from '../../../../components/Popup'
-import AddEmploye from '../AddEmploye'
+// import VisibilityIcon from '@material-ui/icons/Visibility';
+import Controls from '../../../components/controls/Controls'
+import Dot from '../../../components/statusDot'
+import Popup from '../../../components/Popup'
+// import PrintIcon from '@material-ui/icons/Print';
 import { connect } from 'react-redux'
-import Notification from "../../../../components/Notification";
-import ConfirmDialog from "../../../../components/ConfirmDialog";
-import Info from '../../../../components/infoPage'
+import Notification from "../../../components/Notification";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { EmployeContex } from '../../../../LocalDB/EmoloyeDB'
-
+// import ViewDetails from '../ViewDetails'
+// import DateRangeIcon from '@material-ui/icons/DateRange';
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -46,8 +46,11 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     searchInput: {
-        position: 'absolute',
-        left: '10px',
+
+        margin: '4px',
+    },
+    Select: {
+        width: '40px',
         margin: '4px',
     },
     newButton: {
@@ -55,10 +58,15 @@ const useStyles = makeStyles((theme) => ({
         right: '10px'
     },
     resize: {
-
         height: 27,
         fontSize: 11,
         padding: '0 0px 0px 0px '
+    },
+    Selectresize: {
+        width: 20,
+        height: 27,
+        fontSize: 11,
+        padding: 2
     },
     CellContentent: {
         textAlign: 'center',
@@ -68,23 +76,17 @@ const useStyles = makeStyles((theme) => ({
 
 const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
-    { _id: 'EmpolyeName', label: 'Name' },
-    { _id: 'Gender', label: 'Gender' },
-    { _id: 'Mobile', label: 'Mobile', },
-    { _id: 'City', label: 'City' },
-    { _id: 'Salary', label: 'Salary' },
-    { _id: 'Department', label: 'Department', },
-    { _id: 'Type', label: 'Type' },
-    { _id: 'Haier_Date', label: 'Haier Date', },
+    { _id: 'Name', label: 'Customer Name' },
+    { _id: 'Mobile', label: 'Mobile No' },
+    { _id: 'reciptId', label: 'Recipt No' },
+    { _id: 'date', label: 'Date' },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
 const Setup = (props) => {
-    // const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { users, handleremove } = useContext(EmployeContex)
-
-    console.log(users)
-    const [records, setRecords] = useState(users)
+    const { deleteItem } = useContext(DataContext) //
+    const { CustomerDetails } = props.data
+    const [records, setRecords] = useState(CustomerDetails)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
@@ -97,38 +99,53 @@ const Setup = (props) => {
         TblPagination,
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
-    const handleSearch = e => {
+    const ReceptSearch = e => {
         let target = e.target;
         setFilterFn({
             fn: items => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.EmpolyeName.toLowerCase().includes(target.value))
+                    return items.filter(x => x.Mobile.toLowerCase().includes(target.value))
             }
         })
     }
-
+   
     useEffect(() => {
-        setRecords(users)
-    }, [users])
+        setRecords(CustomerDetails)
+    }, [CustomerDetails])
 
+    // const type = [
+    //     { _id: '1', Name: 'Table' },
+    //     { _id: '2', Name: 'TakeAway' }
+    // ]
 
+    const openInPopup = item => {
+        setRecordForEdit(item)
+        setOpenPopup(true)
+    }
+   
     const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
             isOpen: false
         })
-        handleremove(id)
-        setNotify({
-            isOpen: true,
-            message: 'Deleted Successfully',
-            type: 'error'
+        deleteItem(id).then(() => {
+            setRecords(CustomerDetails)
+            setNotify({
+                isOpen: true,
+                message: 'Deleted Successfully',
+                type: 'error'
+            })
+
         })
-
-
     }
-
+//     <Controls.ActionButton
+//     color="primary"
+//     onClick={() => { openInPopup(item) }}
+// >
+//     <VisibilityIcon fontSize="inherit" />
+// </Controls.ActionButton>
     const DataTable = () => {
         return (
             <TblContainer>
@@ -136,40 +153,26 @@ const Setup = (props) => {
                 <TableBody>
                     {
                         recordsAfterPagingAndSorting().map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow key={item._id}>
                                 <TableCell >
-                                    {item.admin ?
-                                        <LockOpenIcon fontSize='inherit' />
-                                        :
-                                        <LockIcon fontSize='inherit' />
-                                    }
+                                    {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
+                                        : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                 </TableCell>
-                                <TableCell>{item.EmpolyeName}</TableCell>
-                                <TableCell>{item.Gender}</TableCell>
+                                <TableCell>{item.Name}</TableCell>
                                 <TableCell>{item.Mobile}</TableCell>
-                                <TableCell>{item.City}</TableCell>
-                                <TableCell>{item.Salary}</TableCell>
-                                <TableCell>{item.Department}</TableCell>
-                                <TableCell>{item.Type}</TableCell>
-                                <TableCell>{item.Haier_Date}</TableCell>
+                                <TableCell>{item.reciptId}</TableCell>
+                                <TableCell>{item.date}</TableCell>
                                 <TableCell>
+                                    
                                     <Controls.ActionButton
                                         color="secondary"
                                         onClick={() => {
-                                            if (item.Type === "SUPERUSER") {
-                                                setNotify({
-                                                    isOpen: true,
-                                                    message: "This User Created By Devloper! You can't Do this operation",
-                                                    type: 'error'
-                                                })
-                                            } else {
-                                                setConfirmDialog({
-                                                    isOpen: true,
-                                                    title: 'Are you sure to delete this record?',
-                                                    subTitle: "You can't undo this operation",
-                                                    onConfirm: () => { onDelete(item.public_id) }
-                                                })
-                                            }
+                                            setConfirmDialog({
+                                                isOpen: true,
+                                                title: 'Are you sure to delete this record?',
+                                                subTitle: "You can't undo this operation",
+                                                onConfirm: () => { onDelete(item._id) }
+                                            })
                                         }}>
                                         <DeleteIcon fontSize="inherit" />
                                     </Controls.ActionButton>
@@ -185,7 +188,7 @@ const Setup = (props) => {
         <>
             <Paper className={classes.Header} >
                 <Controls.Input
-                    label='Name'
+                    label='Phone No'
                     type="text"
                     className={classes.searchInput}
                     size="small"
@@ -195,24 +198,16 @@ const Setup = (props) => {
                             <Search fontSize="inherit" />
                         </InputAdornment>)
                     }}
-                    onChange={handleSearch}
+                    onChange={ReceptSearch}
                 />
-                <Controls.Button
-                    text="Add New"
-                    variant="outlined"
-                    startIcon={<AddIcon />}
-                    className={classes.newButton}
-                    onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}
-                />
+               
             </Paper>
             <Paper className={classes.Body} >
                 {recordsAfterPagingAndSorting().length === 0 ?
                     <Info
-                        title="No User Data Found!"
-                        subTitle={
-                            "Create New User using Add new Button ,"
-                        }
-                    // link={Category.length !== 0 ? null : {to:'/CategorySetup' , title:"Category Setup"}}
+                        title="No Coustomers Data Found!"
+                        subTitle="Go To POS and Add Coustomers Details with Sell"
+                        link={{ to: '/Pos', title: "POS" }}
                     />
                     : <DataTable />
                 }
@@ -225,12 +220,9 @@ const Setup = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-
-                <AddEmploye
+                {/* <ViewDetails
                     recordForEdit={recordForEdit}
-                />
-
-
+                /> */}
             </Popup>
             <Notification
                 notify={notify}

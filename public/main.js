@@ -3,7 +3,7 @@ const path = require("path")
 const isDev = require("electron-is-dev")
 const { ipcMain } = require('electron')
 const { PosPrinter } = require('electron-pos-printer');
-// const PyServer = require('./pyServer/PyServer');
+const mongoPathExist = require('./mongodb/mongoStart');
 const SocketSrver = require('./SocketServer/server');
 const gotTheLock = app.requestSingleInstanceLock()
 const spawn = require('child_process').spawn;
@@ -93,18 +93,20 @@ if (!gotTheLock) {
         let db = null
         loading.once('show', () => {
             mainWin = loading
-            dbserver().then((sucsess) => {
-                const TortoiseDB = require('./tortoiseDB/tortoiseDB');
-                SocketSrver()
-                if (sucsess) {
-                    db = new TortoiseDB({
-                        name: 'ShopDB',
-                        port: 4040,
-                        mongoURI: 'mongodb://localhost:27017',
-                        batchLimit: 1000,
-                    });
-                    db.start()
-                }
+            mongoPathExist().then(() => {
+                dbserver().then((sucsess) => {
+                    const TortoiseDB = require('./tortoiseDB/tortoiseDB');
+                    SocketSrver()
+                    if (sucsess) {
+                        db = new TortoiseDB({
+                            name: 'ShopDB',
+                            port: 4040,
+                            mongoURI: 'mongodb://localhost:27017',
+                            batchLimit: 1000,
+                        });
+                        db.start()
+                    }
+                })
             })
             main = new BrowserWindow({
                 width: 1000,
@@ -119,17 +121,19 @@ if (!gotTheLock) {
                     enableRemoteModule: true,
                 }
             })
-            let settingsWin = new BrowserWindow({
-                width: 800,
-                height: 600,
-                minWidth: 800,
-                minHeight: 600,
-                parent: main,
-                show: false,
-                webPreferences: {
-                    nodeIntegration: true,
-                }
-            })
+            // let Userwin = new BrowserWindow({
+            //     width: 600,
+            //     height: 400,
+            //     minWidth: 400,
+            //     minHeight: 300,
+            //     show: false,
+            //     frame: false,
+            //     titleBarStyle: 'hidden',
+            //     webPreferences: {
+            //         nodeIntegration: true,
+            //         enableRemoteModule: true,
+            //     }
+            // })
             main.webContents.once('dom-ready', () => {
                 console.log('main loaded')
                 main.show()
@@ -139,16 +143,16 @@ if (!gotTheLock) {
             })
             // long loading html
             main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
-            settingsWin.loadURL('http://localhost:4000')
+            // Userwin.loadURL(isDev ? 'http://localhost:3000/user' : `file://${path.join(__dirname, '../build/index.html/user')}`)
 
-            settingsWin.on('close', (e) => {
-                e.preventDefault();
-                settingsWin.hide()
-            })
-            ipcMain.on('dev-settings', (event, arg) => {
-                settingsWin.show()
+            // Userwin.on('close', (e) => {
+            //     e.preventDefault();
+            //     Userwin.hide()
+            // })
+            // ipcMain.on('User-Input', (event, arg) => {
+            //     Userwin.show()
 
-            })
+            // })
             ipcMain.on('print-pos', (event, arg) => {
                 console.log(arg)
                 const Print = JSON.parse(arg)
