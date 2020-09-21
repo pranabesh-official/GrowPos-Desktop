@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, Component } from 'react'
 import { Icon } from 'semantic-ui-react'
 import { makeStyles } from '@material-ui/core/styles';
 import Controls from '../../../components/controls/Controls'
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
         return {
             ...theme.GlobalBox,
             background: '#00000000',
-            width: 600
+            width: 900
         }
     },
     newButton: {
@@ -25,68 +25,57 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const PrintTable = (props) => {
-    const { recordForEdit } = props
-    const classes = useStyles();
-    return (
-        <Paper className={classes.PrintBody} >
-            <Grid container spacing={1} >
-                <Grid item xs={4} sm={4} md={4}>
+
+class PrintTable extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+
+        };
+    }
+    render() {
+        const { recordForEdit } = this.props
+        return (
+            <Grid container spacing={1} style={{ padding: 35, paddingTop: 5 }}>
+                <Grid item xs={12} sm={12} md={12}>
                     <Table bordered size="sm" className="mx-0 my-0">
+                        <thead >
+                            <tr>
+                                <th>Recipt No</th>
+                                <th>Order Type</th>
+                                <th>Create By</th>
+                                <th>Payment Type</th>
+                                <th>Time</th>
+                                <th>Date</th>
+                                <th>Sub Total</th>
+                                <th>Tax </th>
+                                <th>Discount </th>
+                                <th>Complementary</th>
+                                <th>Total Amount</th>
+                                <th>Recive Amount</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
-                                <td className="left">
-                                    <strong>Recipt No</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.OrderSno}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong> Order Type</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.OrderType}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Create By</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.createBy}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Payment Type</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.paymentType}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Time</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.time}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Sub Total</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.SubTotal}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong> Tax Amount</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.taxAmount}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Discount Amount</strong>
-                                </td>
-                                <td className="right" >{recordForEdit.discount}</td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Complementary</strong>
-                                </td>
-                                <td className="right" >
+                                <td  >{recordForEdit.OrderSno}</td>
+
+                                <td  >{recordForEdit.OrderType}</td>
+
+                                <td  >{recordForEdit.createBy}</td>
+
+                                <td  >{recordForEdit.paymentType}</td>
+
+                                <td  >{recordForEdit.time}</td>
+
+                                <td>{recordForEdit.date}</td>
+
+                                <td >{recordForEdit.SubTotal}</td>
+
+                                <td>{recordForEdit.taxAmount}</td>
+
+                                <td>{recordForEdit.discount}</td>
+
+                                <td >
                                     <strong>{
                                         recordForEdit.Complementary ?
                                             <Icon color='green' name='checkmark' size='small' />
@@ -94,19 +83,17 @@ const PrintTable = (props) => {
                                             <Icon color='red' name='remove' size='small' />
                                     }</strong>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td className="left">
-                                    <strong>Total Amount</strong>
-                                </td>
-                                <td className="right" >
+                                <td >
                                     <strong>{recordForEdit.total}</strong>
+                                </td>
+                                <td >
+                                    <strong>{recordForEdit.reciveAmount}</strong>
                                 </td>
                             </tr>
                         </tbody>
                     </Table>
                 </Grid>
-                <Grid item xs={8} sm={8} md={8}  >
+                <Grid item xs={7} sm={7} md={7}  >
                     <Table bordered size="sm" className="mx-0 my-0" >
                         <thead >
                             <tr>
@@ -132,8 +119,8 @@ const PrintTable = (props) => {
                     </Table>
                 </Grid>
             </Grid>
-        </Paper>
-    )
+        )
+    }
 }
 const ViewDetails = (props) => {
     const { recordForEdit } = props
@@ -143,19 +130,25 @@ const ViewDetails = (props) => {
         content: () => componentRef.current
     })
     return (
-        < >
-            <PrintTable recordForEdit={recordForEdit} ref={componentRef} />
-            <Paper className={classes.PrintBody}>
-                <Controls.Button
-                    text="Print"
-                    variant="outlined"
-                    startIcon={<PrintIcon />}
-                    size='medium'
-                    className={classes.newButton}
-                    onClick={handlePrint}
-                />
-            </Paper>
-        </>
+        <Grid container direction='column' >
+            <Grid item xs={12} sm={12}>
+                <Paper className={classes.PrintBody} >
+                    <PrintTable recordForEdit={recordForEdit} ref={componentRef} />
+                </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+                <Paper className={classes.PrintBody}>
+                    <Controls.Button
+                        text="Print"
+                        variant="outlined"
+                        startIcon={<PrintIcon />}
+                        // size='medium'
+                        className={classes.newButton}
+                        onClick={handlePrint}
+                    />
+                </Paper>
+            </Grid>
+        </Grid>
     )
 }
 

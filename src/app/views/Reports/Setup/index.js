@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TableBody, TableRow, TableCell, InputAdornment, Grid } from '@material-ui/core';
 import useTable from '../../../components/Datatable'
@@ -8,6 +8,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import Controls from '../../../components/controls/Controls'
 import Dot from '../../../components/statusDot'
 import Popup from '../../../components/Popup'
+import PrintPopup from '../../../components/PrintPopup'
 import PrintIcon from '@material-ui/icons/Print';
 import { connect } from 'react-redux'
 import Notification from "../../../components/Notification";
@@ -15,8 +16,9 @@ import ConfirmDialog from "../../../components/ConfirmDialog";
 import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
 import ViewDetails from '../ViewDetails'
+import PrintTable from '../ViweAllDetails'
 import DateRangeIcon from '@material-ui/icons/DateRange';
-
+import { useReactToPrint } from 'react-to-print'
 const useStyles = makeStyles((theme) => ({
     Header: props => {
         return {
@@ -71,7 +73,14 @@ const useStyles = makeStyles((theme) => ({
     CellContentent: {
         textAlign: 'center',
         justifyContent: 'center'
-    }
+    },
+    PrintBody: props => {
+        return {
+            ...theme.GlobalBox,
+            background: '#00000000',
+            width: 840
+        }
+    },
 }));
 
 const headCells = [
@@ -94,6 +103,7 @@ const Setup = (props) => {
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
+    const [openPrintPopup, setOpenPrintPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
     const {
@@ -113,17 +123,7 @@ const Setup = (props) => {
             }
         })
     }
-    // const typeSearch = e => {
-    //     let target = e.target;
-    //     setFilterFn({
-    //         fn: items => {
-    //             if (target.value === "")
-    //                 return items;
-    //             else
-    //                 return items.filter(x => x.OrderType.toLowerCase().includes(target.value))
-    //         }
-    //     })
-    // }
+
     const DateSearch = e => {
         let target = e.target;
         setFilterFn({
@@ -139,16 +139,11 @@ const Setup = (props) => {
         setRecords(SellReport)
     }, [SellReport])
 
-    // const type = [
-    //     { _id: '1', Name: 'Table' },
-    //     { _id: '2', Name: 'TakeAway' }
-    // ]
-
     const openInPopup = item => {
         setRecordForEdit(item)
         setOpenPopup(true)
     }
-   
+
     const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
@@ -210,6 +205,11 @@ const Setup = (props) => {
             </TblContainer>
         )
     }
+    const componentRef = useRef()
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current
+    })
+
     return (
         <>
             <Paper className={classes.Header} >
@@ -246,7 +246,7 @@ const Setup = (props) => {
                     variant="outlined"
                     startIcon={<PrintIcon />}
                     className={classes.newButton}
-                    // onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}
+                    onClick={() => { setOpenPrintPopup(true) }}
                 />
             </Paper>
             <Paper className={classes.Body} >
@@ -263,7 +263,6 @@ const Setup = (props) => {
                 <TblPagination />
             </Paper>
             <Popup
-                // title={"Tax"}
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
@@ -271,6 +270,19 @@ const Setup = (props) => {
                     recordForEdit={recordForEdit}
                 />
             </Popup>
+            <PrintPopup
+                handlePrint={handlePrint}
+                openPrintPopup={openPrintPopup}
+                setOpenPrintPopup={setOpenPrintPopup}
+            >
+                <Grid container direction='column' >
+                    <Grid item xs={12} sm={12}>
+                        <Paper className={classes.PrintBody} >
+                            <PrintTable recordsAfterPagingAndSorting={recordsAfterPagingAndSorting} ref={componentRef} />
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </PrintPopup>
             <Notification
                 notify={notify}
                 setNotify={setNotify}
