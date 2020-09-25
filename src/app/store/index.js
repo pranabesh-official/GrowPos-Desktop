@@ -13,7 +13,7 @@ import Kot from './Reducer/Kot'
 
 
 // const logger = createLogger();
-const middleware = [thunk ]
+const middleware = [thunk]
 
 // if (process.env.NODE_ENV !== 'production') {
 //   middleware.push(createLogger());

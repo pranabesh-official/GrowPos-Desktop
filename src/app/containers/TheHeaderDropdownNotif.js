@@ -1,5 +1,6 @@
-import React from 'react'
-import {LogOut} from '../store/action/Auth'
+import React, {  useContext } from 'react'
+import {ShopHandeler} from '../LocalDB/ShopDB'
+import { LogOut, getProfileFetch } from '../store/action/Auth'
 import { connect } from 'react-redux'
 import {
 
@@ -12,29 +13,35 @@ import {
 import CIcon from '@coreui/icons-react'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
-import { isElectron } from 'react-device-detect'
-// import { Redirect } from "react-router-dom"
+
 
 
 const TheHeaderDropdownNotif = (props) => {
-  const logout = ()=>{
+  const {current} = useContext(ShopHandeler)
+  // console.log('TheHeaderDropdownNotif',current)
+  const logout = () => {
     props.LogOut()
   }
-  const {currentUser} = props.Auth
+ 
+
+  // useEffect(() => {
+  //   if (!currentUser) {
+  //     getProfileFetch()
+  //   }
+  // }, [currentUser])
+
   return (
     <CDropdown
       inNav
       className="c-header-nav-item mx-2"
+      style={{borderRadius:0}}
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
         <ArrowDropDownCircleIcon />
       </CDropdownToggle>
       <CDropdownMenu placement="bottom-end" className="pt-0">
-
-        <CDropdownItem><CIcon name="cil-user" className="mr-2 text-success" />{currentUser.EmpolyeName}</CDropdownItem>
-        {/* <CDropdownItem ><CIcon name="cil-settings" className="mr-2 text-info" />{userRole + '  settings'}</CDropdownItem> */}
+        <CDropdownItem><CIcon name="cil-user" className="mr-2 text-success" />{current && current.EmpolyeName}</CDropdownItem>
         <CDropdownItem onClick={() => logout()}> <ExitToAppIcon color="secondary" className="mr-2 " />logout</CDropdownItem>
-
       </CDropdownMenu>
     </CDropdown>
   )
@@ -45,4 +52,4 @@ const mapStateToProps = (state) => {
     Auth: state.Auth,
   }
 }
-export default connect(mapStateToProps, { LogOut })(TheHeaderDropdownNotif);
+export default connect(mapStateToProps, { LogOut, getProfileFetch })(TheHeaderDropdownNotif);

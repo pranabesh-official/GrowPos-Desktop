@@ -52,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
         right: '10px'
     },
     resize: {
-
         height: 27,
         fontSize: 11,
         padding: '0 0px 0px 0px '

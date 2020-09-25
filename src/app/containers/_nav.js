@@ -1,12 +1,12 @@
 
 export default [
-  // {
-  //   _tag: 'CSidebarNavItem',
-  //   name: 'HOME',
-  //   to: '/Dashbord',
-  //   icon: 'cil-home',
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'HOME',
+    to: '/Dashbord',
+    icon: 'cil-home',
   
-  // },
+  },
   {
     _tag: 'CSidebarNavItem',
     name: 'POS',
@@ -53,6 +53,16 @@ export default [
       },
       {
         _tag: 'CSidebarNavItem',
+        name: 'Dine In',
+        to: '/TableSetup',  
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Registers',
+        to: '/Registers',  
+      },
+      {
+        _tag: 'CSidebarNavItem',
         name: 'Category',
         to:'/CategorySetup'
       },
@@ -71,11 +81,7 @@ export default [
         name: 'Users',
         to: '/UserSetup',  
       },
-      // {
-      //   _tag: 'CSidebarNavItem',
-      //   name: 'DEVLOPER SETUP',
-      //   to: '/Employe',  
-      // },
+      
     ],
     
   },

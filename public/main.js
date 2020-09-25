@@ -4,7 +4,6 @@ const isDev = require("electron-is-dev")
 const { ipcMain } = require('electron')
 const { PosPrinter } = require('electron-pos-printer');
 const mongoPathExist = require('./mongodb/mongoStart');
-const SocketSrver = require('./SocketServer/server');
 const gotTheLock = app.requestSingleInstanceLock()
 const spawn = require('child_process').spawn;
 
@@ -95,6 +94,7 @@ if (!gotTheLock) {
             mainWin = loading
             mongoPathExist().then(() => {
                 dbserver().then((sucsess) => {
+                    const SocketSrver = require('./SocketServer/server');
                     const TortoiseDB = require('./tortoiseDB/tortoiseDB');
                     SocketSrver()
                     if (sucsess) {
@@ -121,19 +121,7 @@ if (!gotTheLock) {
                     enableRemoteModule: true,
                 }
             })
-            // let Userwin = new BrowserWindow({
-            //     width: 600,
-            //     height: 400,
-            //     minWidth: 400,
-            //     minHeight: 300,
-            //     show: false,
-            //     frame: false,
-            //     titleBarStyle: 'hidden',
-            //     webPreferences: {
-            //         nodeIntegration: true,
-            //         enableRemoteModule: true,
-            //     }
-            // })
+          
             main.webContents.once('dom-ready', () => {
                 console.log('main loaded')
                 main.show()
@@ -143,16 +131,7 @@ if (!gotTheLock) {
             })
             // long loading html
             main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
-            // Userwin.loadURL(isDev ? 'http://localhost:3000/user' : `file://${path.join(__dirname, '../build/index.html/user')}`)
-
-            // Userwin.on('close', (e) => {
-            //     e.preventDefault();
-            //     Userwin.hide()
-            // })
-            // ipcMain.on('User-Input', (event, arg) => {
-            //     Userwin.show()
-
-            // })
+           
             ipcMain.on('print-pos', (event, arg) => {
                 console.log(arg)
                 const Print = JSON.parse(arg)

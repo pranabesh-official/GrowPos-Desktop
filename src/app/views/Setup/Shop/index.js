@@ -55,7 +55,7 @@ class ShopSetup extends Component {
           <Paper className={classes.Body} style={{height:`${height - 10}px`}}>
               <DataProvider>
                 <ShopProvider>
-                  <Shop height={height - 10} />
+                  <Shop height={height} />
                 </ShopProvider>
               </DataProvider>
           </Paper>

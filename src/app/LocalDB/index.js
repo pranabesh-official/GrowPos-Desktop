@@ -6,7 +6,7 @@ import TurtleDB from 'turtledb';
 import { ReadShop, UserData } from '../store/action/Shop'
 import { GetActive, getClient} from '../store/action/Cart'
 import { getOrderTicket } from '../store/action/Kot'
-import {date , time} from '../Utils'
+
 let context = null;
 const { Provider, Consumer } = context = createContext()
 
@@ -43,25 +43,41 @@ class DataProvider extends Component {
                             this.setState({ items: Data });
                             const Source = Data.filter((item) => item.dbName === 'Source')
                             this.props.ReadData('Source', Source)
+                            
                             const Category = Data.filter((item) => item.dbName === 'Category')
                             this.props.ReadData('Category', Category)
+
                             const Tax = Data.filter((item) => item.dbName === 'Tax')
                             this.props.ReadData('Tax', Tax)
+
                             const Tables = Data.filter((item) => item.dbName === 'Tables')
                             this.props.ReadData('Tables', Tables)
                             this.props.getClient(Tables)
-                            const Products = Data.filter((item) => item.dbName === 'Products')
+
+                            const Registers = Data.filter((item) => item.dbName === 'Registers')
+                            this.props.ReadData('Registers', Registers)
+
+                            const Products = Data.filter((item) => item.dbName === 'Products') 
                             this.props.ReadData('Products', Products)
+
                             const SellReport = Data.filter((item) => item.dbName === 'SellReport')
                             this.props.ReadData('SellReport', SellReport)
+
+                            const TaxGroup = Data.filter((item) => item.dbName === 'TaxGroup')
+                            this.props.ReadData('TaxGroup', TaxGroup)
+
                             const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
                             this.props.ReadData('OrderTicket', OrderTicket)
+
                             const CustomerDetails = Data.filter((item) => item.dbName === 'CustomerDetails')
                             this.props.ReadData('CustomerDetails', CustomerDetails)
+
                             const Shop = Data.filter((item) => item.dbName === 'Shop')
                             this.props.ReadShop(Shop)
+
                             const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
                             this.props.UserData(CurrentUser)
+
                             const Cart = Data.filter((item) => item.dbName === 'Cart')
                             this.props.GetActive(Cart)
                             resolve('load done')
@@ -91,7 +107,7 @@ class DataProvider extends Component {
         const {currentUser} = this.props.Auth
         return new Promise((resolve, reject) => {
             const updatedItems = [...this.state.items];
-            const newItem = Object.assign(Data, { isSync: false, dbName: name, date:date(), time:time() , createBy:currentUser.EmpolyeName})
+            const newItem = Object.assign(Data, { isSync: false, dbName: name, dateTime:new Date() , createBy:currentUser.EmpolyeName})
             this.db.create(newItem)
                 .then((Data) => {
                     updatedItems.push(Data);

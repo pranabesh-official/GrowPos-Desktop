@@ -24,3 +24,20 @@ export const time = () => {
         + currentdate.getSeconds();
     return time
 };
+
+
+export const getDate = (d) => {
+    const currentdate = new Date(d);
+    const date =  currentdate.getDate() + "/"
+        + (currentdate.getMonth() + 1) + "/"
+        + currentdate.getFullYear() 
+    return date
+}
+
+export const gettime = (t) => {
+    const currentdate = new Date(t);
+    const time =  currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":"
+        + currentdate.getSeconds();
+    return time
+};

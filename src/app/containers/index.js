@@ -15,5 +15,5 @@ export {
   TheHeaderDropdownNotif,
   TheLayout,
   TheSidebar,
-  Titlebar
+  Titlebar,
 }

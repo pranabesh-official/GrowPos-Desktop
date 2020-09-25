@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
 import { Grid, Paper } from '@material-ui/core';
 import { connect } from 'react-redux'
-// import { ThemeBackground } from '../LayoutManeger/Themes'
+import SellChart from './SellChart'
 import { withStyles } from '@material-ui/core/styles';
-import Status from "./Status"
-import Setup from './Setup'
+import ShopProvider from '../../LocalDB/ShopDB'
+import Active from './Setup/Active'
 
 const style = (theme) => ({
     Body: {
         ...theme.GlobalBox,
         background: theme.palette.light.main,
-        // overflow: 'auto',
+        padding: 8,
         width: '100%'
     },
-
+    info: {
+        ...theme.GlobalBox,
+        height: '220px',
+    },
+    Status: {
+        ...theme.GlobalBox,
+        height: '100px',
+    },
     heading: {
         fontSize: theme.typography.pxToRem(15),
         flexBasis: '40%',
@@ -50,16 +57,25 @@ class Dashbord extends Component {
         const { classes } = this.props;
         return (
             <Paper className={classes.Body} style={{ height: `${height}px`, maxHeight: `${height}px` }}>
-                <Grid container direction='column' spacing={1}>
-                    <Grid item xs={12} sm={12} md={12}>
-                        <Status />
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={12}>
-                        <Grid container>
-                            <Setup height={height} />
+                <ShopProvider>
+                    <Grid container direction='column' spacing={1}>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <Paper className={classes.info} >
+                                info
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={5} sm={5}>
+                                    <SellChart height={height} />
+                                </Grid>
+                                <Grid item xs={7} sm={7}>
+                                    <Active height={height} />
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                </ShopProvider>
             </Paper>
 
         );

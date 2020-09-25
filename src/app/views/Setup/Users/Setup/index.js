@@ -8,13 +8,14 @@ import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Controls from '../../../../components/controls/Controls'
 import Popup from '../../../../components/Popup'
-import AddEmploye from '../AddEmploye'
+import AddUser from '../AddUser'
 import { connect } from 'react-redux'
 import Notification from "../../../../components/Notification";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
 import Info from '../../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { EmployeContex } from '../../../../LocalDB/EmoloyeDB'
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import { ShopHandeler } from '../../../../LocalDB/ShopDB'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -74,16 +75,13 @@ const headCells = [
     { _id: 'City', label: 'City' },
     { _id: 'Salary', label: 'Salary' },
     { _id: 'Department', label: 'Department', },
-    { _id: 'Type', label: 'Type' },
     { _id: 'Haier_Date', label: 'Haier Date', },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
 const Setup = (props) => {
-    // const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { users, handleremove } = useContext(EmployeContex)
 
-    console.log(users)
+    const { users, loadAllusers, adduser, deleteUser , editUser } = useContext(ShopHandeler)
     const [records, setRecords] = useState(users)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
@@ -108,27 +106,63 @@ const Setup = (props) => {
             }
         })
     }
+    useEffect(() => {
+        loadAllusers()
+    }, [loadAllusers])
 
     useEffect(() => {
         setRecords(users)
     }, [users])
 
+    const addOrEdit = (data, resetForm) => {
+        if(!data._id){
+            adduser(data).then((rasult) => {
+                resetForm()
+                setOpenPopup(false)
+                setRecords(users)
+                loadAllusers()
+                setNotify({
+                    isOpen: true,
+                    message: `${rasult.EmpolyeName} Submitted Successfully`,
+                    type: 'success'
+                })
+    
+            })
+        }
+        if(data._id){
+            editUser(data._id, data).then(()=>{
+                resetForm()
+                setOpenPopup(false)
+                setRecords(users)
+                loadAllusers()
+                setNotify({
+                    isOpen: true,
+                    message: ` Update Successfully`,
+                    type: 'success'
+                })
+            })
+        }
+        
 
+    }
     const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
             isOpen: false
         })
-        handleremove(id)
-        setNotify({
-            isOpen: true,
-            message: 'Deleted Successfully',
-            type: 'error'
+        deleteUser(id).then(() => {
+            loadAllusers()
+            setNotify({
+                isOpen: true,
+                message: 'Deleted Successfully',
+                type: 'error'
+            })
         })
-
-
     }
-
+    const openInPopup = item => {
+        setRecordForEdit(item)
+        setOpenPopup(true)
+    }
     const DataTable = () => {
         return (
             <TblContainer>
@@ -150,9 +184,14 @@ const Setup = (props) => {
                                 <TableCell>{item.City}</TableCell>
                                 <TableCell>{item.Salary}</TableCell>
                                 <TableCell>{item.Department}</TableCell>
-                                <TableCell>{item.Type}</TableCell>
                                 <TableCell>{item.Haier_Date}</TableCell>
                                 <TableCell>
+                                    <Controls.ActionButton
+                                        color="primary"
+                                        onClick={() => { openInPopup(item) }}
+                                    >
+                                        <EditOutlinedIcon fontSize="inherit" />
+                                    </Controls.ActionButton>
                                     <Controls.ActionButton
                                         color="secondary"
                                         onClick={() => {
@@ -167,7 +206,7 @@ const Setup = (props) => {
                                                     isOpen: true,
                                                     title: 'Are you sure to delete this record?',
                                                     subTitle: "You can't undo this operation",
-                                                    onConfirm: () => { onDelete(item.public_id) }
+                                                    onConfirm: () => { onDelete(item._id) }
                                                 })
                                             }
                                         }}>
@@ -226,7 +265,8 @@ const Setup = (props) => {
                 setOpenPopup={setOpenPopup}
             >
 
-                <AddEmploye
+                <AddUser
+                    addOrEdit={addOrEdit}
                     recordForEdit={recordForEdit}
                 />
 

@@ -1,12 +1,10 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, TableBody, TableRow, TableCell, InputAdornment, Grid } from '@material-ui/core';
+import { Paper, InputAdornment, Grid } from '@material-ui/core';
 import useTable from '../../../components/Datatable'
 import { DataContext } from '../../../LocalDB'
 import { Search } from "@material-ui/icons";
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import Controls from '../../../components/controls/Controls'
-import Dot from '../../../components/statusDot'
 import Popup from '../../../components/Popup'
 import PrintPopup from '../../../components/PrintPopup'
 import PrintIcon from '@material-ui/icons/Print';
@@ -14,11 +12,17 @@ import { connect } from 'react-redux'
 import Notification from "../../../components/Notification";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import Info from '../../../components/infoPage'
-import DeleteIcon from '@material-ui/icons/Delete';
 import ViewDetails from '../ViewDetails'
 import PrintTable from '../ViweAllDetails'
 import DateRangeIcon from '@material-ui/icons/DateRange';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+import DataTable from './DataTable'
 import { useReactToPrint } from 'react-to-print'
+import PropTypes from 'prop-types';;
+
+
 const useStyles = makeStyles((theme) => ({
     Header: props => {
         return {
@@ -81,6 +85,41 @@ const useStyles = makeStyles((theme) => ({
             width: 840
         }
     },
+    root: props => {
+        return {
+            flexGrow: 1,
+            backgroundColor: theme.palette.background.paper,
+            display: 'flex',
+            height: `${(props.height - 68) - 100}px`,
+            borderTop: `1px solid ${theme.palette.divider}`
+        }
+    },
+    CartBody: props => {
+        return {
+            ...theme.GlobalBox,
+            padding: '0 0px',
+            background: 'white',
+            overflow: 'auto',
+            height: '100%',
+            width: '100%'
+        }
+    },
+    tabs: {
+        borderRight: `1px solid ${theme.palette.divider}`,
+    },
+    tab: {
+        width: 90,
+        padding: 0
+
+    },
+    Box: {
+        height: '100%',
+        width: '100%'
+    },
+    TabPanel: {
+        height: '100%',
+        width: '100%'
+    }
 }));
 
 const headCells = [
@@ -95,6 +134,8 @@ const headCells = [
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
+
+
 const Setup = (props) => {
     const { deleteItem } = useContext(DataContext) //
     const { SellReport } = props.data
@@ -102,10 +143,15 @@ const Setup = (props) => {
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
+    // const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
     const [openPrintPopup, setOpenPrintPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
+    const [value, setValue] = useState(0);
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
     const {
         TblContainer,
         TblHead,
@@ -159,57 +205,42 @@ const Setup = (props) => {
 
         })
     }
-    const DataTable = () => {
-        return (
-            <TblContainer>
-                <TblHead />
-                <TableBody>
-                    {
-                        recordsAfterPagingAndSorting().map((item) => (
-                            <TableRow key={item._id}>
-                                <TableCell >
-                                    {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
-                                        : <Dot color={'red'} position="center" mx={2} Size={10} />}
-                                </TableCell>
-                                <TableCell>{item.OrderSno}</TableCell>
-                                <TableCell>{item.OrderType}</TableCell>
-                                <TableCell>{item.taxAmount}</TableCell>
-                                <TableCell>{item.discount}</TableCell>
-                                <TableCell>{item.total}</TableCell>
-                                <TableCell>{item.reciveAmount}</TableCell>
-                                <TableCell>{item.date}</TableCell>
-                                <TableCell>
-                                    <Controls.ActionButton
-                                        color="primary"
-                                        onClick={() => { openInPopup(item) }}
-                                    >
-                                        <VisibilityIcon fontSize="inherit" />
-                                    </Controls.ActionButton>
-                                    <Controls.ActionButton
-                                        color="secondary"
-                                        onClick={() => {
-                                            setConfirmDialog({
-                                                isOpen: true,
-                                                title: 'Are you sure to delete this record?',
-                                                subTitle: "You can't undo this operation",
-                                                onConfirm: () => { onDelete(item._id) }
-                                            })
-                                        }}>
-                                        <DeleteIcon fontSize="inherit" />
-                                    </Controls.ActionButton>
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    }
-                </TableBody>
-            </TblContainer>
-        )
-    }
+
     const componentRef = useRef()
     const handlePrint = useReactToPrint({
         content: () => componentRef.current
     })
-
+    function a11yProps(index) {
+        return {
+            id: `vertical-tab-${index}`,
+            'aria-controls': `vertical-tabpanel-${index}`,
+        };
+    }
+    const TabPanel = (props) => {
+        const { children, value, index, ...other } = props;
+        const classes = useStyles();
+        return (
+            <div
+                role="tabpanel"
+                className={classes.TabPanel}
+                hidden={value !== index}
+                id={`vertical-tabpanel-${index}`}
+                aria-labelledby={`vertical-tab-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box  className={classes.Box} >
+                        { children}
+                    </Box>
+                )}
+            </div>
+        );
+    }
+    TabPanel.propTypes = {
+        children: PropTypes.node,
+        index: PropTypes.any.isRequired,
+        value: PropTypes.any.isRequired,
+    };
     return (
         <>
             <Paper className={classes.Header} >
@@ -239,8 +270,6 @@ const Setup = (props) => {
                     }}
                     onChange={DateSearch}
                 />
-
-
                 <Controls.Button
                     text="Print"
                     variant="outlined"
@@ -250,14 +279,57 @@ const Setup = (props) => {
                 />
             </Paper>
             <Paper className={classes.Body} >
-                {recordsAfterPagingAndSorting().length === 0 ?
-                    <Info
-                        title="No Sells Data Found!"
-                        subTitle="Go To POS and Create Your Fast Sell"
-                        link={{ to: '/Pos', title: "POS" }}
-                    />
-                    : <DataTable />
-                }
+                <div className={classes.root}>
+                    <Tabs
+                        orientation="vertical"
+                        variant="scrollable"
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="Vertical tabs example"
+                        className={classes.tabs}
+                    >
+                        <Tab label="Tables" {...a11yProps(0)} wrapped />
+                        <Tab label="Take Away" {...a11yProps(1)} wrapped />
+
+                    </Tabs>
+                    <TabPanel value={value} index={0}>
+                        {recordsAfterPagingAndSorting().length === 0 ?
+                            <Info
+                                title="No Sells Data Found!"
+                                subTitle="Go To POS and Create Your Fast Sell"
+                                link={{ to: '/Pos', title: "POS" }}
+                            />
+                            :
+                            < DataTable
+                                TblContainer={TblContainer}
+                                TblHead={TblHead}
+                                recordsAfterPagingAndSorting={recordsAfterPagingAndSorting}
+                                openInPopup={openInPopup}
+                                onDelete={onDelete}
+                                setConfirmDialog={setConfirmDialog}
+                            />
+                        }
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        {recordsAfterPagingAndSorting().length === 0 ?
+                            <Info
+                                title="No Sells Data Found!"
+                                subTitle="Go To POS and Create Your Fast Sell"
+                                link={{ to: '/Pos', title: "POS" }}
+                            />
+                            :
+                            < DataTable
+                                TblContainer={TblContainer}
+                                TblHead={TblHead}
+                                recordsAfterPagingAndSorting={recordsAfterPagingAndSorting}
+                                openInPopup={openInPopup}
+                                onDelete={onDelete}
+                                setConfirmDialog={setConfirmDialog}
+                            />
+                        }
+                    </TabPanel>
+                </div>
+
             </Paper>
             <Paper className={classes.Footer} >
                 <TblPagination />
@@ -297,6 +369,7 @@ const Setup = (props) => {
 
 }
 
+
 const mapStateToProps = (state) => {
     return {
         data: state.DataStore,
@@ -304,3 +377,18 @@ const mapStateToProps = (state) => {
     }
 }
 export default connect(mapStateToProps,)(Setup)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

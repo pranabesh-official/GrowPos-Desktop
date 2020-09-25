@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import DataProvider from '../../../LocalDB'
 import ShopProvider from '../../../LocalDB/ShopDB'
 import Setup from './Setup'
-import EmployeProvider from '../../../LocalDB/EmoloyeDB'
+
 const style = (theme) => ({
   CartBody: {
     borderRadius: 0,
@@ -69,16 +69,14 @@ class UserSetup extends Component {
     const panes = [
 
       {
-        menuItem: 'TAX',
+        menuItem: 'Users',
         render: () => (
           <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
             <Grid container style={style} >
               <Grid item xs={12} sm={12}>
                 <DataProvider>
                   <ShopProvider>
-                    <EmployeProvider>
                       <Setup height={height} />
-                    </EmployeProvider>
                   </ShopProvider>
                 </DataProvider>
               </Grid>

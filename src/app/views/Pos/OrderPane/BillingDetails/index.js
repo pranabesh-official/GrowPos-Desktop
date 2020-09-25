@@ -114,3 +114,80 @@ export default connect(mapStateToProps, { BillingDetails })(TableBilling);
 
 
 
+
+
+
+
+// import React from 'react';
+// // import Controls from '../../../../components/controls/Controls'
+// import { Grid } from '@material-ui/core';
+// import { connect } from 'react-redux'
+// import { BillingDetails } from '../../../../store/action/Cart'
+// import { makeStyles } from '@material-ui/core/styles';
+// import Button from '@material-ui/core/Button';
+
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         margin: theme.spacing(0.5),
+//         height: 80
+//     },
+//     label: {
+//         textTransform: 'none'
+//     }
+// }));
+
+
+// const TableBilling = () => {
+//     const classes = useStyles();
+//     return (
+//         <Grid container spacing={1} style={{ padding: 8}}>
+
+//             <Grid item xs={4} sm={4} >
+//                 <Button
+//                     text='Customer Mobile'
+//                     variant="outlined"
+//                     color='secondary'
+//                     fullWidth
+//                     classes={{ root: classes.root, label: classes.label }}
+//                 >Customer Details
+//                             </Button>
+//             </Grid>
+//             <Grid item xs={4} sm={4} >
+//                 <Button
+//                     text='Customer Mobile'
+//                     variant="outlined"
+//                     color='secondary'
+//                     fullWidth
+//                     classes={{ root: classes.root, label: classes.label }}
+//                 >Discount
+//                             </Button>
+//             </Grid>
+//             <Grid item xs={4} sm={4} >
+//                 <Button
+//                     text='Customer Mobile'
+//                     variant="outlined"
+//                     color='secondary'
+//                     fullWidth
+//                     classes={{ root: classes.root, label: classes.label }}
+//                 >Complementary
+//                             </Button>
+//             </Grid>
+
+
+//         </Grid>
+
+//     )
+
+// }
+
+// const mapStateToProps = (state) => {
+//     return {
+//         data: state.DataStore,
+//         Cart: state.Cart,
+//     }
+// }
+// export default connect(mapStateToProps, { BillingDetails })(TableBilling);
+
+
+
+

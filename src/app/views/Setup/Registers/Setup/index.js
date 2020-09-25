@@ -1,22 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@material-ui/core';
-import useTable from '../../../components/Datatable'
-// import { DataContext } from '../../../LocalDB'
+import useTable from '../../../../components/Datatable'
+import { DataContext } from '../../../../LocalDB'
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from "@material-ui/icons";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import Controls from '../../../components/controls/Controls'
-import Dot from '../../../components/statusDot'
-import Popup from '../../../components/Popup'
-
+import Controls from '../../../../components/controls/Controls'
+import Dot from '../../../../components/statusDot'
+import Popup from '../../../../components/Popup'
+import AddTax from '../AddTax'
 import { connect } from 'react-redux'
-import Notification from "../../../components/Notification";
-import ConfirmDialog from "../../../components/ConfirmDialog";
-import Info from '../../../components/infoPage'
+import Notification from "../../../../components/Notification";
+import ConfirmDialog from "../../../../components/ConfirmDialog";
+import Info from '../../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-// import AddProduct from '../addProduct/Add'
-
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -25,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
             border: 0,
             padding: 8,
             height: `${48}px`,
-            // width: '100%',
+            width: '100%',
             // borderBottom: '1px solid #f0f0f0'
         }
     },
@@ -33,15 +31,15 @@ const useStyles = makeStyles((theme) => ({
         return {
             ...theme.GlobalBox,
             overflow: 'auto',
-            height: `${(props.height - 150) - 100}px`,
-            
+            height: `${(props.height - 68) - 100}px`,
+            width: '100%'
         }
     },
     Footer: props => {
         return {
             ...theme.GlobalBox,
             padding: 0,
-            // width: '100%',
+            width: '100%',
             height: `${52}px`,
             borderTop: '1px solid #f0f0f0'
         }
@@ -69,22 +67,17 @@ const useStyles = makeStyles((theme) => ({
 
 const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
-    { _id: 'Name', label: 'Name' },
-    { _id: 'Category', label: 'Category' },
-    { _id: 'Price', label: 'Price', },
-    { _id: 'Type', label: 'Type ', },
-    { _id: 'Cost', label: 'Cost', },
-    { _id: 'Qnt', label: 'Qnt', },
-    { _id: 'Tax_Name', label: 'Tax ', },
-    { _id: 'Tax_Percent', label: ' Percent', },
-    { _id: 'Source_Name', label: 'Source ', },
+    { _id: 'Name', label: 'Register Name' },
+    { _id: 'recive', label: 'Recive Amount' },
+    { _id: 'Expence', label: 'Expence', },
+    { _id: 'Ballance', label: 'Ballance', },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
 const Setup = (props) => {
-    // const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { Products , Category} = props.data
-    const [records, setRecords] = useState(Products)
+    const { addItem, editItem, deleteItem } = useContext(DataContext) //
+    const { Registers, Source} = props.data
+    const [records, setRecords] = useState(Registers)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
@@ -104,17 +97,39 @@ const Setup = (props) => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.Name.toLowerCase().includes(target.value))
+                    return items.filter(x => x.Category_Name.toLowerCase().includes(target.value))
             }
         })
     }
 
     useEffect(() => {
-        setRecords(Products)
-    }, [Products])
+        setRecords(Registers)
+    }, [Registers])
 
     const addOrEdit = (data, resetForm) => {
-     
+        if (data._id === null)
+            addItem('Tax', data).then(() => {
+                resetForm()
+                setOpenPopup(false)
+                setRecords(Registers)
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
+                })
+            })
+        if (data._id)
+            editItem(data._id, data).then(() => {
+                resetForm()
+                setOpenPopup(false)
+                setRecords(Registers)
+                setRecordForEdit(null)
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
+                })
+            })
 
     }
 
@@ -123,7 +138,19 @@ const Setup = (props) => {
         setOpenPopup(true)
     }
     const onDelete = id => {
-        
+        setConfirmDialog({
+            ...confirmDialog,
+            isOpen: false
+        })
+        deleteItem(id).then(() => {
+            setRecords(Registers)
+            setNotify({
+                isOpen: true,
+                message: 'Deleted Successfully',
+                type: 'error'
+            })
+
+        })
     }
     const DataTable = () => {
         return (
@@ -138,14 +165,8 @@ const Setup = (props) => {
                                         : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                 </TableCell>
                                 <TableCell>{item.Name}</TableCell>
-                                <TableCell>{item.Category}</TableCell>
-                                <TableCell>{item.Price}</TableCell>
-                                <TableCell>{item.Type}</TableCell>
-                                <TableCell>{item.Cost}</TableCell>
-                                <TableCell>{item.Qnt}</TableCell>
-                                <TableCell>{item.Tax_Name}</TableCell>
-                                <TableCell>{item.Tax_Percent}</TableCell>
-                                <TableCell>{item.Source_Name}</TableCell>
+                                <TableCell>{item.Category_Name}</TableCell>
+                                <TableCell>{item.Percent}</TableCell>
                                 <TableCell>
                                     <Controls.ActionButton
                                         color="primary"
@@ -200,8 +221,13 @@ const Setup = (props) => {
             <Paper className={classes.Body} >
                 {recordsAfterPagingAndSorting().length === 0 ?
                     <Info
-                        title="No Products Data Found!"
-                       
+                        title="No Registers Found!"
+                        subTitle={Source.length === 0 ?
+                           "No Order Ticket Group  Found! Create Order Ticket Group fast"
+                            :
+                            "You Have No Registers Data! Create a new  Register! "
+                        }
+                        link={Source.length !== 0 ? null : {to:'/CategorySetup' , title:"Order Ticket Group"}}
                     />
                     : <DataTable />
                 }
@@ -214,6 +240,10 @@ const Setup = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
+                <AddTax
+                    addOrEdit={addOrEdit}
+                    recordForEdit={recordForEdit}
+                />
             </Popup>
             <Notification
                 notify={notify}

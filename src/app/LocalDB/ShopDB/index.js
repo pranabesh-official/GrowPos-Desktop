@@ -4,11 +4,10 @@ import { connect } from 'react-redux'
 import Controls from "../../components/controls/Controls";
 import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
-
+import axios from 'axios';
 import PrintIcon from '@material-ui/icons/Print';
 
-// if (isElectron) {
-//     // var { PosPrinter } = window.require('electron').remote.require("electron-pos-printer");
+
 
 
 let context = null;
@@ -48,12 +47,28 @@ class ShopProvider extends Component {
         this.state = {
             open: false,
             title: '',
-            subTitle: ''
+            subTitle: '',
+            users: [],
+            current:null
         }
         this.handleClickOpen = this.handleClickOpen.bind(this)
         this.handleClose = this.handleClose.bind(this)
         this.PrintPos = this.PrintPos.bind(this)
+        this.dbUrl = 'http://localhost:4545';
+        this.adduser = this.adduser.bind(this)
+        this.token = sessionStorage.getItem("token")
+        this.Authorization = `Bearer ${this.token}`
+        this.editUser = this.editUser.bind(this)
+        this.deleteUser = this.deleteUser.bind(this)
+        this.loadAllusers = this.loadAllusers.bind(this);
+        this.loadCurrentUser = this.loadCurrentUser.bind(this);
 
+    }
+    componentDidMount(){
+        if(this.token ){
+            this.loadCurrentUser()
+        }
+        
     }
     handleClickOpen(title, subTitle) {
         this.setState({ open: true, title, subTitle })
@@ -61,6 +76,100 @@ class ShopProvider extends Component {
 
     handleClose() {
         this.setState({ open: false })
+    }
+    loadAllusers() {
+        const config = {
+            method: 'get',
+            url: this.dbUrl +'/users',
+            headers: {
+                'Authorization': this.Authorization
+            }
+        };
+        axios(config)
+            .then(({ data: { users } }) => {
+                this.setState({ users });
+            })
+            .catch((err) => console.log('Error:', err));
+    }
+    loadCurrentUser() {
+        const config = {
+            method: 'get',
+            url: this.dbUrl +  '/users/me',
+            headers: {
+                'Authorization': this.Authorization
+            }
+        };
+        axios(config)
+            .then(({ data}) => {
+                // console.log('loadCurrentUser',data )
+                this.setState({ current: data});
+            })
+            .catch((err) => console.log('Error:', err));
+    }
+    adduser(data) {
+        const config = {
+            method: 'post',
+            url: this.dbUrl + '/users',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': this.Authorization
+            },
+            data : data
+        };
+        return new Promise((resolve, reject) => {
+            axios(config)
+                .then(({ data: { user } }) => {
+                    resolve(user)
+                })
+                .catch((err) => {
+                    console.log('Error:', err)
+                    reject(err)
+                });
+
+        })
+    }
+    editUser(id, data) {
+        const config = {
+            method: 'patch',
+            url: this.dbUrl + '/users/' + id,
+            headers: {
+                'Authorization': this.Authorization,
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        return new Promise((resolve, reject) => {
+            axios(config)
+                .then(({ data }) => {
+                    resolve(data)
+                })
+                .catch((err) => {
+                    console.log('Error:', err)
+                    reject(err)
+                });
+
+        })
+    }
+    deleteUser(id) {
+        const config = {
+            method: 'delete',
+            url: this.dbUrl + '/users/' + id,
+            headers: {
+                'Authorization': this.Authorization,
+                'Content-Type': 'application/json'
+            },
+        };
+        return new Promise((resolve, reject) => {
+            axios(config)
+                .then(({ data }) => {
+                    resolve(data)
+                })
+                .catch((err) => {
+                    console.log('Error:', err)
+                    reject(err)
+                });
+
+        })
     }
 
     PrintPos(data, Type) {
@@ -113,6 +222,7 @@ class ShopProvider extends Component {
     }
 
     render() {
+
         const DialogBox = () => {
             const { classes } = this.props;
             const titel = this.state.title
@@ -146,7 +256,13 @@ class ShopProvider extends Component {
         return (
             <Provider
                 value={{
+                    ...this.state,
                     ...this.props.Shop,
+                    ...this.props.Cart,
+                    deleteUser: this.deleteUser,
+                    editUser: this.editUser,
+                    adduser: this.adduser,
+                    loadAllusers: this.loadAllusers,
                     PrintPos: this.PrintPos,
                     handleClickOpen: this.handleClickOpen,
                 }}
@@ -155,13 +271,14 @@ class ShopProvider extends Component {
                     {this.props.children}
                     <DialogBox />
                 </>
-            </Provider>
+            </Provider >
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
+        Cart: state.Cart,
         Shop: state.Shop,
         data: state.DataStore,
         Kot: state.Kot,

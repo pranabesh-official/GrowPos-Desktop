@@ -4,11 +4,47 @@ import { Redirect } from "react-router-dom"
 import { isElectron } from 'react-device-detect'
 import Titlebar from '../../TitleBar'
 import { userPostFetch, getProfileFetch } from '../../store/action/Auth'
-
+import { Dialog, DialogContent, DialogTitle } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Register from './Register'
+import { withStyles } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { theme } from '../../Themes'
+import DataProvider from '../../LocalDB'
+import ShopProvider from '../../LocalDB/ShopDB'
 import './css/style.css'
 import './css/font-awesome-4.7.0/css/font-awesome.min.css'
 import './css/main.css'
 
+const style = theme => ({
+    dialogWrapper: {
+        padding: theme.spacing(0),
+        position: 'absolute',
+        top: theme.spacing(5),
+        borderRadius: 10
+    },
+    dialogTitle: {
+        padding: 0
+    },
+    closebutton: {
+        position: 'absolute',
+        right: '10px',
+        top: '10px',
+    },
+    content: {
+        padding: 8,
+        margin: 0
+    },
+    root: {
+        borderRadius: 25,
+        margin: theme.spacing(0.5),
+        height: 50
+    },
+    label: {
+        textTransform: 'none'
+    }
+});
 
 
 
@@ -21,10 +57,13 @@ class Login extends Component {
             password: '',
             logedIn: true,
             loading: false,
+            open: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClickOpen = this.handleClickOpen.bind(this);
+        this.handleClose = this.handleClose.bind(this);
 
     }
     componentWillMount() {
@@ -45,10 +84,43 @@ class Login extends Component {
             this.props.userPostFetch(username, password)
         }
     }
+    handleClickOpen() {
+        this.setState({ open: true })
+    }
+
+    handleClose() {
+        this.setState({ open: false })
+    }
     render() {
+
+        const DialogBox = () => {
+            const { classes } = this.props;
+            return (
+                <Dialog open={this.state.open} maxWidth="md" classes={{ paper: classes.dialogWrapper }}>
+                    <DialogTitle className={classes.dialogTitle}>
+                        <div style={{ display: 'flex' }}>
+                            <IconButton
+                                color="secondary"
+                                size='small'
+                                variant={"contained"}
+                                className={classes.closebutton}
+                                onClick={this.handleClose}>
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        </div>
+                    </DialogTitle>
+                    <DialogContent className={classes.content}>
+                        <DataProvider>
+                            <ShopProvider>
+                                <Register handleClose={this.handleClose} />
+                            </ShopProvider>
+                        </DataProvider>
+                    </DialogContent>
+                </Dialog>
+            );
+        };
         const { logIn } = this.props.Auth
-        console.log(logIn)
-        const layout = () => {
+        const Layout = () => {
             const { username, password } = this.state;
             return (
                 <>
@@ -80,6 +152,13 @@ class Login extends Component {
                                     </div>
                                     <div className="container-login100-form-btn">
                                         <button type="submit" className="login100-form-btn">Login</button>
+                                                <h6 style={{ fontSize: 12, margin: 5, }}>If You Don't Have Any Shop? </h6>
+                                                <button onClick={this.handleClickOpen} style={{
+                                                    fontSize: 12,
+                                                    color: '#321fdb',
+                                                    margin: 5,
+                                                    background: '#00000000'
+                                                }}>Register Shop</button>
                                     </div>
                                 </form>
                             </div>
@@ -95,9 +174,10 @@ class Login extends Component {
             )
         } else {
             return (
-                <>
-                    {layout()}
-                </>
+                <ThemeProvider theme={theme}>
+                    {Layout()}
+                    <DialogBox />
+                </ThemeProvider>
             )
         }
 
@@ -109,7 +189,10 @@ const mapStateToProps = (state) => {
         Auth: state.Auth,
     }
 }
-export default connect(mapStateToProps, { userPostFetch, getProfileFetch })(Login)
+
+
+export default connect(mapStateToProps, { userPostFetch, getProfileFetch })(withStyles(style, { withTheme: true })(Login))
+
 
 
 
