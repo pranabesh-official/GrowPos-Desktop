@@ -46,5 +46,14 @@ export const theme = createMuiTheme({
         borderRadius: 0,
         border: 0,
         boxShadow: '0 0px 0px 0px ',
-    }
+    },
+    // overrides: {
+    //     MuiOutlinedInput: {
+    //         multiline: {
+    //             fontWeight: 'bold',
+    //             fontSize: '20px',
+    //             color: 'primary',
+    //         }
+    //     }
+    // }
 });

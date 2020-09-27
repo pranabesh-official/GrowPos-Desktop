@@ -1,4 +1,4 @@
-import { sygnet } from './sygnet'
+import { sygnet, receipt ,cashRegister, Card , Store, Settings ,Registration, Expence} from './sygnet'
 import { logo } from './logo'
 import { logoNegative } from './logo-negative'
 
@@ -134,7 +134,14 @@ import {
 export const icons = Object.assign({}, {
   sygnet,
   logo,
-  logoNegative
+  logoNegative,
+  receipt,
+  cashRegister,
+  Card , 
+  Store, 
+  Settings ,
+  Registration, 
+  Expence
 }, {
   cilAlignCenter,
   cilAlignLeft,

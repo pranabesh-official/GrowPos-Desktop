@@ -11,7 +11,7 @@ import PrintIcon from '@material-ui/icons/Print';
 import { connect } from 'react-redux'
 import Notification from "../../../components/Notification";
 import ConfirmDialog from "../../../components/ConfirmDialog";
-import Info from '../../../components/infoPage'
+// import Info from '../../../components/infoPage'
 import ViewDetails from '../ViewDetails'
 import PrintTable from '../ViweAllDetails'
 import DateRangeIcon from '@material-ui/icons/DateRange';
@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
             ...theme.GlobalBox,
             overflow: 'auto',
             height: `${(props.height - 68) - 100}px`,
-            width: '100%'
+            width: '100%',
+            padding:0
         }
     },
     Footer: props => {
@@ -109,16 +110,21 @@ const useStyles = makeStyles((theme) => ({
     },
     tab: {
         width: 90,
-        padding: 0
+        padding: 0,
+        margin:0
 
     },
     Box: {
         height: '100%',
-        width: '100%'
+        width: '100%',
+        padding:0,
+        margin:0
     },
     TabPanel: {
         height: '100%',
-        width: '100%'
+        width: '100%',
+        padding:0,
+        margin:0
     }
 }));
 
@@ -126,15 +132,50 @@ const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
     { _id: 'OrderSno', label: 'Recept No' },
     { _id: 'OrderType', label: 'Order Type' },
-    { _id: 'taxAmount', label: 'Tax Value', },
-    { _id: 'discount', label: 'Discount Value', },
     { _id: 'total', label: 'Total Amount', },
-    { _id: 'reciveAmount', label: 'Recive Amount', },
+    { _id: 'reciveAmount', label: 'Cash Tendered', },
     { _id: 'date', label: 'Date' },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
-
+const Format = [
+    { _id: 0, label: 'All', filterBy: "All", type: null , repotName:"ALL SALE REPORT" },
+    { _id: 1, label: 'Table', filterBy: "Table", type: "client" , repotName:"TABLE SALE REPORT"},
+    { _id: 2, label: 'Take Away', filterBy: "TakeAway", type: "client", repotName:"TAKE AWAY REPORT" },
+    { _id: 3, label: 'Cash', filterBy: "CASH", type: "payment", repotName:"CASH SALE REPORT" },
+    { _id: 4, label: 'Card', filterBy: "CARD", type: "payment" , repotName:"CARD SALE REPORT"},
+]
+function a11yProps(index) {
+    return {
+        id: `vertical-tab-${index}`,
+        'aria-controls': `vertical-tabpanel-${index}`,
+    };
+}
+const TabPanel = (props) => {
+    const { children, value, index, ...other } = props;
+    const classes = useStyles();
+    return (
+        <div
+            role="tabpanel"
+            className={classes.TabPanel}
+            hidden={value !== index}
+            id={`vertical-tabpanel-${index}`}
+            aria-labelledby={`vertical-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box className={classes.Box} >
+                    { children}
+                </Box>
+            )}
+        </div>
+    );
+}
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+};
 
 const Setup = (props) => {
     const { deleteItem } = useContext(DataContext) //
@@ -143,21 +184,26 @@ const Setup = (props) => {
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
-    // const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
     const [openPrintPopup, setOpenPrintPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
     const [value, setValue] = useState(0);
+    const [tab, setTab] = useState("All");
+
+
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
     const {
         TblContainer,
         TblHead,
         TblPagination,
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
+
     const ReceptSearch = e => {
         let target = e.target;
         setFilterFn({
@@ -170,26 +216,46 @@ const Setup = (props) => {
         })
     }
 
-    const DateSearch = e => {
-        let target = e.target;
-        setFilterFn({
-            fn: items => {
-                if (target.value === "")
-                    return items;
-                else
-                    return items.filter(x => x.date.toLowerCase().includes(target.value))
-            }
-        })
-    }
+    // const DateSearch = e => {
+    //     let target = e.target;
+    //     setFilterFn({
+    //         fn: items => {
+    //             if (target.value === "")
+    //                 return items;
+    //             else
+    //                 return items.filter(x => x.dateTime.toLowerCase().includes(target.value))
+    //         }
+    //     })
+    // }
+
     useEffect(() => {
-        setRecords(SellReport)
-    }, [SellReport])
+        setTab(Format[value].filterBy)
+    }, [value])
+
+
+
+    useEffect(() => {
+        const filter = Format.find(item => item.filterBy === tab)
+        if (filter.type === 'client') {
+            const Report = SellReport.filter(item => item.OrderType === tab)
+            setRecords(Report)
+        }
+        if (filter.type === 'payment') {
+            const Report = SellReport.filter(item => item.paymentType === tab)
+            setRecords(Report)
+        }
+        if (filter.type === null) {
+            setRecords(SellReport)
+        }
+
+    }, [tab, SellReport])
+
 
     const openInPopup = item => {
         setRecordForEdit(item)
         setOpenPopup(true)
     }
-
+    console.log(SellReport)
     const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
@@ -210,37 +276,7 @@ const Setup = (props) => {
     const handlePrint = useReactToPrint({
         content: () => componentRef.current
     })
-    function a11yProps(index) {
-        return {
-            id: `vertical-tab-${index}`,
-            'aria-controls': `vertical-tabpanel-${index}`,
-        };
-    }
-    const TabPanel = (props) => {
-        const { children, value, index, ...other } = props;
-        const classes = useStyles();
-        return (
-            <div
-                role="tabpanel"
-                className={classes.TabPanel}
-                hidden={value !== index}
-                id={`vertical-tabpanel-${index}`}
-                aria-labelledby={`vertical-tab-${index}`}
-                {...other}
-            >
-                {value === index && (
-                    <Box  className={classes.Box} >
-                        { children}
-                    </Box>
-                )}
-            </div>
-        );
-    }
-    TabPanel.propTypes = {
-        children: PropTypes.node,
-        index: PropTypes.any.isRequired,
-        value: PropTypes.any.isRequired,
-    };
+
     return (
         <>
             <Paper className={classes.Header} >
@@ -257,7 +293,7 @@ const Setup = (props) => {
                     }}
                     onChange={ReceptSearch}
                 />
-                <Controls.Input
+                {/* <Controls.Input
                     label='Date'
                     type="text"
                     className={classes.searchInput}
@@ -269,7 +305,7 @@ const Setup = (props) => {
                         </InputAdornment>)
                     }}
                     onChange={DateSearch}
-                />
+                /> */}
                 <Controls.Button
                     text="Print"
                     variant="outlined"
@@ -288,18 +324,13 @@ const Setup = (props) => {
                         aria-label="Vertical tabs example"
                         className={classes.tabs}
                     >
-                        <Tab label="Tables" {...a11yProps(0)} wrapped />
-                        <Tab label="Take Away" {...a11yProps(1)} wrapped />
+                        {Format.map((item, index) => (
+                            <Tab label={item.label} {...a11yProps(index)} wrapped key={item._id} />
+                        ))}
 
                     </Tabs>
-                    <TabPanel value={value} index={0}>
-                        {recordsAfterPagingAndSorting().length === 0 ?
-                            <Info
-                                title="No Sells Data Found!"
-                                subTitle="Go To POS and Create Your Fast Sell"
-                                link={{ to: '/Pos', title: "POS" }}
-                            />
-                            :
+                    {Format.map((item, index) => (
+                        <TabPanel value={value} index={index} key={item._id} >
                             < DataTable
                                 TblContainer={TblContainer}
                                 TblHead={TblHead}
@@ -308,26 +339,8 @@ const Setup = (props) => {
                                 onDelete={onDelete}
                                 setConfirmDialog={setConfirmDialog}
                             />
-                        }
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        {recordsAfterPagingAndSorting().length === 0 ?
-                            <Info
-                                title="No Sells Data Found!"
-                                subTitle="Go To POS and Create Your Fast Sell"
-                                link={{ to: '/Pos', title: "POS" }}
-                            />
-                            :
-                            < DataTable
-                                TblContainer={TblContainer}
-                                TblHead={TblHead}
-                                recordsAfterPagingAndSorting={recordsAfterPagingAndSorting}
-                                openInPopup={openInPopup}
-                                onDelete={onDelete}
-                                setConfirmDialog={setConfirmDialog}
-                            />
-                        }
-                    </TabPanel>
+                        </TabPanel>
+                    ))}
                 </div>
 
             </Paper>
@@ -350,7 +363,12 @@ const Setup = (props) => {
                 <Grid container direction='column' >
                     <Grid item xs={12} sm={12}>
                         <Paper className={classes.PrintBody} >
-                            <PrintTable recordsAfterPagingAndSorting={recordsAfterPagingAndSorting} ref={componentRef} />
+                            <PrintTable
+                                recordsAfterPagingAndSorting={recordsAfterPagingAndSorting}
+                                ref={componentRef}
+                                Format={Format}
+                                tab={tab}
+                            />
                         </Paper>
                     </Grid>
                 </Grid>

@@ -93,7 +93,9 @@ const Register = (props) => {
                     printOt: true,
                     billFast: true,
                     OtNo: true,
-                    discountOffer: true
+                    discountOffer: true,
+                    Bill: null,
+                    OT: null,
                 }
                 addItem('Shop', data).then((result) => {
                     setLoading(false)

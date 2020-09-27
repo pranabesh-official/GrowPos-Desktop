@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Grid , Paper} from '@material-ui/core';
+import { Avatar, Grid, Paper, Typography } from '@material-ui/core';
 import DataProvider from '../../../LocalDB'
 import Shop from './ShopSetup'
-import ShopProfile from './ShopProfile'
+// import ShopProfile from './ShopProfile'
 import ShopProvider from '../../../LocalDB/ShopDB'
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux'
@@ -11,7 +11,7 @@ const style = (theme) => ({
   Body: {
     ...theme.GlobalBox,
     background: '#f0f0f0',
-    // overflow: 'auto',
+    paddingRight: 5,
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -26,6 +26,39 @@ const style = (theme) => ({
     alignItems: 'center',
     borderBottom: '1px solid #f0f0f0'
   },
+  titleIcon: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.light,
+      cursor: 'default'
+    },
+    '& .MuiSvgIcon-root': {
+      fontSize: '8rem',
+    }
+  },
+  root: {
+    padding: theme.spacing(2),
+    borderRadius: 0,
+    border: 0,
+    boxShadow: '0 0px 0px 0px ',
+    height: '100%',
+    width: '100%',
+    borderTop: '1px solid #f0f0f0',
+    background: '#00000000',
+    backgroundColor: '#00000000',
+  },
+  Title: {
+    textAlign: 'center'
+  },
+  Content: {
+    textAlign: 'center'
+  },
+  avatar: {
+    backgroundColor: '#00000000',
+    hiight: 100,
+    width: 100
+  }
 
 });
 class ShopSetup extends Component {
@@ -43,21 +76,33 @@ class ShopSetup extends Component {
     const { height } = this.state
     const { classes } = this.props;
     return (
-      <Grid container spacing={1} style={{ padding: '5px' }}>
+      <Grid container spacing={3} style={{ padding: '5px' }}>
         <Grid item xs={12} sm={5} id='FormCategory' style={{ height: `${height - 10}px` }}>
-          <DataProvider>
-            <ShopProvider>
-              <ShopProfile />
-            </ShopProvider>
-          </DataProvider>
+          <Paper className={classes.root}>
+            <div className={classes.Title}>
+              <img
+                src={'http://localhost:4545/static/img/location.png'}
+                className={classes.avatar}
+                alt="icon"
+              />
+            </div>
+            <div className={classes.Content}>
+              <Typography variant="h6">
+                Setup Your Shop Details
+              </Typography>
+              <Typography variant="body2" display="inline">
+                This Set Up Only  for Admin
+              </Typography>
+            </div>
+          </Paper>
         </Grid>
         <Grid item xs={12} sm={7} id='ViewCategory' style={{ height: `${height - 10}px` }}>
-          <Paper className={classes.Body} style={{height:`${height - 10}px`}}>
-              <DataProvider>
-                <ShopProvider>
-                  <Shop height={height} />
-                </ShopProvider>
-              </DataProvider>
+          <Paper className={classes.Body} style={{ height: `${height - 10}px` }}>
+            <DataProvider>
+              <ShopProvider>
+                <Shop height={height} />
+              </ShopProvider>
+            </DataProvider>
           </Paper>
         </Grid>
       </Grid>

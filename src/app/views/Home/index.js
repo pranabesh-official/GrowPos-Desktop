@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Grid, Paper } from '@material-ui/core';
 import { connect } from 'react-redux'
-import SellChart from './SellChart'
 import { withStyles } from '@material-ui/core/styles';
 import ShopProvider from '../../LocalDB/ShopDB'
-import Active from './Setup/Active'
+import Active from './Active'
+import StatusLayout from './Status/index'
+import DataProvider from '../../LocalDB'
 
 const style = (theme) => ({
     Body: {
@@ -15,6 +16,7 @@ const style = (theme) => ({
     },
     info: {
         ...theme.GlobalBox,
+        background: theme.palette.light.main,
         height: '220px',
     },
     Status: {
@@ -58,23 +60,22 @@ class Dashbord extends Component {
         return (
             <Paper className={classes.Body} style={{ height: `${height}px`, maxHeight: `${height}px` }}>
                 <ShopProvider>
-                    <Grid container direction='column' spacing={1}>
-                        <Grid item xs={12} sm={12} md={12}>
-                            <Paper className={classes.info} >
-                                info
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={5} sm={5}>
-                                    <SellChart height={height} />
-                                </Grid>
-                                <Grid item xs={7} sm={7}>
-                                    <Active height={height} />
+                    <DataProvider>
+                        <Grid container direction='column' spacing={1}>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <Paper className={classes.info} >
+                                    <StatusLayout />
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12} sm={12}>
+                                        <Active height={height} />
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
+                    </DataProvider>
                 </ShopProvider>
             </Paper>
 

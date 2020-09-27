@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
 import axios from 'axios';
 import PrintIcon from '@material-ui/icons/Print';
-
+import { GetShop } from '../../store/action/Shop'
 
 
 
@@ -49,7 +49,7 @@ class ShopProvider extends Component {
             title: '',
             subTitle: '',
             users: [],
-            current:null
+            current: null
         }
         this.handleClickOpen = this.handleClickOpen.bind(this)
         this.handleClose = this.handleClose.bind(this)
@@ -62,13 +62,14 @@ class ShopProvider extends Component {
         this.deleteUser = this.deleteUser.bind(this)
         this.loadAllusers = this.loadAllusers.bind(this);
         this.loadCurrentUser = this.loadCurrentUser.bind(this);
+        this.chengeUserDetails = this.chengeUserDetails.bind(this);
 
     }
-    componentDidMount(){
-        if(this.token ){
+    componentDidMount() {
+        if (this.token) {
             this.loadCurrentUser()
         }
-        
+
     }
     handleClickOpen(title, subTitle) {
         this.setState({ open: true, title, subTitle })
@@ -80,7 +81,7 @@ class ShopProvider extends Component {
     loadAllusers() {
         const config = {
             method: 'get',
-            url: this.dbUrl +'/users',
+            url: this.dbUrl + '/users',
             headers: {
                 'Authorization': this.Authorization
             }
@@ -94,27 +95,49 @@ class ShopProvider extends Component {
     loadCurrentUser() {
         const config = {
             method: 'get',
-            url: this.dbUrl +  '/users/me',
+            url: this.dbUrl + '/users/me',
             headers: {
                 'Authorization': this.Authorization
             }
         };
         axios(config)
-            .then(({ data}) => {
-                // console.log('loadCurrentUser',data )
-                this.setState({ current: data});
+            .then(({ data }) => {
+                this.setState({ current: data });
+                this.props.GetShop(data)
             })
             .catch((err) => console.log('Error:', err));
+    }
+    chengeUserDetails(data) {
+        const config = {
+            method: 'patch',
+            url: this.dbUrl + '/users/me',
+            headers: {
+                'Authorization': this.Authorization
+            },
+            data: data
+        };
+        return new Promise((resolve, reject) => {
+            axios(config)
+                .then(({ data }) => {
+                    this.setState({ current: data });
+                    resolve()
+                })
+                .catch((err) => {
+                    console.log('Error:', err)
+                    reject(err)
+                });
+        })
+
     }
     adduser(data) {
         const config = {
             method: 'post',
             url: this.dbUrl + '/users',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': this.Authorization
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Authorization
             },
-            data : data
+            data: data
         };
         return new Promise((resolve, reject) => {
             axios(config)
@@ -260,6 +283,7 @@ class ShopProvider extends Component {
                     ...this.props.Shop,
                     ...this.props.Cart,
                     deleteUser: this.deleteUser,
+                    chengeUserDetails: this.chengeUserDetails,
                     editUser: this.editUser,
                     adduser: this.adduser,
                     loadAllusers: this.loadAllusers,
@@ -288,7 +312,7 @@ const mapStateToProps = (state) => {
 
 export { Consumer as ShopData, context as ShopHandeler }
 
-export default connect(mapStateToProps)(withStyles(style, { withTheme: true })(ShopProvider))
+export default connect(mapStateToProps, { GetShop })(withStyles(style, { withTheme: true })(ShopProvider))
 
 
 

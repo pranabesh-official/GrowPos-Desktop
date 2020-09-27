@@ -7,27 +7,27 @@ import Table from 'react-bootstrap/Table'
 import { connect } from 'react-redux'
 import { Refresh } from '../../../store/action/Cart'
 import { Icon } from 'semantic-ui-react'
+import Notification from "../../../components/Notification";
+const paymentOpstion = [
+  { _id: 'CASH', Name: 'Cash' },
+  { _id: 'CARD', Name: 'Credit/Debit Card' },
 
-
+]
 
 const Settlement = (props) => {
   const { BillData, setOpenPopup, Active, handleTabChange, SaveTickets, Delete } = props
-  const { editItem, addItem, deleteItem } = useContext(DataContext)
+  const { editItem, addItem, deleteItem, Registers } = useContext(DataContext)
+  const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
   const [loading, setLoading] = useState(false)
-  const paymentOpstion = [
-    { _id: 'CASH', Name: 'Cash' },
-    { _id: 'CARD', Name: 'Card' },
-    { _id: 'PAYTM', Name: 'Paytm' },
-  ]
   const initialFValues = {
     reciveAmount: 0,
-    paymentType: '',
+    paymentType: 'CASH',
+    Note: '',
+    Register: ''
   }
   const validate = (fieldValues = values) => {
     let temp = { ...errors }
     if (!Active.free) {
-      if ('reciveAmount' in fieldValues)
-        temp.reciveAmount = fieldValues.reciveAmount !== 0 ? "" : "This field is required."
       if ('paymentType' in fieldValues)
         temp.paymentType = fieldValues.paymentType ? "" : "This field is required."
     }
@@ -46,6 +46,8 @@ const Settlement = (props) => {
     handleInputChange,
     resetForm
   } = useForm(initialFValues, true, validate);
+
+
   const addcustomer = (data) => {
     return new Promise((resolve, reject) => {
       addItem('CustomerDetails', data).then((result) => {
@@ -56,6 +58,35 @@ const Settlement = (props) => {
       });
     })
   }
+  const UpdateRegister = (total) => {
+    const amount = total
+    if (values.paymentType === 'CASH') {
+      const reg = Registers.find(item => item._id === values.Register)
+      const updateIncome = Object.assign(reg, { Income: reg.Income + amount })
+      return new Promise((resolve, reject) => {
+        editItem(values.Register, updateIncome).then((result) => {
+          resolve(result)
+        }).catch((err) => {
+          console.log('Error:', err)
+          reject(err)
+        });
+      })
+    }
+    if (values.paymentType === 'CARD') {
+      const reg = Registers.find(item => item._id === values.Register)
+      const updateIncome = Object.assign(reg, { Diposite: reg.Diposite + amount })
+      return new Promise((resolve, reject) => {
+        editItem(values.Register, updateIncome).then((result) => {
+          resolve(result)
+        }).catch((err) => {
+          console.log('Error:', err)
+          reject(err)
+        });
+      })
+    }
+
+  }
+
   const SettlementPayment = () => {
     let Total = BillData.total
     if (Active.free) {
@@ -84,24 +115,29 @@ const Settlement = (props) => {
           taxAmount: result.taxAmount,
           discount: result.discount,
           total: result.total,
-          Complementary:result.Complementary,
-          OrderId:result.OrderId,
-          paymentType:result.paymentType
+          Complementary: result.Complementary,
+          OrderId: result.OrderId,
+          paymentType: result.paymentType
         }
         if (Active.Mobile || Active.Name) {
           let newData = null
           if (Active.Name) {
             newData = Object.assign(coustomerdata, { Name: Active.Name })
-          } 
-          if (Active.Mobile){
-             newData = Object.assign(coustomerdata, { Mobile: Active.Mobile,  })
           }
+          if (Active.Mobile) {
+            newData = Object.assign(coustomerdata, { Mobile: Active.Mobile, })
+          }
+          UpdateRegister(result.total).then(() => { })
           addcustomer(newData).then(() => {
             resolve(result)
           })
+
         } else {
-          resolve(result)
+          UpdateRegister(result.total).then(() => {
+            resolve(result)
+          })  
         }
+
       }).catch((err) => {
         console.log('Error:', err)
         reject(err)
@@ -127,64 +163,73 @@ const Settlement = (props) => {
   }
   const handleSubmit = e => {
     e.preventDefault()
-    if (validate()) {
-      setLoading(true)
-      if (SaveTickets) {
-        const old = { SaveRecord: SaveTickets }
-        const OrderTicket = Object.assign(old, {
-          OrderId: Active.displayNo,
-          OrderSno: Active.OTSno,
-          OrderPrintTime: Active.OTPrint,
-          OrderType: Active.Type
+    if (values.Register) {
+      if (validate()) {
+        setLoading(true)
+        if (SaveTickets) {
+          const old = { SaveRecord: SaveTickets }
+          const OrderTicket = Object.assign(old, {
+            OrderId: Active.displayNo,
+            OrderSno: Active.OTSno,
+            OrderPrintTime: Active.OTPrint,
+            OrderType: Active.Type
 
-        })
-        addItem('OrderTicket', OrderTicket).then(() => {
-          SaveTickets.forEach(element => {
-            try {
-              Delete(element.id)
-            } catch (error) {
-              console.log(error)
+          })
+          addItem('OrderTicket', OrderTicket).then(() => {
+            SaveTickets.forEach(element => {
+              try {
+                Delete(element.id)
+              } catch (error) {
+                console.log(error)
+              }
+
+            });
+          })
+        }
+        SettlementPayment().then((result) => {
+          console.log(result)
+          if (Active.Type === 'TakeAway') {
+            clear().then(() => {
+              setLoading(false)
+              props.Refresh()
+              setOpenPopup(false)
+              handleTabChange(0, null)
+            })
+
+          }
+          if (Active.Type === 'Table') {
+            const New = {
+              ClientId: Active.ClientId,
+              Cart: [],
+              Ot: [],
+              OTPrint: 0,
+              OTSno: null,
+              Type: 'Table',
+              isActive: false,
             }
-
-          });
+            editItem(Active._id, New).then(() => {
+              props.Refresh()
+            })
+            editItem(Active.ClientId, { table_Status: 'Inactive' }).then(() => {
+              setLoading(false)
+              setOpenPopup(false)
+              handleTabChange(0, null)
+            })
+          }
         })
       }
-      SettlementPayment().then((result) => {
-        console.log(result)
-        if (Active.Type === 'TakeAway') {
-          clear().then(() => {
-            setLoading(false)
-            props.Refresh()
-            setOpenPopup(false)
-            handleTabChange(0, null)
-          })
-
-        }
-        if (Active.Type === 'Table') {
-          const New = {
-            ClientId: Active.ClientId,
-            Cart: [],
-            Ot: [],
-            OTPrint: 0,
-            OTSno: null,
-            Type: 'Table',
-            isActive: false,
-          }
-          editItem(Active._id, New).then(() => {
-            props.Refresh()
-          })
-          editItem(Active.ClientId, { table_Status: 'Inactive' }).then(() => {
-            setLoading(false)
-            setOpenPopup(false)
-            handleTabChange(0, null)
-          })
-        }
+    } else {
+      setNotify({
+        isOpen: true,
+        message: ` Please Select Register `,
+        type: 'warning'
       })
     }
-  }
 
+  }
+  // console.log(Registers)
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} style={{ maxWidth: 600 }}>
       <Grid item xs={6} >
         <Grid container spacing={1}>
           <Grid item xs={12} >
@@ -228,31 +273,74 @@ const Settlement = (props) => {
       <Grid item xs={6} style={{ borderLeft: '1px solid #f0f0f0' }}>
         <Grid container spacing={1}>
           <Grid item xs={12} >
-            <Controls.Input
-              name="reciveAmount"
-              label="Recive Amount"
-              type="number"
+            <Controls.Select
+              label="Select Register"
+              name="Register"
               size="small"
+              options={Registers}
               fullWidth
-              disabled={Active.free}
-              value={values.reciveAmount}
+              optionsValue={'_id'}
+              optionsDisplay={'Name'}
+              value={values.Register}
               onChange={handleInputChange}
-              error={errors.Name}
+              error={errors.Register}
             />
           </Grid>
           <Grid item xs={12} >
-            <Controls.Select
-              label="Payment Type"
+            <Controls.RadioGroup
+              // label="Payment Type"
               name="paymentType"
               size="small"
-              fullWidth
               disabled={Active.free}
               options={paymentOpstion}
               optionsValue={'_id'}
               optionsDisplay={'Name'}
-              value={values.Category_id}
+              value={values.paymentType}
               onChange={handleInputChange}
-              error={errors.Category_id}
+              error={errors.paymentType}
+            />
+          </Grid>
+          {values.paymentType === 'CASH' &&
+            <>
+              <Grid item xs={6} >
+                <Controls.Input
+                  name="reciveAmount"
+                  label="Cash Tendered"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  disabled={Active.free}
+                  value={values.reciveAmount}
+                  onChange={handleInputChange}
+                  error={errors.Name}
+                />
+              </Grid>
+              <Grid item xs={6} >
+                <Controls.Input
+                  name="BalancetoCustomer"
+                  label="Balance to Customer"
+                  type="number"
+                  size="small"
+                  value={values.reciveAmount !== 0 && values.reciveAmount > 0 && values.reciveAmount !== "" ?
+                    values.reciveAmount - BillData.total :
+                    BillData.total
+                  }
+                  fullWidth
+                  disabled
+                />
+              </Grid>
+
+            </>
+          }
+          <Grid item xs={12} >
+            <Controls.Input
+              name="Note"
+              label="Remark Note !"
+              type="number"
+              size="small"
+              value={values.Note}
+              onChange={handleInputChange}
+              fullWidth
             />
           </Grid>
         </Grid>
@@ -268,7 +356,12 @@ const Settlement = (props) => {
           color="default"
           onClick={resetForm} />
       </div>
+      <Notification
+        notify={notify}
+        setNotify={setNotify}
+      />
     </Grid>
+
   )
 
 }

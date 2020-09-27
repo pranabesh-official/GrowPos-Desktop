@@ -1,4 +1,4 @@
-import { READ_SHOP_DATA, GET_USER_DATA , GET_PRINTER_SETUP} from '../action/types'
+import { READ_SHOP_DATA, GET_USER_DATA, GET_PRINTER_SETUP, GET_SHOP_DATA } from '../action/types'
 
 const initialState = {
     logdin: false,
@@ -7,7 +7,7 @@ const initialState = {
     _id: null,
     userData: null,
     ShopType: [
-        { name: 'Resturant', _id: 1 , display:"Food And Drink" },
+        { name: 'Resturant', _id: 1, display: "Food And Drink" },
     ],
     printSetups: [],
     printers: false
@@ -64,6 +64,13 @@ const Shop = (state = initialState, action) => {
                 ...state,
                 printSetups: action.data,
                 printers: true,
+            }
+        case GET_SHOP_DATA:
+            return {
+                ...state,
+                _id: action.data._id,
+                ShopData: action.data,
+                shopAdd: true,
             }
 
         default: return state

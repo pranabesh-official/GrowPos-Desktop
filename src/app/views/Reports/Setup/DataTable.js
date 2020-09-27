@@ -4,6 +4,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Dot from '../../../components/statusDot'
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import Controls from '../../../components/controls/Controls'
+import {getDate} from '../../../Utils'
 
 const DataTable = (props) => {
     const {
@@ -28,11 +29,9 @@ const DataTable = (props) => {
                             </TableCell>
                             <TableCell>{item.OrderSno}</TableCell>
                             <TableCell>{item.OrderType}</TableCell>
-                            <TableCell>{item.taxAmount}</TableCell>
-                            <TableCell>{item.discount}</TableCell>
                             <TableCell>{item.total}</TableCell>
                             <TableCell>{item.reciveAmount}</TableCell>
-                            <TableCell>{item.date}</TableCell>
+                            <TableCell>{getDate(item.dateTime)}</TableCell>
                             <TableCell>
                                 <Controls.ActionButton
                                     color="primary"

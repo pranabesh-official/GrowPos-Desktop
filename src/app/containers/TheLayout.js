@@ -2,6 +2,7 @@ import React from 'react'
 import DataProvider from '../LocalDB'
 import { ThemeBackground } from '../views/LayoutManeger/Themes'
 import { isElectron } from 'react-device-detect'
+import ShopProvider from '../LocalDB/ShopDB'
 import {
   TheContent,
   TheSidebar,
@@ -19,7 +20,9 @@ const Layout = () => {
       <TheSidebar />
       <div className="c-wrapper">
         {isElectron && <Titlebar />}
-        <TheHeader />
+        <ShopProvider>
+          <TheHeader />
+        </ShopProvider>
         <div className="c-body" id='Content' style={{ background: ThemeBackground }}>
           <TheContent />
         </div>

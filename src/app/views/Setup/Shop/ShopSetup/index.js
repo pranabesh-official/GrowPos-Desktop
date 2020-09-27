@@ -1,18 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Grid, Paper, Typography } from '@material-ui/core'; //Chip
+import { Grid, Paper } from '@material-ui/core'; //Chip
 import Controls from "../../../../components/controls/Controls";
 import { useForm } from '../../../../components/useForm';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux'
 import { DataContext } from '../../../../LocalDB'
 import Notification from "../../../../components/Notification";
-import ReactCodeInput from 'react-code-input'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
-import LockIcon from '@material-ui/icons/Lock';
-import { Pin } from 'react-desktop/macOs';
+
 
 
 
@@ -91,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     Footer: props => {
         return {
             ...theme.GlobalBox,
-            padding: 0,
+            padding: 5,
             width: '100%',
             height: `${48}px`,
             borderTop: `1px solid ${theme.palette.divider}`,
@@ -164,7 +162,9 @@ const Shop = (props) => {
         printOt: true,
         billFast: true,
         OtNo: true,
-        discountOffer: true
+        discountOffer: true,
+        Bill:null,
+        OT:null,
     }
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
@@ -236,6 +236,7 @@ const Shop = (props) => {
                     <AntTabs value={value} onChange={handleChange} aria-label="ant example">
                         <AntTab label="General settings" {...a11yProps(0)} />
                         <AntTab label="Preferences" {...a11yProps(1)} />
+                        
                     </AntTabs>
                 </div>
                 <TabPanel value={value} index={0}>
@@ -408,6 +409,7 @@ const Shop = (props) => {
                         </Grid>
                     </Paper>
                 </TabPanel>
+              
             </div>
             <Paper className={classes.Footer}>
                 <div>

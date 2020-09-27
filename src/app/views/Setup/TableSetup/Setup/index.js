@@ -177,7 +177,7 @@ const Setup = (props) => {
                                             {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
                                                 : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                         </TableCell>
-                                        <TableCell>{`${item.Type} ${item.Type}`}</TableCell>
+                                        <TableCell>{`${item.Type} ${item.No}`}</TableCell>
                                         <TableCell>{item.table_Status}</TableCell>
                                         <TableCell>{getDate(item.dateTime)}</TableCell>
                                         <TableCell>{item.createBy}</TableCell>

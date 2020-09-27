@@ -6,6 +6,7 @@ import PrintIcon from '@material-ui/icons/Print';
 import { Grid, Paper } from '@material-ui/core'
 import { useReactToPrint } from 'react-to-print'
 import Table from 'react-bootstrap/Table'
+import {gettime} from '../../../Utils'
 import './table.css'
 
 
@@ -46,13 +47,12 @@ class PrintTable extends Component {
                                 <th>Create By</th>
                                 <th>Payment Type</th>
                                 <th>Time</th>
-                                <th>Date</th>
                                 <th>Sub Total</th>
                                 <th>Tax </th>
                                 <th>Discount </th>
                                 <th>Complementary</th>
                                 <th>Total Amount</th>
-                                <th>Recive Amount</th>
+                                <th>Cash Tendered By Customer</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,9 +65,7 @@ class PrintTable extends Component {
 
                                 <td  >{recordForEdit.paymentType}</td>
 
-                                <td  >{recordForEdit.time}</td>
-
-                                <td>{recordForEdit.date}</td>
+                                <td>{gettime(recordForEdit.dateTime)}</td>
 
                                 <td >{recordForEdit.SubTotal}</td>
 

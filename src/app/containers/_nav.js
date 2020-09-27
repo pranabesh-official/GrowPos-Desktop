@@ -4,21 +4,21 @@ export default [
     _tag: 'CSidebarNavItem',
     name: 'HOME',
     to: '/Dashbord',
-    icon: 'cil-home',
+    icon: 'Store',
   
   },
   {
     _tag: 'CSidebarNavItem',
     name: 'POS',
     to: '/Pos',
-    icon: 'sygnet',
+    icon: 'cashRegister',
   
   },
   {
     _tag: 'CSidebarNavItem',
     name: 'Coustomers',
     to: '/Coustomers',
-    icon: 'cil-user',
+    icon: 'Card',
   
   },
   // {
@@ -37,14 +37,14 @@ export default [
     _tag: 'CSidebarNavItem',
     name: 'Records',
     to: '/Reports',
-    icon: 'cil-print',
+    icon: 'Registration',
   
   },
   {
     _tag: 'CSidebarNavDropdown',
     name: 'Setup',
    
-    icon: 'cil-settings',
+    icon: 'Settings',
     _children: [
       {
         _tag: 'CSidebarNavItem',
@@ -80,6 +80,11 @@ export default [
         _tag: 'CSidebarNavItem',
         name: 'Users',
         to: '/UserSetup',  
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Printer Setup',
+        to: '/PrinterSetup',  
       },
       
     ],

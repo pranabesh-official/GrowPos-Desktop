@@ -1,5 +1,5 @@
-import React, {  useContext } from 'react'
-import {ShopHandeler} from '../LocalDB/ShopDB'
+import React, { useContext, useState } from 'react'
+import { ShopHandeler } from '../LocalDB/ShopDB'
 import { LogOut, getProfileFetch } from '../store/action/Auth'
 import { connect } from 'react-redux'
 import {
@@ -10,39 +10,38 @@ import {
   CDropdownToggle,
 
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import {Settings, VerifiedUserSharp ,   VerifiedUser} from '@material-ui/icons';
+import User from '../components/User'
 
 
 const TheHeaderDropdownNotif = (props) => {
-  const {current} = useContext(ShopHandeler)
-  // console.log('TheHeaderDropdownNotif',current)
+  const { current } = useContext(ShopHandeler)
+  const [openPopup, setOpenPopup] = useState(false)
   const logout = () => {
     props.LogOut()
   }
- 
-
-  // useEffect(() => {
-  //   if (!currentUser) {
-  //     getProfileFetch()
-  //   }
-  // }, [currentUser])
 
   return (
     <CDropdown
       inNav
       className="c-header-nav-item mx-2"
-      style={{borderRadius:0}}
+      style={{ borderRadius: 0 }}
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
-        <ArrowDropDownCircleIcon />
+        <VerifiedUserSharp />
       </CDropdownToggle>
       <CDropdownMenu placement="bottom-end" className="pt-0">
-        <CDropdownItem><CIcon name="cil-user" className="mr-2 text-success" />{current && current.EmpolyeName}</CDropdownItem>
+        <CDropdownItem onClick={() => setOpenPopup(true)}> <VerifiedUser color='primary' className="mr-2 " />{current && current.EmpolyeName}</CDropdownItem>
+        <CDropdownItem onClick={() => setOpenPopup(true)}> <Settings color="primary" className="mr-2 " />User Settings</CDropdownItem>
         <CDropdownItem onClick={() => logout()}> <ExitToAppIcon color="secondary" className="mr-2 " />logout</CDropdownItem>
       </CDropdownMenu>
+      <User
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      />
     </CDropdown>
   )
 }

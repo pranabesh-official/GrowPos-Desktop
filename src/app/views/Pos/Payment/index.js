@@ -8,7 +8,8 @@ import Statusbutton from '../../../components/StatusButton'
 import BillHandler from './BillHandler'
 import Popup from '../../../components/Popup'
 import Settlement from './Payment'
-import { getAll , Delete } from '../../../Utils/OrderTickets'
+import Info from '../../../components/infoPage'
+import { getAll, Delete } from '../../../Utils/OrderTickets'
 
 const ActionButton = (props) => {
     const initialFValues = {
@@ -21,6 +22,7 @@ const ActionButton = (props) => {
     const { getBilldetails } = useContext(ClientHandeler)
     const [openPopup, setOpenPopup] = useState(false)
     const { Active } = props.Cart
+    const { Registers } = props.data
     const [BillData, setBillData] = useState(initialFValues)
 
     useEffect(() => {
@@ -81,14 +83,22 @@ const ActionButton = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-                <Settlement
-                    BillData={BillData}
-                    Active={Active}
-                    setOpenPopup={setOpenPopup}
-                    handleTabChange={handleTabChange}
-                    SaveTickets={SaveTickets}
-                    Delete={Delete}
-                />
+                {Registers.length === 0 ?
+                    <Info
+                        title="You Have No Registers!"
+                        subTitle={"You Have No Registers To Add Your Bill! Add A Register"}
+                        link={{ to: '/Registers', title: "Registers Setup" }}
+                    />
+                    :
+                    <Settlement
+                        BillData={BillData}
+                        Active={Active}
+                        setOpenPopup={setOpenPopup}
+                        handleTabChange={handleTabChange}
+                        SaveTickets={SaveTickets}
+                        Delete={Delete}
+                    />
+                }
             </Popup>
         </Grid>
 
@@ -99,6 +109,7 @@ const mapStateToProps = (state) => {
     return {
         Kot: state.Kot,
         Cart: state.Cart,
+        data: state.DataStore,
     }
 }
 export default connect(mapStateToProps)(ActionButton) 

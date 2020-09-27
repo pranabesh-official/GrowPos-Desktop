@@ -9,7 +9,7 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import Controls from '../../../../components/controls/Controls'
 import Dot from '../../../../components/statusDot'
 import Popup from '../../../../components/Popup'
-import AddTax from '../AddTax'
+import AddRegister from '../AddRegister'
 import { connect } from 'react-redux'
 import Notification from "../../../../components/Notification";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
@@ -68,15 +68,16 @@ const useStyles = makeStyles((theme) => ({
 const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
     { _id: 'Name', label: 'Register Name' },
-    { _id: 'recive', label: 'Recive Amount' },
+    { _id: 'Income', label: 'Income' },
     { _id: 'Expence', label: 'Expence', },
-    { _id: 'Ballance', label: 'Ballance', },
+    { _id: 'Diposite', label: 'Diposite', },
+    { _id: 'Balance', label: 'Balance', },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
 const Setup = (props) => {
     const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { Registers, Source} = props.data
+    const { Registers} = props.data
     const [records, setRecords] = useState(Registers)
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
@@ -97,7 +98,7 @@ const Setup = (props) => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.Category_Name.toLowerCase().includes(target.value))
+                    return items.filter(x => x.Name.toLowerCase().includes(target.value))
             }
         })
     }
@@ -108,7 +109,7 @@ const Setup = (props) => {
 
     const addOrEdit = (data, resetForm) => {
         if (data._id === null)
-            addItem('Tax', data).then(() => {
+            addItem('Registers', data).then(() => {
                 resetForm()
                 setOpenPopup(false)
                 setRecords(Registers)
@@ -137,20 +138,29 @@ const Setup = (props) => {
         setRecordForEdit(item)
         setOpenPopup(true)
     }
-    const onDelete = id => {
-        setConfirmDialog({
-            ...confirmDialog,
-            isOpen: false
-        })
-        deleteItem(id).then(() => {
-            setRecords(Registers)
+    const onDelete = (id ,Income ) => {
+        if(Income === 0){
+            setConfirmDialog({
+                ...confirmDialog,
+                isOpen: false
+            })
+            deleteItem(id).then(() => {
+                setRecords(Registers)
+                setNotify({
+                    isOpen: true,
+                    message: 'Deleted Successfully',
+                    type: 'error'
+                })
+    
+            })
+        }else{
             setNotify({
                 isOpen: true,
-                message: 'Deleted Successfully',
+                message: 'Your Have Pending Amount!',
                 type: 'error'
             })
-
-        })
+        }
+        
     }
     const DataTable = () => {
         return (
@@ -165,8 +175,10 @@ const Setup = (props) => {
                                         : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                 </TableCell>
                                 <TableCell>{item.Name}</TableCell>
-                                <TableCell>{item.Category_Name}</TableCell>
-                                <TableCell>{item.Percent}</TableCell>
+                                <TableCell>{item.Income}</TableCell>
+                                <TableCell>{item.Expence}</TableCell>
+                                <TableCell>{item.Diposite}</TableCell>
+                                <TableCell>{(item.Diposite+item.Income)- item.Expence }</TableCell>
                                 <TableCell>
                                     <Controls.ActionButton
                                         color="primary"
@@ -181,7 +193,7 @@ const Setup = (props) => {
                                                 isOpen: true,
                                                 title: 'Are you sure to delete this record?',
                                                 subTitle: "You can't undo this operation",
-                                                onConfirm: () => { onDelete(item._id) }
+                                                onConfirm: () => { onDelete(item._id, item.Income) }
                                             })
                                         }}>
                                         <DeleteIcon fontSize="inherit" />
@@ -198,7 +210,7 @@ const Setup = (props) => {
         <>
             <Paper className={classes.Header} >
                 <Controls.Input
-                    label='Category'
+                    label='Register Name'
                     type="text"
                     className={classes.searchInput}
                     size="small"
@@ -222,12 +234,7 @@ const Setup = (props) => {
                 {recordsAfterPagingAndSorting().length === 0 ?
                     <Info
                         title="No Registers Found!"
-                        subTitle={Source.length === 0 ?
-                           "No Order Ticket Group  Found! Create Order Ticket Group fast"
-                            :
-                            "You Have No Registers Data! Create a new  Register! "
-                        }
-                        link={Source.length !== 0 ? null : {to:'/CategorySetup' , title:"Order Ticket Group"}}
+                        subTitle={"You Have No Registers Data! Create a new  Register! "} 
                     />
                     : <DataTable />
                 }
@@ -240,7 +247,7 @@ const Setup = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-                <AddTax
+                <AddRegister
                     addOrEdit={addOrEdit}
                     recordForEdit={recordForEdit}
                 />

@@ -1,15 +1,18 @@
-import React, { useRef, Component } from 'react'
+import React, { Component } from 'react'
 import { Icon } from 'semantic-ui-react'
-import { makeStyles } from '@material-ui/core/styles';
-// import Controls from '../../../components/controls/Controls'
-// import PrintIcon from '@material-ui/icons/Print';
-import { Grid, Paper } from '@material-ui/core'
-
+import { withStyles } from '@material-ui/core/styles';
+import { Grid, Paper, Typography } from '@material-ui/core'
 import Table from 'react-bootstrap/Table'
+import { getDate } from '../../../Utils'
 import './table.css'
 
-
-const useStyles = makeStyles((theme) => ({
+const style = (theme) => ({
+    Header: {
+        ...theme.GlobalBox,
+        padding: 5,
+        textAlign: 'center'
+        // overflow: 'auto',
+    },
     PrintBody: props => {
         return {
             ...theme.GlobalBox,
@@ -22,8 +25,19 @@ const useStyles = makeStyles((theme) => ({
         right: '10px',
         bottom: '10px'
     },
+    heading: {
+        fontSize: theme.typography.pxToRem(24),
+        flexBasis: '33.33%',
+        flexShrink: 0,
+        color: theme.palette.dark.main
+    },
+    secondaryHeading: {
+        fontSize: theme.typography.pxToRem(10),
+    }
 
-}));
+});
+
+
 
 
 class PrintTable extends Component {
@@ -34,15 +48,18 @@ class PrintTable extends Component {
         };
     }
     render() {
-        const { recordsAfterPagingAndSorting } = this.props
+        const { classes } = this.props;
+        const { recordsAfterPagingAndSorting, Format, tab } = this.props
+        const SubHeader = Format.find(item => item.filterBy === tab)
         return (
             <Grid container direction='column'>
+                <Paper className={classes.Header}>
+                    <Typography className={classes.heading}>{SubHeader.repotName}</Typography>
+                </Paper>
                 {recordsAfterPagingAndSorting().map((item) => (
                     <Grid container spacing={1} style={{
-                        padding: 35, 
-                        paddingTop: 5, 
-                        // borderTop:  '1px solid #2a3446',
-                        // borderBottom:'1px solid #2a3446',
+                        padding: 35,
+                        paddingTop: 5,
                     }} key={item._id} >
                         <Grid item xs={12} sm={12} md={12}>
                             <Table bordered size="sm" className="mx-0 my-0">
@@ -52,14 +69,12 @@ class PrintTable extends Component {
                                         <th>Order Type</th>
                                         <th>Create By</th>
                                         <th>Payment Type</th>
-                                        <th>Time</th>
                                         <th>Date</th>
                                         <th>Sub Total</th>
                                         <th>Tax </th>
                                         <th>Discount </th>
                                         <th>Complementary</th>
                                         <th>Total Amount</th>
-                                        <th>Recive Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,9 +87,7 @@ class PrintTable extends Component {
 
                                         <td  >{item.paymentType}</td>
 
-                                        <td  >{item.time}</td>
-
-                                        <td>{item.date}</td>
+                                        <td>{getDate(item.dateTime)}</td>
 
                                         <td >{item.SubTotal}</td>
 
@@ -93,9 +106,6 @@ class PrintTable extends Component {
                                         <td >
                                             <strong>{item.total}</strong>
                                         </td>
-                                        <td >
-                                            <strong>{item.reciveAmount}</strong>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </Table>
@@ -107,7 +117,6 @@ class PrintTable extends Component {
                                         <th>{'Item'}</th>
                                         <th>Price</th>
                                         <th>Qnt</th>
-
                                         <th>total</th>
                                     </tr>
                                 </thead>
@@ -134,4 +143,5 @@ class PrintTable extends Component {
     }
 }
 
-export default PrintTable
+export default withStyles(style, { withTheme: true })(PrintTable)
+// export default PrintTable
