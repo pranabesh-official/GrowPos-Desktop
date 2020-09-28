@@ -32,7 +32,7 @@ router.get('/users', auth, async (req, res) => {
         res.status(400).send(e.message)
     }
 })
-router.post('/users', auth, async (req, res) => {
+router.post('/users',  async (req, res) => {
     const user = new Users(req.body)
     try {
         const token = await user.generateAuthToken()

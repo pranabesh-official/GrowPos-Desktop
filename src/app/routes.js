@@ -12,13 +12,16 @@ import Coustomers from './views/Customers'
 import TableSetup from './views/Setup/TableSetup'
 import Registers from './views/Setup/Registers'
 import PrinterSetup from "./views/Setup/ReciptPrinter";
-
+import PettyCash from './views/PettyCash'
+import Recipts from './views/Recipts'
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/Dashbord', name: 'Dashbord', component: Dashbord },
   { path: '/Pos', name: 'Pos', component: Pos },
   { path: '/Reports', name: 'Reports', component: Reports },
+  { path: '/Recipts', name: 'Recipts', component: Recipts },
+  { path: '/PettyCash', name: 'PettyCash', component: PettyCash },
   { path: '/Coustomers', name: 'Coustomers', component: Coustomers },
   { path: '/PrinterSetup', name: 'PrinterSetup', component: PrinterSetup },
   { path: '/CategorySetup', name: 'CategorySetup', component: CategorySetup },

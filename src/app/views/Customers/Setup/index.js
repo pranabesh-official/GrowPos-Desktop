@@ -4,18 +4,16 @@ import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@material
 import useTable from '../../../components/Datatable'
 import { DataContext } from '../../../LocalDB'
 import { Search } from "@material-ui/icons";
-// import VisibilityIcon from '@material-ui/icons/Visibility';
+import {getDate} from '../../../Utils'
 import Controls from '../../../components/controls/Controls'
 import Dot from '../../../components/statusDot'
 import Popup from '../../../components/Popup'
-// import PrintIcon from '@material-ui/icons/Print';
 import { connect } from 'react-redux'
 import Notification from "../../../components/Notification";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-// import ViewDetails from '../ViewDetails'
-// import DateRangeIcon from '@material-ui/icons/DateRange';
+
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -78,6 +76,7 @@ const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
     { _id: 'Name', label: 'Customer Name' },
     { _id: 'Mobile', label: 'Mobile No' },
+    { _id: 'orderType', label: 'Order Type' },
     { _id: 'reciptId', label: 'Recipt No' },
     { _id: 'date', label: 'Date' },
     { _id: 'actions', label: 'Actions', disableSorting: true }
@@ -87,7 +86,6 @@ const Setup = (props) => {
     const { deleteItem } = useContext(DataContext) //
     const { CustomerDetails } = props.data
     const [records, setRecords] = useState(CustomerDetails)
-    const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
@@ -115,16 +113,7 @@ const Setup = (props) => {
         setRecords(CustomerDetails)
     }, [CustomerDetails])
 
-    // const type = [
-    //     { _id: '1', Name: 'Table' },
-    //     { _id: '2', Name: 'TakeAway' }
-    // ]
-
-    const openInPopup = item => {
-        setRecordForEdit(item)
-        setOpenPopup(true)
-    }
-   
+   console.log(CustomerDetails)
     const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
@@ -140,12 +129,6 @@ const Setup = (props) => {
 
         })
     }
-//     <Controls.ActionButton
-//     color="primary"
-//     onClick={() => { openInPopup(item) }}
-// >
-//     <VisibilityIcon fontSize="inherit" />
-// </Controls.ActionButton>
     const DataTable = () => {
         return (
             <TblContainer>
@@ -160,8 +143,9 @@ const Setup = (props) => {
                                 </TableCell>
                                 <TableCell>{item.Name}</TableCell>
                                 <TableCell>{item.Mobile}</TableCell>
+                                <TableCell>{item.orderType}</TableCell>
                                 <TableCell>{item.reciptId}</TableCell>
-                                <TableCell>{item.date}</TableCell>
+                                <TableCell>{getDate(item.dateTime)}</TableCell>
                                 <TableCell>
                                     
                                     <Controls.ActionButton

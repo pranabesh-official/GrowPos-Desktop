@@ -26,7 +26,7 @@ const StatusLayout = (props) => {
             Expence = Expence + element.Expence
             Diposite = Diposite + element.Diposite
         });
-        const Balnce =  (Number(Income) + Number(Diposite)) - Number(Expence)
+        const Balnce =  (Number(Income) + Number(Diposite)) + Number(Expence)
         setSaleData({
             Income: Number(Income).toFixed(2),
             Expence: Number(Expence).toFixed(2),

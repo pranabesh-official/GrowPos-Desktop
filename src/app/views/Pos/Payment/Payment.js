@@ -62,7 +62,7 @@ const Settlement = (props) => {
     const amount = total
     if (values.paymentType === 'CASH') {
       const reg = Registers.find(item => item._id === values.Register)
-      const updateIncome = Object.assign(reg, { Income: reg.Income + amount })
+      const updateIncome = Object.assign(reg, { Income: Number(reg.Income) + Number(amount )})
       return new Promise((resolve, reject) => {
         editItem(values.Register, updateIncome).then((result) => {
           resolve(result)
@@ -74,7 +74,7 @@ const Settlement = (props) => {
     }
     if (values.paymentType === 'CARD') {
       const reg = Registers.find(item => item._id === values.Register)
-      const updateIncome = Object.assign(reg, { Diposite: reg.Diposite + amount })
+      const updateIncome = Object.assign(reg, { Diposite: Number(reg.Diposite) + Number(amount) })
       return new Promise((resolve, reject) => {
         editItem(values.Register, updateIncome).then((result) => {
           resolve(result)
@@ -187,7 +187,6 @@ const Settlement = (props) => {
           })
         }
         SettlementPayment().then((result) => {
-          console.log(result)
           if (Active.Type === 'TakeAway') {
             clear().then(() => {
               setLoading(false)

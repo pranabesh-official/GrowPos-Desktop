@@ -57,6 +57,9 @@ class DataProvider extends Component {
                             const Registers = Data.filter((item) => item.dbName === 'Registers')
                             this.props.ReadData('Registers', Registers)
 
+                            const PettyCash = Data.filter((item) => item.dbName === 'PettyCash')
+                            this.props.ReadData('PettyCash', PettyCash)
+
                             const Products = Data.filter((item) => item.dbName === 'Products') 
                             this.props.ReadData('Products', Products)
 
@@ -68,6 +71,9 @@ class DataProvider extends Component {
 
                             const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
                             this.props.ReadData('OrderTicket', OrderTicket)
+
+                            const UnfulFilled = Data.filter((item) => item.dbName === 'UnfulFilled')
+                            this.props.ReadData('UnfulFilled', UnfulFilled)
 
                             const CustomerDetails = Data.filter((item) => item.dbName === 'CustomerDetails')
                             this.props.ReadData('CustomerDetails', CustomerDetails)
@@ -115,7 +121,6 @@ class DataProvider extends Component {
                     this.props.SyncDb('AddItem')
                     this.loadAllData()
                     resolve(Data)
-                    console.log('Table', Data)
                 })
                 .catch((err) => {
                     console.log('Error:', err)

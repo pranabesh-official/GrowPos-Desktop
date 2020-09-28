@@ -12,7 +12,7 @@ const AddRegister = (props) => {
 
   const initialFValues = {
     Name: "",
-    Income:0,
+    Income: 0,
     Expence: 0,
     Diposite: 0,
     _id: null
@@ -66,8 +66,7 @@ const AddRegister = (props) => {
               onChange={handleInputChange}
               error={errors.Name}
             />
-          </Grid>
-
+          </Grid>       
           <div>
             <Controls.Button
               type="submit"

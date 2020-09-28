@@ -120,7 +120,7 @@ const AddTax = (props) => {
   }
   const validate = (fieldValues = values) => {
     let temp = { ...errors }
-    if ('Category_id' in fieldValues)
+    if ('Name' in fieldValues)
       temp.Name = fieldValues.Name ? "" : "No Tax Name Found!"
     if ('Percent' in fieldValues)
       temp.Name = fieldValues.Name ? "" : "No Tax Name Found!"

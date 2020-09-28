@@ -13,6 +13,8 @@ const initialState = {
     CustomerDetails:[],
     Registers:[],
     TaxGroup:[],
+    PettyCash:[],
+    UnfulFilled:[],
     options: [
         { name: 'Manufactured', _id: 1,id: 1 },
         { name: 'Purchased', _id: 2 ,id: 2  },

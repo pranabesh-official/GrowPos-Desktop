@@ -1,21 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@material-ui/core';
-import useTable from '../../../../components/Datatable'
-import { DataContext } from '../../../../LocalDB'
-import AddIcon from '@material-ui/icons/Add';
+import useTable from '../../../components/Datatable'
+import { DataContext } from '../../../LocalDB'
 import { Search } from "@material-ui/icons";
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import Controls from '../../../../components/controls/Controls'
-import Dot from '../../../../components/statusDot'
-import Popup from '../../../../components/Popup'
-import AddTax from '../AddTax'
+// import VisibilityIcon from '@material-ui/icons/Visibility';
+import Controls from '../../../components/controls/Controls'
+import Dot from '../../../components/statusDot'
+import Popup from '../../../components/Popup'
 import { connect } from 'react-redux'
-import Notification from "../../../../components/Notification";
-import ConfirmDialog from "../../../../components/ConfirmDialog";
-import Info from '../../../../components/infoPage'
+import Notification from "../../../components/Notification";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { getNameById } from '../../../../Utils'
+
 
 const useStyles = makeStyles((theme) => ({
     Header: props => {
@@ -46,8 +44,11 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     searchInput: {
-        position: 'absolute',
-        left: '10px',
+
+        margin: '4px',
+    },
+    Select: {
+        width: '40px',
         margin: '4px',
     },
     newButton: {
@@ -55,10 +56,15 @@ const useStyles = makeStyles((theme) => ({
         right: '10px'
     },
     resize: {
-
         height: 27,
         fontSize: 11,
         padding: '0 0px 0px 0px '
+    },
+    Selectresize: {
+        width: 20,
+        height: 27,
+        fontSize: 11,
+        padding: 2
     },
     CellContentent: {
         textAlign: 'center',
@@ -68,17 +74,16 @@ const useStyles = makeStyles((theme) => ({
 
 const headCells = [
     { _id: 'Sync', label: 'Status', disableSorting: true },
-    { _id: 'Name', label: 'TAX Name' },
-    { _id: 'Category_Name', label: 'Category' },
-    { _id: 'Percent', label: 'TAX Percent', },
+    { _id: 'OTSno', label: 'Recipt No' },
+    { _id: 'Type', label: 'Type' },
+    { _id: 'Amount', label: 'Total Amount', },
     { _id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
-const Setup = (props) => {
-    const { addItem, editItem, deleteItem } = useContext(DataContext) //
-    const { Tax, Category } = props.data
-    const [records, setRecords] = useState(Tax)
-    const [recordForEdit, setRecordForEdit] = useState(null)
+const UnfulFilled = (props) => {
+    const { deleteItem } = useContext(DataContext) //
+    const { UnfulFilled } = props.data
+    const [records, setRecords] = useState(UnfulFilled)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
@@ -90,55 +95,52 @@ const Setup = (props) => {
         TblPagination,
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
-    const handleSearch = e => {
+    const ReceptSearch = e => {
         let target = e.target;
         setFilterFn({
             fn: items => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.Category.toLowerCase().includes(target.value))
+                    return items.filter(x => x.OTSno.toLowerCase().includes(target.value))
             }
         })
     }
 
     useEffect(() => {
-        setRecords(Tax)
-    }, [Tax])
+        setRecords(UnfulFilled)
+    }, [UnfulFilled])
 
-    const addOrEdit = (data, resetForm) => {
-        const SelectCategory = Category.find(item => item._id === data.Category_id)
-        if (data._id === null) {
-            const newadd = Object.assign(data, { Category: SelectCategory.Name })
-            addItem('Tax', newadd).then(() => {
-                resetForm()
-                setOpenPopup(false)
-                setRecords(Tax)
-                setNotify({
-                    isOpen: true,
-                    message: 'Submitted Successfully',
-                    type: 'success'
-                })
-            })
+    const getAmount = (Active) => {
+        let net = 0
+        let Tax = 0
+        let Dis = 0
+        if (Active.Cart.length !== 0) {
+            Active.Cart.forEach(element => {
+                net = net + element.cartQnt * element.Price
+                if (element.withTax === false && element.Tax_Percent) {
+                    Tax = Tax + ((element.cartQnt * element.Price) * element.Tax_Percent / 100)
+                }
+            });
         }
-        if (data._id)
-            editItem(data._id, data).then(() => {
-                resetForm()
-                setOpenPopup(false)
-                setRecords(Tax)
-                setRecordForEdit(null)
-                setNotify({
-                    isOpen: true,
-                    message: 'Submitted Successfully',
-                    type: 'success'
-                })
-            })
 
-    }
-
-    const openInPopup = item => {
-        setRecordForEdit(item)
-        setOpenPopup(true)
+        if (Active.discount) {
+            if (Active.discount === true) {
+                if (Active.Discount) {
+                    Dis = Active.Discount
+                }
+                if (Active.Percent) {
+                    Dis = (Tax + net) * Active.Discount / 100
+                }
+            }
+        }
+        const amount = Number(net + Tax - Dis)
+        return {
+            SubTotal: Number(net),
+            taxAmount: Number(Tax),
+            discount: Number(Dis),
+            total: amount.toFixed(2)
+        }
     }
     const onDelete = id => {
         setConfirmDialog({
@@ -146,7 +148,7 @@ const Setup = (props) => {
             isOpen: false
         })
         deleteItem(id).then(() => {
-            setRecords(Tax)
+            setRecords(UnfulFilled)
             setNotify({
                 isOpen: true,
                 message: 'Deleted Successfully',
@@ -155,7 +157,6 @@ const Setup = (props) => {
 
         })
     }
-
     const DataTable = () => {
         return (
             <TblContainer>
@@ -168,16 +169,10 @@ const Setup = (props) => {
                                     {item.isSync ? <Dot color={'green'} position="center" mx={2} Size={10} />
                                         : <Dot color={'red'} position="center" mx={2} Size={10} />}
                                 </TableCell>
-                                <TableCell>{item.Name}</TableCell>
-                                <TableCell>{getNameById(Category, item.Category_id)}</TableCell>
-                                <TableCell>{item.Percent}</TableCell>
+                                <TableCell>{item.OTSno}</TableCell>
+                                <TableCell>{item.Type}</TableCell>                              
+                                <TableCell>{getAmount(item).total}</TableCell>
                                 <TableCell>
-                                    <Controls.ActionButton
-                                        color="primary"
-                                        onClick={() => { openInPopup(item) }}
-                                    >
-                                        <EditOutlinedIcon fontSize="inherit" />
-                                    </Controls.ActionButton>
                                     <Controls.ActionButton
                                         color="secondary"
                                         onClick={() => {
@@ -185,7 +180,7 @@ const Setup = (props) => {
                                                 isOpen: true,
                                                 title: 'Are you sure to delete this record?',
                                                 subTitle: "You can't undo this operation",
-                                                onConfirm: () => { onDelete(item._id) }
+                                                onConfirm: () => { onDelete(item._id, item.Income) }
                                             })
                                         }}>
                                         <DeleteIcon fontSize="inherit" />
@@ -202,7 +197,7 @@ const Setup = (props) => {
         <>
             <Paper className={classes.Header} >
                 <Controls.Input
-                    label='Category'
+                    label='Recipt No'
                     type="text"
                     className={classes.searchInput}
                     size="small"
@@ -212,26 +207,15 @@ const Setup = (props) => {
                             <Search fontSize="inherit" />
                         </InputAdornment>)
                     }}
-                    onChange={handleSearch}
+                    onChange={ReceptSearch}
                 />
-                <Controls.Button
-                    text="Add New"
-                    variant="outlined"
-                    startIcon={<AddIcon />}
-                    className={classes.newButton}
-                    onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}
-                />
+
             </Paper>
             <Paper className={classes.Body} >
                 {recordsAfterPagingAndSorting().length === 0 ?
                     <Info
-                        title="No Tax Data Found!"
-                        subTitle={Category.length !== 0 ?
-                            "Create New Tax using Add new Button ,then select Category and Add Tax Percent! this Will Effect On All Actegory In your Tax!"
-                            :
-                            "You Have No Categoy Data! Create A Category Fast! "
-                        }
-                        link={Category.length !== 0 ? null : { to: '/CategorySetup', title: "Category Setup" }}
+                        title="No UnfulFilled Data Found!"
+                        subTitle="If You Delete Any Active Recipt You can Find Hear!"
                     />
                     : <DataTable />
                 }
@@ -244,10 +228,9 @@ const Setup = (props) => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-                <AddTax
-                    addOrEdit={addOrEdit}
+                {/* <ViewDetails
                     recordForEdit={recordForEdit}
-                />
+                /> */}
             </Popup>
             <Notification
                 notify={notify}
@@ -269,4 +252,4 @@ const mapStateToProps = (state) => {
         sync: state.SyncData,
     }
 }
-export default connect(mapStateToProps,)(Setup)
+export default connect(mapStateToProps,)(UnfulFilled)

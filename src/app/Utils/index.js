@@ -41,3 +41,13 @@ export const gettime = (t) => {
         + currentdate.getSeconds();
     return time
 };
+
+export const getNameById = (arry , id) => {
+    const find = arry.find(item=>item._id === id)
+    if(find){
+        return find.Name
+    }else{
+        return 'Data Removed'
+    }
+    
+};

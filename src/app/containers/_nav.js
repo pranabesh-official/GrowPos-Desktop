@@ -16,23 +16,25 @@ export default [
   },
   {
     _tag: 'CSidebarNavItem',
+    name: 'Petty Cash',
+    to: '/PettyCash',
+    icon: 'Expence',
+  
+  },
+  {
+    _tag: 'CSidebarNavItem',
     name: 'Coustomers',
     to: '/Coustomers',
     icon: 'Card',
   
   },
-  // {
-  //   _tag: 'CSidebarNavDropdown',
-  //   name: 'Reports',
-  //   icon: 'cil-print',
-  //   _children: [
-  //     {
-  //       _tag: 'CSidebarNavItem',
-  //       name: 'All Reports',
-       
-  //     },
-  //   ],
-  // },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Recipts',
+    to: '/Recipts',
+    icon: 'receipt',
+  
+  },
   {
     _tag: 'CSidebarNavItem',
     name: 'Records',

@@ -6,13 +6,13 @@ import useTable from '../../../components/Datatable'
 import { Search } from "@material-ui/icons";
 import Controls from '../../../components/controls/Controls'
 import Popup from '../../../components/Popup'
-import { ShopHandeler } from '../../../LocalDB/ShopDB'
+// import { ShopHandeler } from '../../../LocalDB/ShopDB'
 import { connect } from 'react-redux'
 import Notification from "../../../components/Notification";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import Info from '../../../components/infoPage'
 import DeleteIcon from '@material-ui/icons/Delete';
-// import AddProduct from '../addProduct/Add'
+import { DataContext } from '../../../LocalDB'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -62,18 +62,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const headCells = [
-    { _id: 'Type', label: 'Active' },
+    { _id: 'Type', label: 'Active' },  
     { _id: 'OTSno', label: 'Recipt No' },
     { _id: 'Stutas', label: 'Stutas', },
+    { _id: 'Type', label: 'Type' },
     { _id: 'Amount', label: 'Amount', },
     { _id: 'actions', label: 'Clear', disableSorting: true }
 ]
 
 const Active = (props) => {
-
-    const { ActiveData, Clients } = useContext(ShopHandeler)
-    const DisplayTable = ActiveData.filter(item => item.Cart.length !== 0 && item.Cart.length > 0)//
-    const [records, setRecords] = useState(DisplayTable)
+    const { addItem, editItem, deleteItem } = useContext(DataContext)
+    const { ActiveData, Clients } = props.Cart
+    const [records, setRecords] = useState(ActiveData)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const classes = useStyles(props);
     const [openPopup, setOpenPopup] = useState(false)
@@ -92,19 +92,23 @@ const Active = (props) => {
                 if (target.value === "")
                     return items;
                 else
-                    return items.filter(x => x.OTSno.toLowerCase().includes(target.value))
+                    return items.filter(x => x.OTSno && x.OTSno.toLowerCase().includes(target.value))
             }
         })
     }
 
     useEffect(() => {
-        const DisplayTable = ActiveData.filter(item => item.Cart.length !== 0 && item.Cart.length > 0)//
-        setRecords(DisplayTable)
+        setRecords(ActiveData)
     }, [ActiveData])
 
     const getStatus = (id) => {
         const status = Clients.find(item => item._id === id)
-        return status.table_Status
+        if (status) {
+            return status.table_Status
+        } else {
+            return "Removed"
+        }
+
     }
     const getAmount = (Active) => {
         let net = 0
@@ -137,60 +141,171 @@ const Active = (props) => {
             total: amount.toFixed(2)
         }
     }
+    const clearTakeAway = (Active) => {
+        const id1 = Active.ClientId
+        const id2 = Active._id
+        return new Promise((resolve, reject) => {
+
+            try {
+                deleteItem(id1).then(() => {
+                    setRecords(ActiveData)
+                })
+                deleteItem(id2).then(() => {
+                    setRecords(ActiveData)
+                    resolve()
+                })
+
+            } catch (error) {
+                reject(error)
+            }
+        })
+
+    }
+    const clearTable = (Active) => {
+        const id1 = Active.ClientId
+        const id2 = Active._id
+        return new Promise((resolve, reject) => {
+            const New = {
+                ClientId: id1,
+                Cart: [],
+                Ot: [],
+                OTPrint: 0,
+                OTSno: null,
+                Type: 'Table',
+                isActive: false,
+            }
+            try {
+                editItem(id1, { table_Status: 'Inactive' }).then(() => {
+                    setRecords(ActiveData)
+                })
+                editItem(id2, New).then(() => {
+                    setRecords(ActiveData)
+                    setNotify({
+                        isOpen: true,
+                        message: 'Clear Done!',
+                        type: 'error'
+                    })
+                    resolve()
+                })
+
+            } catch (error) {
+                reject(error)
+            }
+        })
+
+    }
+    const addUnfulFilled = (item) => {
+        console.log(item)
+        return new Promise((resolve, reject) => {
+            const update = {
+                BillSno: item.BillSno,
+                Cart: item.Cart,
+                ClientId: item.ClientId,
+                OTPrint: item.OTPrint,
+                OTSno: item.OTSno,
+                Ot: item.Ot,
+                Stutas: item.Stutas,
+                Type: item.Type,
+                createBy: item.createBy,
+                dateTime: item.dateTime,
+            }
+
+            addItem('UnfulFilled', update).then((d) => {
+                setRecords(ActiveData)
+                resolve(d)
+            }).catch((err) => {
+                console.log('Error:', err)
+                reject(err)
+            });
+        })
+
+    }
     const onDelete = item => {
         setConfirmDialog({
             ...confirmDialog,
             isOpen: false
         })
+        addUnfulFilled(item).then(() => {
+            if (item.Type === 'TakeAway') {
+
+                clearTakeAway(item).then(() => {
+                    setNotify({
+                        isOpen: true,
+                        message: 'Clear Done!',
+                        type: 'error'
+                    })
+                })
+            }
+            if (item.Type === 'Table') {
+
+                clearTable(item).then(() => {
+                    setNotify({
+                        isOpen: true,
+                        message: 'Clear Done!',
+                        type: 'error'
+                    })
+                })
+            }
+        })
+
     }
-    // console.log(ActiveData)
+
 
     const DataTable = () => {
-        if (DisplayTable.length === 0) {
-            return (
-                <Info
-                    title="You Have No Sale Running "
-                    subTitle="Start Sale With This Link!"
-                    link={{ to: '/Pos', title: "Point Of Sale" }}
-                />
-            )
-        } else {
-            return (
-                <TblContainer>
-                    <TblHead />
-                    <TableBody>
-                        {
-                            recordsAfterPagingAndSorting().map((item) => (
-                                <>
-                                    <TableRow key={item._id}>
-                                        <TableCell>{item.Type}</TableCell>
-                                        <TableCell>{item.OTSno}</TableCell>
-                                        <TableCell>{getStatus(item.ClientId)}</TableCell>
-                                        <TableCell>{getAmount(item).total}</TableCell>
-                                        <TableCell>
-                                            <Controls.ActionButton
-                                                color="secondary"
-                                                disabled
-                                                onClick={() => {
-                                                    setConfirmDialog({
-                                                        isOpen: true,
-                                                        title: 'Are you sure to Clear this Billing?',
-                                                        subTitle: "Sorry This operation Not abaile Now!",
-                                                        onConfirm: () => { onDelete(item) }
-                                                    })
-                                                }}>
-                                                <DeleteIcon fontSize="inherit" />
-                                            </Controls.ActionButton>
-                                        </TableCell>
-                                    </TableRow>
-                                </>
 
-                            ))
-                        }
-                    </TableBody>
-                </TblContainer>
-            )
-        }
+        return (
+            <>
+                {recordsAfterPagingAndSorting().length !== 0 ?
+                    <TblContainer>
+                        <TblHead />
+                        <TableBody>
+                            {
+                                recordsAfterPagingAndSorting().map((item) => {
+                                    if (item.OTSno) {
+                                        return (
+                                            <TableRow key={item._id}>
+                                                <TableCell>{item.Type === 'TakeAway' ?
+                                                    `Order Id ${item.displayNo}` :
+                                                    `${item.Type} ${item.displayNo}`
+
+                                                }</TableCell>                                            
+                                                <TableCell>{item.OTSno}</TableCell>
+                                                <TableCell>{item.ClientId && getStatus(item.ClientId)}</TableCell>
+                                                <TableCell>{item.Type}</TableCell>
+                                                <TableCell>{item && getAmount(item).total}</TableCell>
+                                                <TableCell>
+                                                    <Controls.ActionButton
+                                                        color="secondary"
+                                                        onClick={() => {
+                                                            setConfirmDialog({
+                                                                isOpen: true,
+                                                                title: 'Are you sure to Clear this Billing?',
+                                                                subTitle: "Sorry This operation Not abaile Now!",
+                                                                onConfirm: () => { onDelete(item) }
+                                                            })
+                                                        }}>
+                                                        <DeleteIcon fontSize="inherit" />
+                                                    </Controls.ActionButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    }
+
+                                })
+                            }
+                        </TableBody>
+                    </TblContainer>
+                    :
+                    <Info
+                        title="You Have No Setup! "
+                        subTitle="Create Your Shop SetUp Fast"
+                        link={{ to: '/Pos', title: "Point Of Sale" }}
+                    />
+                }
+
+            </>
+        )
+
 
     }
     return (
@@ -254,6 +369,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.DataStore,
         sync: state.SyncData,
+        Cart: state.Cart,
     }
 }
 export default connect(mapStateToProps,)(Active)

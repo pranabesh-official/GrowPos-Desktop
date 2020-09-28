@@ -3,7 +3,7 @@ import { Table, TableHead, TableRow, TableCell, makeStyles, TablePagination, Tab
 
 const useStyles = makeStyles(theme => ({
     table: {
-        marginTop: 5,
+        marginTop: 0,
         boxShadow: '0 0px 0px 0px ',
         '& thead th': {
             boxShadow: '0 0px 0px 0px ',
