@@ -34,7 +34,7 @@ class TheFooter extends Component {
                 size="small"
               >
                 <Icon loading={isSync} name='sync' size='small' />
-                {change !== 0 && <h6 style={{ fontSize: '10px' }}>{change}</h6>}
+                {change !== 0 && <h6 style={{ fontSize: '10px' ,margin: 0}}>{change}</h6>}
               </IconButton>
               <IconButton
                 size="small"
@@ -48,9 +48,9 @@ class TheFooter extends Component {
                     });
                 }}
               >
-                {change !== 0 ? <h6 style={{ fontSize: '10px', color: 'black' }}>{'Sync now'}</h6> :
+                {change !== 0 ? <h6 style={{ fontSize: '10px', color: 'black',margin: 0 }}>{'Sync now'}</h6> :
                   <>
-                    <h6 style={{ fontSize: '10px', color: 'black' }}>{lastSync()}</h6>
+                    <h6 style={{ fontSize: '10px', color: 'black',margin: 0 }}>{lastSync()}</h6>
                   </>
                 }
               </IconButton>
@@ -74,8 +74,8 @@ class TheFooter extends Component {
                 size="small"
                 onClick={() => loadAllData()}
               >
-                {dataload ? <h6 style={{ fontSize: '10px', color: 'black' }}>Database Connected</h6> :
-                  <h6 style={{ fontSize: '10px', color: 'black' }}>Database Disconnected </h6>}
+                {dataload ? <h6 style={{ fontSize: '10px', color: 'black', margin: 0}}>Database Connected</h6> :
+                  <h6 style={{ fontSize: '10px', color: 'black' , margin: 0}}>Database Disconnected </h6>}
               </IconButton>
             </>
           )}

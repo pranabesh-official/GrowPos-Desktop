@@ -4,8 +4,7 @@ import { IconButton, Typography } from '@material-ui/core'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import AddIcon from '@material-ui/icons/Add';
-import AnnouncementIcon from '@material-ui/icons/Announcement';
+import {ContactSupport} from '@material-ui/icons';
 // const getStatus = (status) => {
 //     switch (status) {
 //         case 'Active': return success
@@ -62,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     },
     main: {
         height: '100%',
-        width:'100%'
+        width: '100%'
     }
 }))
 
@@ -76,8 +75,8 @@ const StyledButton = withStyles({
         textAlign: 'initial',
         justifyContent: 'space-between',
         border: 0,
-        height:100,
-        maxHeight:100,
+        height: 100,
+        maxHeight: 100,
         boxShadow: '0 0px 0px 0px ',
         "&:hover": {
             backgroundColor: 'white',
@@ -91,26 +90,25 @@ const StyledButton = withStyles({
 
 export default function Support(props) {
     const classes = useStyles(props);
-    const { onClick, label, sublabel } = props
+    const {  label, sublabel } = props
 
     return (
         <StyledButton className={classes.main} >
-            <ButtonBase
-                // className={classes.cardAction}
-                onClick={onClick}
-            >
-                <div className={classes.Title}>
-                    <IconButton disableRipple className={classes.titleIcon} >
-                        <AnnouncementIcon fontSize='inherit' />
-                    </IconButton>
-                </div>
-                <div className={classes.details}>
-                    <CardContent className={classes.content} >
-                        <Typography className={classes.heading}>{label}</Typography>
-                        <Typography className={classes.secondaryHeading}>{sublabel}</Typography>
-                    </CardContent>
-                </div>
-            </ButtonBase>
+           
+                <>
+                    <div className={classes.Title}>
+                        <IconButton disableRipple className={classes.titleIcon} >
+                            <ContactSupport fontSize='inherit' />
+                        </IconButton>
+                    </div>
+                    <div className={classes.details}>
+                        <CardContent className={classes.content} >
+                            <Typography className={classes.heading}>{label}</Typography>
+                            <Typography className={classes.secondaryHeading}>{sublabel}</Typography>
+                        </CardContent>
+                    </div>
+                </>
+            
         </StyledButton>
     );
 }

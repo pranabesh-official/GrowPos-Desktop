@@ -200,16 +200,17 @@ const Register = (props) => {
                         />
                       </CInputGroup>
                       <CInputGroup className="mb-4">
-                        <Controls.RadioGroup
+                        <Controls.Select
                           name="Type"
+                          label="Business Type"
                           value={values.Type}
                           options={ShopType}
                           optionsValue={'name'}
                           size="small"
+                          fullWidth
                           error={errors.Type}
                           optionsDisplay={'display'}
                           onChange={handleInputChange}
-
                         />
                       </CInputGroup>
                       <CRow>

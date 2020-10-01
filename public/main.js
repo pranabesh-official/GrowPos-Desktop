@@ -79,30 +79,34 @@ if (!gotTheLock) {
                         db.start()
                     }
                 })
+                main = new BrowserWindow({
+                    width: 1000,
+                    height: 700,
+                    minWidth: 1000,
+                    minHeight: 680,
+                    show: false,
+                    frame: false,
+                    titleBarStyle: 'hidden',
+                    webPreferences: {
+                        nodeIntegration: true,
+                        enableRemoteModule: true,
+                    }
+                })
+                main.webContents.once('dom-ready', () => {
+                    console.log('main loaded')
+                    main.show()
+                    mainWin = main
+                    loading.hide()
+                    loading.close()
+                })
+                main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
+           
             })
-            main = new BrowserWindow({
-                width: 1000,
-                height: 700,
-                minWidth: 1000,
-                minHeight: 680,
-                show: false,
-                frame: false,
-                titleBarStyle: 'hidden',
-                webPreferences: {
-                    nodeIntegration: true,
-                    enableRemoteModule: true,
-                }
-            })
+           
           
-            main.webContents.once('dom-ready', () => {
-                console.log('main loaded')
-                main.show()
-                mainWin = main
-                loading.hide()
-                loading.close()
-            })
+           
             // long loading html
-            main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
+            // main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
            
             ipcMain.on('print-pos', (event, arg) => {
                 console.log(arg)
