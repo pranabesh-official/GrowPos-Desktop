@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { isElectron } from 'react-device-detect'
 import axios from 'axios';
 import PrintIcon from '@material-ui/icons/Print';
-import { GetShop } from '../../store/action/Shop'
+
 
 
 
@@ -103,7 +103,6 @@ class ShopProvider extends Component {
         axios(config)
             .then(({ data }) => {
                 this.setState({ current: data });
-                this.props.GetShop(data)
             })
             .catch((err) => console.log('Error:', err));
     }
@@ -312,7 +311,7 @@ const mapStateToProps = (state) => {
 
 export { Consumer as ShopData, context as ShopHandeler }
 
-export default connect(mapStateToProps, { GetShop })(withStyles(style, { withTheme: true })(ShopProvider))
+export default connect(mapStateToProps, )(withStyles(style, { withTheme: true })(ShopProvider))
 
 
 

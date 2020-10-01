@@ -259,6 +259,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.DataStore,
         sync: state.SyncData,
+        Shop: state.Shop,
     }
 }
 export default connect(mapStateToProps,)(Setup)

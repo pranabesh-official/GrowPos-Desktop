@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { ReadData, LoadStart, LoadSucsess, LoadFail } from '../store/action/DataStore'
 import { SyncDb, SyncDbReset, isSyncStart, isSyncDone } from '../store/action/syncAction'
 import TurtleDB from 'turtledb';
-import { ReadShop, UserData } from '../store/action/Shop'
-import { GetActive, getClient} from '../store/action/Cart'
+import { ReadShop } from '../store/action/Shop'
+import { GetActive, getClient } from '../store/action/Cart'
 import { getOrderTicket } from '../store/action/Kot'
-
+import { getProfileFetch } from '../store/action/Auth'
 let context = null;
 const { Provider, Consumer } = context = createContext()
 
@@ -35,56 +35,56 @@ class DataProvider extends Component {
         }
     }
     async loadAllData() {
+        const { islogedIn, currentUser } = this.props.Auth
         return new Promise((resolve, reject) => {
             const loadData = () => {
                 return new Promise((resolve, reject) => {
                     this.db.readAll()
                         .then((Data) => {
                             this.setState({ items: Data });
-                            const Source = Data.filter((item) => item.dbName === 'Source')
+                            const Shop = Data.find((item) => item._id === currentUser.shopid)
+                            this.props.ReadShop(Shop)
+
+                            const filterData = Data.filter((item) => item.shopid === currentUser.shopid)
+                           
+                            const Source = filterData.filter((item) => item.dbName === 'Source')
                             this.props.ReadData('Source', Source)
-                            
-                            const Category = Data.filter((item) => item.dbName === 'Category')
+
+                            const Category = filterData.filter((item) => item.dbName === 'Category')
                             this.props.ReadData('Category', Category)
 
-                            const Tax = Data.filter((item) => item.dbName === 'Tax')
+                            const Tax = filterData.filter((item) => item.dbName === 'Tax')
                             this.props.ReadData('Tax', Tax)
 
-                            const Tables = Data.filter((item) => item.dbName === 'Tables')
+                            const Tables = filterData.filter((item) => item.dbName === 'Tables')
                             this.props.ReadData('Tables', Tables)
                             this.props.getClient(Tables)
 
-                            const Registers = Data.filter((item) => item.dbName === 'Registers')
+                            const Registers = filterData.filter((item) => item.dbName === 'Registers')
                             this.props.ReadData('Registers', Registers)
 
-                            const PettyCash = Data.filter((item) => item.dbName === 'PettyCash')
+                            const PettyCash = filterData.filter((item) => item.dbName === 'PettyCash')
                             this.props.ReadData('PettyCash', PettyCash)
 
-                            const Products = Data.filter((item) => item.dbName === 'Products') 
+                            const Products = filterData.filter((item) => item.dbName === 'Products')
                             this.props.ReadData('Products', Products)
 
-                            const SellReport = Data.filter((item) => item.dbName === 'SellReport')
+                            const SellReport = filterData.filter((item) => item.dbName === 'SellReport')
                             this.props.ReadData('SellReport', SellReport)
 
-                            const TaxGroup = Data.filter((item) => item.dbName === 'TaxGroup')
+                            const TaxGroup = filterData.filter((item) => item.dbName === 'TaxGroup')
                             this.props.ReadData('TaxGroup', TaxGroup)
 
-                            const OrderTicket = Data.filter((item) => item.dbName === 'OrderTicket')
+                            const OrderTicket = filterData.filter((item) => item.dbName === 'OrderTicket')
                             this.props.ReadData('OrderTicket', OrderTicket)
 
-                            const UnfulFilled = Data.filter((item) => item.dbName === 'UnfulFilled')
+                            const UnfulFilled = filterData.filter((item) => item.dbName === 'UnfulFilled')
                             this.props.ReadData('UnfulFilled', UnfulFilled)
 
-                            const CustomerDetails = Data.filter((item) => item.dbName === 'CustomerDetails')
+                            const CustomerDetails = filterData.filter((item) => item.dbName === 'CustomerDetails')
                             this.props.ReadData('CustomerDetails', CustomerDetails)
 
-                            const Shop = Data.filter((item) => item.dbName === 'Shop')
-                            this.props.ReadShop(Shop)
-
-                            const CurrentUser = Data.filter((item) => item.dbName === 'CurrentUser')
-                            this.props.UserData(CurrentUser)
-
-                            const Cart = Data.filter((item) => item.dbName === 'Cart')
+                            const Cart = filterData.filter((item) => item.dbName === 'Cart')
                             this.props.GetActive(Cart)
                             resolve('load done')
                         })
@@ -94,26 +94,41 @@ class DataProvider extends Component {
 
                 })
             }
-            this.props.LoadStart()
-            loadData()
-                .then((sucsess) => {
-                    this.props.LoadSucsess()
-                    resolve(sucsess)
-                })
-                .catch((err) => {
-                    console.log('Error:', err)
-                    this.props.LoadFail()
-                    reject(err)
-                });
+
+            if (islogedIn && currentUser !== null) {
+                this.props.LoadStart()
+                loadData()
+                    .then((sucsess) => {
+                        this.props.LoadSucsess()
+                        resolve(sucsess)
+                    })
+                    .catch((err) => {
+                        console.log('Error:', err)
+                        this.props.LoadFail()
+                        reject(err)
+                    });
+            }
+
 
         })
     }
 
     async addItem(name, Data) {
-        const {currentUser} = this.props.Auth
+        const { currentUser } = this.props.Auth
+        let create = 'admin'
+        let shop = 'admin'
+        if (currentUser !== null) {
+            create = currentUser.EmpolyeName
+            shop = currentUser.shopid
+        }
         return new Promise((resolve, reject) => {
             const updatedItems = [...this.state.items];
-            const newItem = Object.assign(Data, { isSync: false, dbName: name, dateTime:new Date() , createBy:currentUser.EmpolyeName})
+            const newItem = Object.assign(Data, {
+                isSync: false,
+                dbName: name, dateTime: new Date(),
+                createBy: create,
+                shopid: shop
+            })
             this.db.create(newItem)
                 .then((Data) => {
                     updatedItems.push(Data);
@@ -180,7 +195,7 @@ class DataProvider extends Component {
         })
     }
     async editItem(_id, editItem) {
-        
+
         return new Promise((resolve, reject) => {
             this.loadAllData().then((d) => {
                 let updatedItems;
@@ -335,8 +350,8 @@ export default connect(mapStateToProps, {
     isSyncStart,
     isSyncDone,
     ReadShop,
-    UserData,
     GetActive,
     getOrderTicket,
-    getClient
+    getClient,
+    getProfileFetch
 })(DataProvider) 

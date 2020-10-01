@@ -116,7 +116,9 @@ const Setup = (props) => {
 
     const addOrEdit = (data, resetForm) => {
         if(!data._id){
-            adduser(data).then((rasult) => {
+            const { _id} = props.Shop
+            const newData = Object.assign(data, {shopid: _id}) 
+            adduser(newData).then((rasult) => {
                 resetForm()
                 setOpenPopup(false)
                 setRecords(users)
@@ -170,7 +172,7 @@ const Setup = (props) => {
                 <TableBody>
                     {
                         recordsAfterPagingAndSorting().map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow key={item._id}>
                                 <TableCell >
                                     {item.admin ?
                                         <LockOpenIcon fontSize='inherit' />
@@ -195,10 +197,10 @@ const Setup = (props) => {
                                     <Controls.ActionButton
                                         color="secondary"
                                         onClick={() => {
-                                            if (item.Type === "SUPERUSER") {
+                                            if (item.admin) {
                                                 setNotify({
                                                     isOpen: true,
-                                                    message: "This User Created By Devloper! You can't Do this operation",
+                                                    message: "This User Created By Admin! You can't Do this operation",
                                                     type: 'error'
                                                 })
                                             } else {
@@ -251,7 +253,6 @@ const Setup = (props) => {
                         subTitle={
                             "Create New User using Add new Button ,"
                         }
-                    // link={Category.length !== 0 ? null : {to:'/CategorySetup' , title:"Category Setup"}}
                     />
                     : <DataTable />
                 }
@@ -260,16 +261,13 @@ const Setup = (props) => {
                 <TblPagination />
             </Paper>
             <Popup
-                // title={"Tax"}
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-
                 <AddUser
                     addOrEdit={addOrEdit}
                     recordForEdit={recordForEdit}
                 />
-
 
             </Popup>
             <Notification
@@ -290,6 +288,8 @@ const mapStateToProps = (state) => {
     return {
         data: state.DataStore,
         sync: state.SyncData,
+        Auth: state.Auth,
+        Shop: state.Shop,
     }
 }
 export default connect(mapStateToProps,)(Setup)

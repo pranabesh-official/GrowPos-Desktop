@@ -9,7 +9,7 @@ if(isElectron){
 
 class Titlebar extends PureComponent {
   static defaultProps = {
-    color: '#ffffff',
+    color: '#ebedef',
     theme: 'light'
   };
 

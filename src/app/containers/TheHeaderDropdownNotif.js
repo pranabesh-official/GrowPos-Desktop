@@ -3,25 +3,24 @@ import { ShopHandeler } from '../LocalDB/ShopDB'
 import { LogOut, getProfileFetch } from '../store/action/Auth'
 import { connect } from 'react-redux'
 import {
-
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-
 } from '@coreui/react'
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-
-import {Settings, VerifiedUserSharp ,   VerifiedUser} from '@material-ui/icons';
+// import { Redirect } from 'react-router-dom'
+import { Settings, VerifiedUserSharp, VerifiedUser } from '@material-ui/icons';
 import User from '../components/User'
+import { Avatar } from '@material-ui/core'
 
 
 const TheHeaderDropdownNotif = (props) => {
   const { current } = useContext(ShopHandeler)
   const [openPopup, setOpenPopup] = useState(false)
-  const logout = () => {
-    props.LogOut()
+  const logout = async () => {
+    await props.LogOut()
   }
 
   return (
@@ -34,7 +33,16 @@ const TheHeaderDropdownNotif = (props) => {
         <VerifiedUserSharp />
       </CDropdownToggle>
       <CDropdownMenu placement="bottom-end" className="pt-0">
-        <CDropdownItem onClick={() => setOpenPopup(true)}> <VerifiedUser color='primary' className="mr-2 " />{current && current.EmpolyeName}</CDropdownItem>
+        <CDropdownItem
+          // tag="div"
+          color="light"
+        > <Avatar
+            color='primary'
+            className="mr-2 "
+            alt={current && `${current.EmpolyeName}`}
+            src={'avatar'}
+            sizes='small'
+          /><strong>{current && current.EmpolyeName} </strong></CDropdownItem>
         <CDropdownItem onClick={() => setOpenPopup(true)}> <Settings color="primary" className="mr-2 " />User Settings</CDropdownItem>
         <CDropdownItem onClick={() => logout()}> <ExitToAppIcon color="secondary" className="mr-2 " />logout</CDropdownItem>
       </CDropdownMenu>
@@ -43,6 +51,7 @@ const TheHeaderDropdownNotif = (props) => {
         setOpenPopup={setOpenPopup}
       />
     </CDropdown>
+
   )
 }
 

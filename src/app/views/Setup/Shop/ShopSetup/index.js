@@ -82,7 +82,8 @@ const useStyles = makeStyles((theme) => ({
         return {
             ...theme.GlobalBox,
             overflow: 'auto',
-            height: `${(props.height) - 110}px`,
+            // height: `${(props.height) - 110}px`,
+            height: '100%',
             padding: 8
         }
     },
@@ -98,10 +99,6 @@ const useStyles = makeStyles((theme) => ({
     heading: {
         fontSize: theme.typography.pxToRem(10),
     },
-    pin: {
-        borderTop: `1px solid ${theme.palette.divider}`,
-        borderBottom: `1px solid ${theme.palette.divider}`,
-    }
 
 }));
 
@@ -143,28 +140,18 @@ TabPanel.propTypes = {
 
 const Shop = (props) => {
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
-    const { addItem, editItem } = useContext(DataContext)
+    const { editItem } = useContext(DataContext)
     const { ShopType, _id, ShopData } = props.Shop
     const initialFValues = {
         Name: '',
         Type: '',
         Contact: '',
-        About: '',
         Location: '',
-        DeletePin: true,
-        EditTax: false,
-        EditCategory: true,
-        EditProducts: true,
         EditSource: false,
         Pin: '1234',
-        roundOff: false,
-        printBill: true,
-        printOt: true,
-        billFast: true,
-        OtNo: true,
-        discountOffer: true,
-        Bill:null,
-        OT:null,
+        Preferences:null,
+        Bill: null,
+        OT: null,
     }
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
@@ -195,34 +182,24 @@ const Shop = (props) => {
     const handleSubmit = e => {
         e.preventDefault()
         if (validate()) {
-            if (_id) {
-                editItem(_id, values).then(() => {
-                    setNotify({
-                        isOpen: true,
-                        message: 'Submitted Successfully',
-                        type: 'success'
-                    })
+            editItem(_id, values).then(() => {
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
                 })
-            } else {
-                addItem('Shop', values).then(() => {
-                    setNotify({
-                        isOpen: true,
-                        message: 'Submitted Successfully',
-                        type: 'success'
-                    })
-                })
-            }
+            })
         }
     }
     useEffect(() => {
         if (ShopData) {
             setValues({
-                ...ShopData
+                ...ShopData,
             })
         }
     }, [ShopData, setValues])
 
-  
+
 
     const classes = useStyles(props);
     const [value, setValue] = React.useState(0);
@@ -235,8 +212,6 @@ const Shop = (props) => {
                 <div className={classes.demo1}>
                     <AntTabs value={value} onChange={handleChange} aria-label="ant example">
                         <AntTab label="General settings" {...a11yProps(0)} />
-                        <AntTab label="Preferences" {...a11yProps(1)} />
-                        
                     </AntTabs>
                 </div>
                 <TabPanel value={value} index={0}>
@@ -308,108 +283,15 @@ const Shop = (props) => {
                                             value={values.Pin}
                                             onChange={handleInputChange}
                                         />
-                                      
+
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12} sm={12} style={{ marginTop: 8 }}>
-                                    <Controls.Checkbox
-                                        name="DeletePin"
-                                        label="Allow Delete Adta all User without Pin "
-                                        value={values.DeletePin}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} >
-                                    <Controls.Checkbox
-                                        name="EditCategory"
-                                        label="Allow Category Edit for All User"
-                                        value={values.EditCategory}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} >
-                                    <Controls.Checkbox
-                                        name="EditTax"
-                                        label="Allow tax Edit for All User"
-                                        value={values.EditTax}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} >
-                                    <Controls.Checkbox
-                                        name="EditProducts"
-                                        label="Allow Products Edit for All User"
-                                        value={values.EditProducts}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} >
-                                    <Controls.Checkbox
-                                        name="EditSource"
-                                        label="Allow Source Edit for All User"
-                                        value={values.EditSource}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                            </Grid>
+                            </Grid>  
                         </Grid>
                     </Paper>
                 </TabPanel>
-                <TabPanel value={value} index={1}>
-                    <Paper className={classes.Body} >
-                        <Grid container spacing={1} style={{ padding: 8 }}  >
-                            <Grid item xs={12} sm={12} style={{ marginTop: 8 }}>
-                                <Controls.Checkbox
-                                    name="roundOff"
-                                    label=" Do not roundoff sale total "
-                                    value={values.roundOff}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} >
-                                <Controls.Checkbox
-                                    name="printBill"
-                                    label="Print Bill receipt"
-                                    value={values.printBill}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} >
-                                <Controls.Checkbox
-                                    name="printOt"
-                                    label="Print order ticket / KOT receipt"
-                                    value={values.printOt}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} >
-                                <Controls.Checkbox
-                                    name="billFast"
-                                    label="Print receipt first, then accept payment"
-                                    value={values.billFast}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} >
-                                <Controls.Checkbox
-                                    name="OtNo"
-                                    label="Print order ticket / KOT number in the receipt "
-                                    value={values.OtNo}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} >
-                                <Controls.Checkbox
-                                    name="discountOffer"
-                                    label=" Allow All User to offer discounts"
-                                    value={values.discountOffer}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </TabPanel>
-              
+               
+
             </div>
             <Paper className={classes.Footer}>
                 <div>

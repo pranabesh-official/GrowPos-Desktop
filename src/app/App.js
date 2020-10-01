@@ -1,49 +1,41 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from "react-router-dom"
+import React from 'react';
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"
 import './scss/style.scss';
 import './App.css';
 import { connect } from 'react-redux'
 import { getProfileFetch } from './store/action/Auth';
-import { Ripple } from 'react-preloaders';
-import Login from './views/LogIn/index'
+// import { Ripple } from 'react-preloaders';
+import Login from './views/Auth/login/Login'
 import TheLayout from './containers/TheLayout'
+import LogInRoute from './views/Auth/LogInRoute'
+import RegisterRoute from './views/Auth/LogInRoute'
+import Register from './views/Auth/register/Register'
+import DataProvider from './LocalDB'
+import ShopProvider from './LocalDB/ShopDB'
 
-
-class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-
-    }
-
-  }
-  componentDidMount() {
-    this.props.getProfileFetch()
-  }
-  componentWillUnmount() {
-    this.props.getProfileFetch()
-  }
-
-  render() {
-    return (
-      <BrowserRouter>
-        <React.Suspense fallback={<Ripple />}>
+const App = (props) => {
+  return (
+    <DataProvider>
+      <ShopProvider>
+        <BrowserRouter>
           <Switch>
-            <Route path="/login" name="login" component={Login} />
+            <LogInRoute path="/login" name="login" component={Login} />
+            <RegisterRoute path="/Register" name="Register" component={Register} />
             <Route path="/" name="Home" component={TheLayout} />
+            <Redirect from="*" to='/' />
           </Switch>
-        </React.Suspense>
-      </BrowserRouter>
-
-    )
-  }
+        </BrowserRouter>
+      </ShopProvider>
+    </DataProvider>
+  )
 }
+
 const mapStateToProps = (state) => {
   return {
     Auth: state.Auth,
   }
 }
-export default connect(mapStateToProps, { getProfileFetch } )(App);
+export default connect(mapStateToProps, { getProfileFetch })(App);
 
 
 

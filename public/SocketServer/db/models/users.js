@@ -66,9 +66,9 @@ const userSchema = new mongoose.Schema({
         }
     }],
     shopid: {
-        shopid: {
-            type: String,
-        }
+        type:String,
+        required:true,
+        trim: true
     },
     avatar:{
         type:Buffer

@@ -1,9 +1,8 @@
 import { LOGIN_USER, LOGIN_SUCSESS, LOGIN_FAIL, LOGOUT_USER} from '../action/types'
 
 const initialState = {
-    logIn: false,
-    currentUser: {},
     islogedIn: false,
+    currentUser: null,
     error: null,
 
 }
@@ -13,7 +12,7 @@ const Auth = (state = initialState, action) => {
         case LOGIN_USER:
             return {
                 ...state,
-                logIn: true
+                islogedIn: false,
             }
         case LOGIN_SUCSESS:
             return {
@@ -26,14 +25,13 @@ const Auth = (state = initialState, action) => {
                 ...state,
                 error: action.payload,
                 islogedIn: false,
-                logIn: false
+                currentUser: null,
             }
         case LOGOUT_USER:
             return {
                 ...state,
-                currentUser: {},
+                currentUser: null,
                 islogedIn: false,
-                logIn: false
             }
         default:
             return state;

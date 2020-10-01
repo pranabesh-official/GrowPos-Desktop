@@ -4,8 +4,8 @@ import { connect } from 'react-redux'
 import { Tab } from 'semantic-ui-react'
 import { ThemeBackground } from '../../LayoutManeger/Themes'
 import { withStyles } from '@material-ui/core/styles';
-import DataProvider from '../../../LocalDB'
-import ShopProvider from '../../../LocalDB/ShopDB'
+// import DataProvider from '../../../LocalDB'
+// import ShopProvider from '../../../LocalDB/ShopDB'
 import Setup from './Setup'
 import SourceSetup from './Setup/SourceSetup'
 
@@ -74,11 +74,7 @@ class CategorySetup extends Component {
           <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
             <Grid container style={style} >
               <Grid item xs={12} sm={12}>
-                <DataProvider>
-                  <ShopProvider>
-                    <Setup height={height} />
-                  </ShopProvider>
-                </DataProvider>
+                <Setup height={height} />
               </Grid>
             </Grid>
           </Tab.Pane>
@@ -90,11 +86,7 @@ class CategorySetup extends Component {
           <Tab.Pane attached={false} active={true} style={{ padding: '0px' }}>
             <Grid container style={style} >
               <Grid item xs={12} sm={12}>
-                <DataProvider>
-                  <ShopProvider>
-                    <SourceSetup height={height} />
-                  </ShopProvider>
-                </DataProvider>
+                <SourceSetup height={height} />
               </Grid>
             </Grid>
           </Tab.Pane>
@@ -108,8 +100,8 @@ class CategorySetup extends Component {
           <Tab
             menu={{ borderless: true, attached: false, tabular: false, }}
             panes={panes}
-            // activeIndex={activeIndex}
-            // onTabChange={() => this.handleTabChange(0, null)}
+          // activeIndex={activeIndex}
+          // onTabChange={() => this.handleTabChange(0, null)}
           />
         </Grid>
       </Grid>

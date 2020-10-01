@@ -1,10 +1,51 @@
 import axios from 'axios'
 
-import { LOGIN_USER, LOGIN_SUCSESS, LOGIN_FAIL, LOGOUT_USER } from './types.js'
+import { LOGIN_SUCSESS, LOGIN_FAIL } from './types.js'
 
 const baseurl = 'http://localhost:4545'
-export const userPostFetch = (user, pass) => {
-    var data = JSON.stringify({ username: user, password: pass });
+
+export const userPostFetch = user => {
+  
+    const data = Object.assign(user, {
+        EmpolyeName: "Admin",
+        Gender: null,
+        Department: "Admin",
+        Haier_Date: new Date(),
+        admin: true,
+        Salary: 0,
+
+    })
+    console.log(data)
+    return dispatch => {
+        const config = {
+            method: 'post',
+            url: baseurl + '/users',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: data
+        };
+        return axios(config)
+            .then(({ data }) => {
+                if (data.user) {
+                    sessionStorage.setItem("token", data.token)
+                    sessionStorage.setItem("admin", data.user.admin)
+                    dispatch(loginUser(data.user))
+                } else {
+                    loginfaild()
+                }
+
+            })
+            .catch((error) => {
+                console.log(error)
+                dispatch(loginfaild(error))
+            })
+    }
+}
+
+
+export const userLoginFetch = (data) => {
+    // const data = JSON.stringify({ username: user, password: pass });
     return dispatch => {
         let login = {
             method: 'post',
@@ -18,10 +59,10 @@ export const userPostFetch = (user, pass) => {
             .then(({ data }) => {
                 if (data.user) {
                     sessionStorage.setItem("token", data.token)
-                    sessionStorage.setItem("public_id", data.user._id)
-                    dispatch(loginUser())
+                    sessionStorage.setItem("admin", data.user.admin)
+                    dispatch(loginUser(data.user))
                 } else {
-                    loginfaild(data.message)
+                    loginfaild()
                 }
 
             })
@@ -31,36 +72,31 @@ export const userPostFetch = (user, pass) => {
             })
     }
 }
-export const getProfileFetch = (page) => {
+export const getProfileFetch = () => {
     return dispatch => {
         const token = sessionStorage.getItem("token")
-        // const public_id = sessionStorage.public_id;
-        let getUser = {
-            method: 'get',
-            url: baseurl + '/users/me',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }
         if (token) {
-            if (page === 'LOGIN') {
-                dispatch(loginUser())
-
+            let getUser = {
+                method: 'get',
+                url: baseurl + '/users/me',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             }
             return axios(getUser)
                 .then(({ data }) => {
                     if (data) {
-                        dispatch(GetcurrentUser(data))
+                        dispatch(loginUser(data))
                     } else {
                         sessionStorage.removeItem("token")
-                        sessionStorage.removeItem("public_id")
+                        sessionStorage.removeItem("admin")
                         dispatch(loginfaild(data.message))
                     }
                 })
                 .catch((error) => {
                     console.log(error)
                     sessionStorage.removeItem("token")
-                    sessionStorage.removeItem("public_id")
+                    sessionStorage.removeItem("admin")
                     dispatch(loginfaild(error))
                 })
         } else {
@@ -70,35 +106,31 @@ export const getProfileFetch = (page) => {
     }
 }
 
-export const LogOut = (name, data) => {
-    const token = sessionStorage.getItem("token")
-    let logout = {
-        method: 'get',
-        url: baseurl + '/users/logout',
-        headers: {
-            'Authorization': `Bearer ${token}`
+export const LogOut = () => {
+    return dispatch => {
+        const token = sessionStorage.getItem("token")
+        let logout = {
+            method: 'get',
+            url: baseurl + '/users/logout',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         }
-    }
-    axios(logout)
-        .then(({ data }) => {
-            console.log(data)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    sessionStorage.removeItem("token")
-    sessionStorage.removeItem("public_id")
-    return (dispatch) => {
-        dispatch({
-            type: LOGOUT_USER,
-        })
+        return axios(logout)
+            .then(({ data }) => {
+                console.log(data)
+                sessionStorage.removeItem("token")
+                sessionStorage.removeItem("admin")
+                dispatch(loginfaild())
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 }
-const loginUser = () => ({
-    type: LOGIN_USER,
-})
 
-const GetcurrentUser = (userData) => ({
+
+const loginUser = (userData) => ({
     type: LOGIN_SUCSESS,
     payload: userData
 })

@@ -36,32 +36,7 @@ if (!gotTheLock) {
             console.log(['MongoPid'], mongopid)
         })
     }
-    let userServer = null
-    let pypid = null
-    const PyServer = () => {
-        userServer = spawn(path.join(__dirname, './pyServer/DB.exe'), [], {
-            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-        });
-        return new Promise((resolve, reject) => {
-            // let sucsess = false
-            console.log('[PyServer]  Server Starting!')
-            userServer.stdout.on('data', (d) => {
-                console.log('[PyServer]', d.toString('utf8'));
-                // sucsess = true
-                resolve(d.toString('utf8'))
-            });
-            userServer.stderr.on('data', (d) => {
-                console.log('[PyServer]', d.toString('utf8'));
-                reject(d.toString('utf8'))
-            });
-            userServer.on('close', (code) => {
-                console.log('[PyServer]  Server EXIT!');
-            });
-            pypid = userServer.pid;
-
-        })
-
-    }
+    
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
         if (mainWin) {
@@ -70,9 +45,6 @@ if (!gotTheLock) {
         }
     })
     app.on('ready', async () => {
-        PyServer().then((msg) => {
-            console.log(msg)
-        })
         let main = null
         let loading = new BrowserWindow({
             width: 200,
@@ -111,7 +83,7 @@ if (!gotTheLock) {
             main = new BrowserWindow({
                 width: 1000,
                 height: 700,
-                minWidth: 980,
+                minWidth: 1000,
                 minHeight: 680,
                 show: false,
                 frame: false,
@@ -168,18 +140,13 @@ if (!gotTheLock) {
     }
     const KillRunning = () => {
         mongoServer.kill('SIGINT')
-        userServer.kill('SIGINT')
     }
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             checkRunning(mongopid).then((r) => {
                 console.log(r)
-                checkRunning(pypid).then((r) => {
-                    console.log(r)
-                    KillRunning()
-                    app.quit()
-                })
-
+                KillRunning()
+                app.quit()
             })
         }
     })
