@@ -8,6 +8,7 @@
   },
   "homepage": "./",
   "main": "public/main.js",
+
   "dependencies": {
     "@coreui/coreui": "^3.2.2",
     "@coreui/icons": "2.0.0-beta.4",
@@ -90,7 +91,7 @@
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "build": "npm run react-build && npm run electron-build",
-    "build:package": "npm run react-build && electron-packager . GrowPos  --ignore=node_modules/react-* --ignore=node_modules/@material-* --ignore=node_modules/redux-* --ignore=node_modules/@coreui/* --ignore=node_modules/semantic-* --ignore=public --ignore=src  --out dist/",
+    "build:package": "npm run react-build && electron-packager . GrowPos  --ignore=node_modules/react-* --ignore=node_modules/@material-* --ignore=node_modules/redux-* --ignore=node_modules/@coreui/* --ignore=node_modules/semantic-*  --ignore=src  --out dist/",
     "start": "concurrently \"cross-env BROWSER=none npm run react-start\"  \"wait-on http://localhost:3000 && electron .\" "
   },
   "eslintConfig": {
