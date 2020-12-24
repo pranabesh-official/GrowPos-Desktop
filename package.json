@@ -8,7 +8,6 @@
   },
   "homepage": "./",
   "main": "public/main.js",
-
   "dependencies": {
     "@coreui/coreui": "^3.2.2",
     "@coreui/icons": "2.0.0-beta.4",
@@ -109,6 +108,7 @@
       "last 1 safari version"
     ]
   },
+  
   "devDependencies": {
     "concurrently": "^5.2.0",
     "electron": "^9.0.5",
