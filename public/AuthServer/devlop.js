@@ -7,7 +7,7 @@ const io = require('socket.io')(http)
 require('./db/connection')
 const userRouter = require('./routers/user.routers')
 const taskRouter = require('./routers/task.routers')
-const cors = require('cors')
+const cors =require('cors')
 
 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -36,9 +36,14 @@ io.on('connection', function (socket) {
     console.log('[Socket.io] Connected!')
 })
 
-
 app.listen(4545, function () {
     console.log('[Socket.io] listening Port 4545! 🔥')
 })
+// const SocketSrver = () => {
 
+//     app.listen(4545, function () {
+//         console.log('[Socket.io] listening Port 4545! 🔥')
+//     })
+// }
 
+// module.exports = SocketSrver;

@@ -66,9 +66,17 @@ if (!gotTheLock) {
             mainWin = loading
             mongoPathExist().then(() => {
                 dbserver().then((sucsess) => {
-                    const SocketSrver = require('./SocketServer/server');
+                    const AuthServer = require('./AuthServer/index.js');
                     const TortoiseDB = require('./tortoiseDB/tortoiseDB');
-                    SocketSrver()
+                    if (sucsess) {
+                        db = new AuthServer({
+                            name: 'ShopDB',
+                            port: 4545,
+                            mongoURI: 'mongodb://localhost:27017',
+                            batchLimit: 1000,
+                        });
+                        db.start()
+                    }
                     if (sucsess) {
                         db = new TortoiseDB({
                             name: 'ShopDB',
