@@ -1,66 +1,149 @@
-.window{
-    /* border:  1px solid #321fdb; */
-    border-radius: 0;
-   
 
+.tabber {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.tabber label {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  padding: 3rem;
+  cursor: pointer;
+  will-change: transform;
+  transform: translateZ(0px);
+  transition: transform 125ms ease-in-out, filter 125ms ease-in-out;
+}
+.tabber label:hover {
+  transform: scale(1.15);
+}
+.tabber input[type=radio] {
+  display: none;
+}
+.tabber input[type=radio]#t1 ~ .blob {
+  transform-origin: right center;
+}
+.tabber input[type=radio]#t2 ~ .blob {
+  transform-origin: left center;
+}
+.tabber input[type=radio]#t1:checked ~ .blob {
+  background: cornflowerblue;
+  -webkit-animation-name: stretchyRev;
+          animation-name: stretchyRev;
+}
+.tabber input[type=radio]#t2:checked ~ .blob {
+  background-color: skyblue;
+  -webkit-animation-name: stretchy;
+          animation-name: stretchy;
+}
+.tabber .blob {
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  border-radius: 4rem;
+  -webkit-animation-duration: 0.5s;
+          animation-duration: 0.5s;
+  -webkit-animation-direction: forwards;
+          animation-direction: forwards;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+  transition: transform 150ms ease, background 150ms ease;
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" /><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" /><feComposite in="SourceGraphic" in2="goo" operator="atop"/></filter></defs></svg>#goo');
+}
+.tabber .blob:before, .tabber .blob:after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  background-color: inherit;
+  height: 100%;
+  width: 50%;
+  border-radius: 100%;
+  transform: scale(1.15);
+  transition: transform 150ms ease;
+  -webkit-animation-name: pulse;
+          animation-name: pulse;
+  -webkit-animation-duration: 0.5s;
+          animation-duration: 0.5s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+}
+.tabber .blob:before {
+  left: 0;
+  -webkit-animation-delay: 0.15s;
+          animation-delay: 0.15s;
+}
+.tabber .blob:after {
+  right: 0;
 }
 
-
-
-
-.titel{
-   width: 100%;
-   position: absolute;
-   max-width: 100vw;
-   top: 0px;
-   border-bottom:  1px solid #321fdb;
-
+@-webkit-keyframes stretchy {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  50% {
+    transform: translateX(0) scaleX(2);
+  }
+  100% {
+    transform: translateX(100%) scaleX(1);
+  }
 }
 
-
-.col-md-9 {
-    flex: 0 0 80%;
-    min-width: 70%;
-    max-width: 100%;
-    width: 600;
-    
+@keyframes stretchy {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  50% {
+    transform: translateX(0) scaleX(2);
+  }
+  100% {
+    transform: translateX(100%) scaleX(1);
+  }
 }
-
-
-.col-md-8 {
-    flex: 0 0 100%;
-    max-width: 66%;
+@-webkit-keyframes stretchyRev {
+  0% {
+    transform: translateX(100%) scaleX(1);
+  }
+  50% {
+    transform: translateX(0) scaleX(2);
+  }
+  100% {
+    transform: translateX(0) scaleX(1);
+  }
 }
-
-.wave{
-    position: fixed;
-    top: 10;
-	bottom: 0;
-	left: 0;
-	height: 100%;
-    z-index: -1;
-    background: #00000000;
+@keyframes stretchyRev {
+  0% {
+    transform: translateX(100%) scaleX(1);
+  }
+  50% {
+    transform: translateX(0) scaleX(2);
+  }
+  100% {
+    transform: translateX(0) scaleX(1);
+  }
 }
-
-.img{
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
+@-webkit-keyframes pulse {
+  0%, 50% {
+    transform: scaleX(1);
+  }
+  25%, 75% {
+    transform: scaleX(1.5);
+  }
 }
-
-.myDiv{
-    width: 100vw;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap :7rem;
-    padding: 0 2rem;
-    background: #00000000;
-}
-
-.login-content{
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	text-align: center;
+@keyframes pulse {
+  0%, 50% {
+    transform: scaleX(1);
+  }
+  25%, 75% {
+    transform: scaleX(1.5);
+  }
 }

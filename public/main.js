@@ -1,8 +1,15 @@
-const { app, BrowserWindow } = require('electron')
+const {
+    app,
+    BrowserWindow
+} = require('electron')
 const path = require("path")
 const isDev = require("electron-is-dev")
-const { ipcMain } = require('electron')
-const { PosPrinter } = require('electron-pos-printer');
+const {
+    ipcMain
+} = require('electron')
+const {
+    PosPrinter
+} = require('electron-pos-printer');
 const mongoPathExist = require('./mongodb/mongoStart');
 const gotTheLock = app.requestSingleInstanceLock()
 const spawn = require('child_process').spawn;
@@ -13,6 +20,14 @@ if (!gotTheLock) {
 } else {
     let mongopid = null
     let mongoServer = null
+    const checkInternetConnected = require('check-internet-connected');
+    checkInternetConnected()
+        .then((result) => {
+            console.log(result); //successfully connected to a server
+        })
+        .catch((ex) => {
+            console.log(ex); // cannot connect to a server or error occurred.
+        });
     const dbserver = () => {
         mongoServer = spawn(path.join(__dirname, './mongodb/mongod.exe'), ['--dbpath', '/data/db'], {
             stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
@@ -36,7 +51,7 @@ if (!gotTheLock) {
             console.log(['MongoPid'], mongopid)
         })
     }
-    
+
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
         if (mainWin) {
@@ -108,14 +123,14 @@ if (!gotTheLock) {
                     loading.close()
                 })
                 main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
-           
+
             })
-           
-          
-           
+
+
+
             // long loading html
             // main.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
-           
+
             ipcMain.on('print-pos', (event, arg) => {
                 console.log(arg)
                 const Print = JSON.parse(arg)
@@ -163,7 +178,3 @@ if (!gotTheLock) {
         }
     })
 }
-
-
-
-

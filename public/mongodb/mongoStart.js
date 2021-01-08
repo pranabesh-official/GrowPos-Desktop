@@ -11,7 +11,7 @@ const mongoPathExist = () => {
       } else {
         console.log('[Directory] not found! ');
         console.log('[Directory] Creating.. ');
-        fs.mkdirSync(dir);
+        // fs.mkdirSync(dir);
         console.log('[Directory] Creating Done! ');
         resolve()
       }

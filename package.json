@@ -24,10 +24,12 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "google-auth-library": "^6.0.0",
     "axios": "^0.19.2",
     "base-64": "^0.1.0",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.5.0",
+    "check-internet-connected": "^2.0.5",
     "chokidar": "^3.4.2",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
@@ -90,7 +92,7 @@
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "build": "npm run react-build && npm run electron-build",
-    "build:package": "npm run react-build && electron-packager .  --out dist/",
+    "build:package": "npm run react-build && electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true  --out dist/",
     "start": "concurrently \"cross-env BROWSER=none npm run react-start\"  \"wait-on http://localhost:3000 && electron .\" "
   },
   "eslintConfig": {
@@ -108,7 +110,6 @@
       "last 1 safari version"
     ]
   },
-  
   "devDependencies": {
     "concurrently": "^5.2.0",
     "electron": "^9.0.5",

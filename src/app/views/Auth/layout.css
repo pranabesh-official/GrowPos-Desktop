@@ -1,0 +1,59 @@
+.window {
+  border-radius: 0;
+  background: ##DAF7A6;
+}
+
+.titel {
+  width: 100%;
+  position: absolute;
+  max-width: 100vw;
+  top: 0px;
+  /* border-bottom:  1px solid #321fdb; */
+}
+
+.col-md-9 {
+  flex: 0 0 80%;
+  min-width: 70%;
+  max-width: 100%;
+  width: 600;
+}
+
+.col-md-8 {
+  flex: 0 0 100%;
+  max-width: 66%;
+}
+
+.wave {
+  position: fixed;
+  top: 10;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  z-index: -1;
+  background: #00000000;
+}
+
+.img {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.myDiv {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 7rem;
+  padding: 0 2rem;
+  background: #00000000;
+}
+
+.login-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+}
+
+
