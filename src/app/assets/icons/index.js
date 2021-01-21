@@ -1,4 +1,4 @@
-import { sygnet, receipt ,cashRegister, Card , Store, Settings ,Registration, Expence} from './sygnet'
+import { sygnet, receipt ,cashRegister, Card , Store, Settings ,Registration, Expence , printerSettings , subSettings} from './sygnet'
 import { logo } from './logo'
 import { logoNegative } from './logo-negative'
 
@@ -141,7 +141,9 @@ export const icons = Object.assign({}, {
   Store, 
   Settings ,
   Registration, 
-  Expence
+  Expence,
+  printerSettings, 
+  subSettings
 }, {
   cilAlignCenter,
   cilAlignLeft,

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Paper, Grid, IconButton } from '@material-ui/core'
 import { connect } from 'react-redux'
 // import { SyncDbDone } from '../store/action/syncAction'
+import Connection from '../components/connection'
 
 import { DataConsumer } from '../LocalDB'
 import { Icon } from 'semantic-ui-react'
@@ -97,7 +98,7 @@ class TheFooter extends Component {
             {SyncData()}
           </Grid>
           <Grid item xs={4} sm={4}>
-
+            <Connection/>
           </Grid>
         </Grid>
       </Paper>

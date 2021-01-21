@@ -1,5 +1,4 @@
-import React from 'react'
-// import { Link } from 'react-router-dom'
+import React, {  useContext } from 'react'
 import Titlebar from '../../../TitleBar'
 import Controls from '../../../components/controls/Controls'
 import { isElectron } from 'react-device-detect'
@@ -10,12 +9,20 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { theme } from '../../../Themes'
 import { userLoginFetch } from '../../../store/action/Auth'
 import { useForm } from '../../../components/useForm'
-import { Grid ,Avatar , Typography} from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-
+import { authenticate, isAuth } from '../../../helpers/auth'
+import Fab from '@material-ui/core/Fab';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import CheckIcon from '@material-ui/icons/Check';
+import clsx from 'clsx';
+import { green } from '@material-ui/core/colors';
+import { DataContext } from '../../../LocalDB'
+import { userPostFetch } from '../../../store/action/Auth'
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,11 +73,39 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     borderRadius: '25px',
-    color:'#321fdb'
+    color: '#321fdb'
+  },
+  wrapper: {
+    margin: theme.spacing(1),
+    position: 'relative',
+  },
+  buttonSuccess: {
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
+  },
+  fabProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: -6,
+    left: -6,
+    zIndex: 1,
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   }
 }));
 const Login = (props) => {
   const classes = useStyles();
+  const { addItem } = useContext(DataContext)
+  const {  _id } = props.Shop
+
   const initialFValues = {
     username: '',
     password: '',
@@ -94,18 +129,73 @@ const Login = (props) => {
     values,
     errors,
     setErrors,
-    handleInputChange,
+    setValues,
+    validateOnChange
   } = useForm(initialFValues, true, validate);
 
+  const handleInputChange = e => {
+    const { name, value } = e.target
+    setValues({
+      ...values,
+      [name]: value
+    })
+    if (validateOnChange)
+      validate({ [name]: value })
+  }
+  const url = 'http://localhost:5000/api'
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate())
-      props.userLoginFetch(values)
+    if (validate()) {
+      if (isAuth()) {
+        props.userLoginFetch(values)
+      } else {        axios
+          .post(`${url}/login`, {
+            email: values.username,
+            password: values.password
+          })
+          .then(res => {
+            authenticate(res, () => {
+              isAuth() && isAuth().role === 'admin'
+                ? props.history.push('/admin')
+                : props.history.push('/private');
+                console.log(values.username , values.password)
+                console.log(res.data.user);
+                if(_id){
+                  props.userLoginFetch(values)
+                }else{
+                  addItem('Shop', {
+                    Name: res.data.user.name,
+                    Type: 'Resturant',
+                    Contact: res.data.user.contact,
+                    Location: res.data.user.location,
+                    Pin: '1234',
+                    Bill: null,
+                    OT: null,
+                    Preferences: null
+                  }).then((result) => {
+                    props.userPostFetch({
+                      username: values.username,
+                      password: values.password,
+                      Mobile: res.data.user.contact,
+                      City: res.data.user.location,
+                      shopid:result._id
+                    })
+                  })
+                }
+            });
+          })
+          .catch(err => {
+            console.log(err.response);
+          });
+      }
+    }
   }
-
+  const buttonClassname = clsx({
+    [classes.buttonSuccess]: isAuth(),
+  });
   return (
     <ThemeProvider theme={theme}>
-      <div style={{background:'#0000000'}}>
+      <div style={{ background: '#0000000' }}>
         <div >
           {isElectron &&
             <div className="titel" >
@@ -123,19 +213,17 @@ const Login = (props) => {
                   <Card className={classes.Card}>
                     <CardContent>
                       <div className={classes.paper}>
-                        <Avatar className={classes.avatar}>
-                            <LockOutlinedIcon />
-                          </Avatar>
-                          <Typography component="h1" variant="h5">
-                            Login
-                          </Typography>
-                        {/* <form class="tabber">
-                          <label for="t1"><LockOutlinedIcon style={{ color:'#321fdb', size:'20px'}}/></label>
-                          <input id="t1" name="food" type="radio" checked />
-                          <label for="t2"><LockOutlinedIcon style={{ color:'#321fdb', size:'20px'}}/></label>
-                          <input id="t2" name="food" type="radio" />
-                          <div class="blob"></div>
-                        </form> */}
+                        <div className={classes.wrapper}>
+                          <Fab
+                            aria-label="save"
+                            color="primary"
+                            className={buttonClassname}
+                            onClick={isAuth}
+                          >
+                            {isAuth() ? <CheckIcon /> : <LockOutlinedIcon />}
+                          </Fab>
+                          {isAuth() && <CircularProgress size={68} className={classes.fabProgress} />}
+                        </div>
                         <form className={classes.form} noValidate onSubmit={handleSubmit}>
                           <Controls.Input
                             name="username"
@@ -193,21 +281,16 @@ const Login = (props) => {
   )
 }
 
-
+const mapStateToProps = (state) => {
+  return {
+    Auth: state.Auth,
+    Shop: state.Shop,
+  }
+}
 
 const mapDispatchToProps = dispatch => ({
-  userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo))
+  userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo)),
+  userPostFetch: userInfo => dispatch(userPostFetch(userInfo))
 })
-export default connect(null, mapDispatchToProps)(Login);
-// export default connect(mapStateToProps, {userPostFetch, getProfileFetch})(Login)
 
-// , {userPostFetch, getProfileFetch}
-
-
-{/* <Grid container>
-                        <Grid item>
-                          <Link to="/Register" variant="body2">
-                            {"Don't have an Register Your Shop? Register"}
-                          </Link>
-                        </Grid>
-                      </Grid> */}
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

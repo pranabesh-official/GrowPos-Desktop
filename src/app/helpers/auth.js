@@ -1,5 +1,5 @@
 import cookie from 'js-cookie'
-import { GoogleLogout } from 'react-google-login';
+// import { GoogleLogout } from 'react-google-login';
 
 // Set in Cookie
 export const setCookie = (key, value) => {

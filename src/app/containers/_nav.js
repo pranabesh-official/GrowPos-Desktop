@@ -1,9 +1,4 @@
 
-// let disabled = true
-// const admin = sessionStorage.getItem("admin")
-// if (admin) {
-//   disabled = false
-// }
 
 
 export default [
@@ -62,7 +57,7 @@ export default [
         // addLinkClass: 'c-disabled',
         // // 'disabled': disabled,
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -71,7 +66,7 @@ export default [
         name: 'Dine In',
         to: '/TableSetup',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -80,7 +75,7 @@ export default [
         name: 'Registers',
         to: '/Registers',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -89,7 +84,7 @@ export default [
         name: 'Category',
         to: '/CategorySetup',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -98,7 +93,7 @@ export default [
         name: 'Prouducts',
         to: '/ProuductSetup',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -107,7 +102,7 @@ export default [
         name: 'TAX',
         to: '/TaxSetup',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
       },
@@ -116,28 +111,22 @@ export default [
         name: 'Users',
         to: '/UserSetup',
         icon: {
-          name: 'cil-ApplicationsSettings',
+          name: 'subSettings',
           className: 'text-warning'
         },
 
       },
-      // {
-      //   _tag: 'CSidebarNavItem',
-      //   name: 'Preferences',
-      //   to: '/Preferences',  
-      // },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Printer Setup',
-        to: '/PrinterSetup',
-        icon: {
-          name: 'cil-ApplicationsSettings',
-          className: 'text-warning'
-        },
-      },
 
-    ],
-
+    ]
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Printer Setup',
+    to: '/PrinterSetup',
+    icon: {
+      name: 'printerSettings',
+      className: 'text-warning'
+    },
   },
 
 ]

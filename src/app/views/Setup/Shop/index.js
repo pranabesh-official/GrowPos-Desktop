@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar, Grid, Paper, Typography } from '@material-ui/core';
+import {  Grid, Paper, Typography } from '@material-ui/core';
 import DataProvider from '../../../LocalDB'
 import Shop from './ShopSetup'
 // import ShopProfile from './ShopProfile'

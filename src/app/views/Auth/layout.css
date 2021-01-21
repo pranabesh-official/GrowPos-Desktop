@@ -11,17 +11,7 @@
   /* border-bottom:  1px solid #321fdb; */
 }
 
-.col-md-9 {
-  flex: 0 0 80%;
-  min-width: 70%;
-  max-width: 100%;
-  width: 600;
-}
 
-.col-md-8 {
-  flex: 0 0 100%;
-  max-width: 66%;
-}
 
 .wave {
   position: fixed;

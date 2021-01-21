@@ -7,10 +7,13 @@ const useStyles = makeStyles(theme => ({
     dialogWrapper: {
         padding: theme.spacing(0),
         position: 'absolute',
-        top: theme.spacing(5)
+        top: theme.spacing(5),
+        boxShadow: 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;'
+        
     },
     dialogTitle: {
-        padding: 0
+        padding: 0,
+        background: '#3c4b64',
     },
     content: {
         padding: 8,
@@ -24,7 +27,7 @@ export default function Popup(props) {
     const classes = useStyles();
 
     return (
-        <Dialog open={openPopup} maxWidth="md" classes={{ paper: classes.dialogWrapper }}>
+        <Dialog open={openPopup} maxWidth="md" classes={{ paper: classes.dialogWrapper }} >
             <DialogTitle className={classes.dialogTitle}>
                 <div style={{ display: 'flex' }}>
                     <Typography variant="h6" component="div" style={{ flexGrow: 1, margin:5 }}>

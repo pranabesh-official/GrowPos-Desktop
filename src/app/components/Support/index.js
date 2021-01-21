@@ -3,26 +3,8 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { IconButton, Typography } from '@material-ui/core'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import {ContactSupport} from '@material-ui/icons';
-// const getStatus = (status) => {
-//     switch (status) {
-//         case 'Active': return success
-//         case 'Inactive': return secondary
-//         case 'Pending': return warning
-//         case 'Banned': return danger
-//         default: return info
-//     }
-// }
 
-// const getType = (Type) => {
-//     switch (Type) {
-//         case 'Table': return location
-//         case 'Delivery': return 'http://localhost:4545/static/img/location.png'
-//         case 'TakeAway': return 'http://localhost:4545/static/img/take-away.png'
-//         default: return 'http://localhost:4545/static/img/take-away.png'
-//     }
-// }
 const useStyles = makeStyles(theme => ({
     details: {
         display: 'flex',

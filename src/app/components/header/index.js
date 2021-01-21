@@ -10,6 +10,7 @@ import Popup from '../Popup'
 import { connect } from 'react-redux'
 import { BillingDetails } from '../../store/action/Cart'
 import CIcon from '@coreui/icons-react'
+
 const useStyles = makeStyles((theme) => ({
     root: (props) => {
         return {
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
     const classes = useStyles(props);
-    const { title, subtitle, src } = props
+    const { title, subtitle} = props
     const [openPopup, setOpenPopup] = useState(false)
 
     const AddDiscount = () => {

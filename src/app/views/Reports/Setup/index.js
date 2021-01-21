@@ -14,7 +14,6 @@ import ConfirmDialog from "../../../components/ConfirmDialog";
 // import Info from '../../../components/infoPage'
 import ViewDetails from '../ViewDetails'
 import PrintTable from '../ViweAllDetails'
-import DateRangeIcon from '@material-ui/icons/DateRange';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
